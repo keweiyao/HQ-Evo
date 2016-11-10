@@ -1,59 +1,47 @@
 #include <iostream>
-#include "Xsection.h"
+#include <cmath>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
+#include "Xsection.h"
 
-//=============Xsection_2to2===================================================
-// Integrate 2->2 type cross-section and tabulate at grid points, and provide
-// fast interpolator for 2->2 type cross-section
+double gsl_1dfunc_wrapper(double x, void * params_){
+	integrate_params * params = static_cast<integrate_params*>(params_);
+	return params->dXdPS(&x, 1, params->params);
+}
 
-// initialize the class with the specifiv 2->2 process you want
-// by the t-differential cross-section, Mass of the massive particle
-Xsection_2to2::Xsection_2to2(double (*dXdt_)(double t, void * params), double (*approx_X_)(double s, double Temp, double M), double M1_)
-:	dXdt(dXdt_), approx_X(approx_X_), M1(M1_), Ns(100), NT(50), 
-	sL(M1*M1*1.001), sM(4.*M1*M1), sH(400*M1*M1), 
+//=============Xsection base class===================================================
+// this is the base class for 2->2 and 2->3 cross-sections
+Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
+: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(50), 
+	sL(M1*M1*1.01), sM(4.*M1*M1), sH(400*M1*M1), 
 	ds1((sM-sL)/(Ns-1.)), ds2((sH-sM)/(Ns-1.)),
 	TL(0.1), TH(1.0), dT((TH-TL)/(NT-1.))
 {
-	// making table
-	tabulate_s_Temp();
+	std::cout << "initialize base Xsection class" << std::endl;
 }
 
-void Xsection_2to2::tabulate_s_Temp(void){
-	std::cout << "Making X-section table" << std::endl;
+void Xsection::tabulate_s_Temp(void){
+	std::cout << "Making Xsection table --" << std::endl;
+	
 	double s, Temp;
-	Xtab.resize(Ns*2);	
+	Xtab.resize(Ns*2);
 	for (size_t i=0; i<2*Ns; ++i) {
 		if (i<Ns) s = sL + i*ds1;
 		else s = sM + (i-Ns)*ds2;
 		Xtab[i].resize(NT);
 		for (size_t j=0; j<NT; ++j) {
 			Temp = TL + j*dT;
+			
 			Xtab[i][j] = calculate(s, Temp)/approx_X(s, Temp, M1);
+			std::cout <<Xtab[i][j]<<std::endl;
 		}
 	}
 	std::cout << "X-section done" << std::endl;
 }
 
-double Xsection_2to2::calculate(double s, double Temp){
-	double result, error, tmin, tmax;
-	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
-	double * p = new double[3];
-	p[0] = s;
-	p[1] = Temp;
-	p[2] = M1;
-    gsl_function F;
-	F.function = dXdt;
-	F.params = p;
-	tmax = 0.0;
-	tmin = -pow(s-M1*M1, 2)/s;
-	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
-    return result;
-}
-
-double Xsection_2to2::interpX(double s, double Temp){
+double Xsection::interpX(double s, double Temp){
 	if (Temp < TL) Temp = TL;
 	if (Temp >= TH) Temp = TH-dT;
 	if (s < sL) s = sL;
@@ -70,4 +58,93 @@ double Xsection_2to2::interpX(double s, double Temp){
 			+Xtab[is][iT+1]*(1.-rs)*rT
 			+Xtab[is+1][iT+1]*rs*rT);
 }
+
+//============Derived 2->2 Xsection class===================================
+Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
+:	Xsection(dXdPS_, approx_X_, M1_)
+{
+	std::cout << "starting " << __func__ << std::endl;
+	// making table
+	tabulate_s_Temp();
+}
+
+double Xsection_2to2::calculate(double s, double Temp){
+	double result, error, tmin, tmax;
+	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
+	integrate_params * params = new integrate_params;
+	params->dXdPS = dXdPS;
+	double * p = new double[3];
+	p[0] = s;
+	p[1] = Temp;
+	p[2] = M1;
+	params->params = p;
+
+    gsl_function F;
+	F.function = gsl_1dfunc_wrapper;
+	F.params = params;
+	tmax = 0.0;
+	tmin = -pow(s-M1*M1, 2)/s;
+	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
+
+	delete[] p;
+	delete params;
+
+    return result;
+}
+
+double Xsection_2to2::sample_dXdPS(double s, double Temp){
+	(void)s;
+	(void)Temp;
+	return 1.0;
+}
+
+//============Derived 2->3 Xsection class===================================
+Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
+:	Xsection(dXdPS_, approx_X_, M1_)
+{
+	// making table
+	tabulate_s_Temp();
+}
+
+double Xsection_2to3::calculate(double s, double Temp){
+	double result, error;
+
+	const gsl_rng_type * Tr = gsl_rng_default;
+	gsl_rng * r = gsl_rng_alloc(Tr);
+	
+	double * params = new double[3];
+	params[0] = s; params[1] = Temp; params[2] = M1;
+	
+	gsl_monte_function G;
+	G.f = dXdPS; 
+	G.dim = 4; // k+p4, k-p4, phi4k, cos4
+	G.params = params;
+	
+	// limits of the integration
+	double sqrts = std::sqrt(s), M2 = M1*M1;
+	double xl[4], xu[4];
+	xl[0] = 0.0; xu[0] = 0.5*(sqrts-M2/sqrts);
+	xl[1] = 0.0; xu[1] = 0.5*(sqrts-M2/sqrts);
+	xl[2] = 0.0; xu[2] = 2.*M_PI;
+	xl[3] = -1.; xu[3] = 1.;
+	
+	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
+	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
+	gsl_monte_vegas_integrate(&G, xl, xu, 4, 20000, r, sv, &result, & error);
+	while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>1.0)
+	{
+		gsl_monte_vegas_integrate(&G, xl, xu, 4, 40000, r, sv, &result, & error);
+	}
+	gsl_monte_vegas_free(sv);
+	gsl_rng_free(r);
+	delete params;
+	return result/(s-M2)/8./std::pow(2.*M_PI, 5);
+}
+
+double Xsection_2to3::sample_dXdPS(double s, double Temp){
+	(void)s;
+	(void)Temp;
+	return 1.0;
+}
+
 

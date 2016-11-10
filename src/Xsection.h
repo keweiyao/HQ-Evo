@@ -5,11 +5,21 @@
 #include <vector>
 #include "matrix_elements.h"
 
-//=============================================================================
-class Xsection_2to2{
-private:
+struct integrate_params{
+	double (*dXdPS)(double * PS, size_t n_dims, void * params);
+	double * params;
+};
+
+double gsl_1dfunc_wrapper(double x, void * params_);
+
+//=============Xsection base class===================================================
+// This is the base class for 2->2 and 2->3 cross-sections.
+// It takes care of the tabulating details and the tabulating routines, also the interpolation process
+// The actually total Xsection calcuate function and final state sample function are virtual functions, because 2->2 and 2->3 uses quite different techniques to do these jobs.
+class Xsection{
+protected:
 	void tabulate_s_Temp(void);
-	double (*dXdt)(double t, void * params);
+	double (*dXdPS)(double * PS, size_t n_dims, void * params);
 	double (*approx_X)(double s, double Temp, double M);
 	double M1;
 	// For interpolation
@@ -18,12 +28,28 @@ private:
 	std::vector< std::vector<double> > Xtab;
 	const size_t Ns, NT;
 	const double sL, sM, sH, ds1, ds2;
-	const double TL, TH, dT; 
+	const double TL, TH, dT;
 public:
-    Xsection_2to2(double (*dXdt_)(double t, void * params), double (*approx_X_)(double s, double Temp, double M), double M1);
-    double calculate(double s, double Temp);
+	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_);
 	double interpX(double s, double Temp);
-	double sample_dXdt(double s, double Temp);
+	virtual double calculate(double s, double Temp) = 0;
+	virtual double sample_dXdPS(double s, double Temp) = 0;
+};
+
+//============Derived 2->2 Xsection class============================================
+class Xsection_2to2 : public Xsection{
+public:
+    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_);
+    double calculate(double s, double Temp);
+	double sample_dXdPS(double s, double Temp);
+};
+
+//============Derived 2->3 Xsection class============================================
+class Xsection_2to3 : public Xsection{
+public:
+    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_);
+    double calculate(double s, double Temp);
+	double sample_dXdPS(double s, double Temp);
 };
 
 #endif

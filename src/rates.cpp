@@ -127,9 +127,12 @@ double rates<T>::calculate(double E1, double Temp)
 	}
 	gsl_monte_vegas_free(s);
 	gsl_rng_free(r);
+	delete params;
+	delete[] p;
 	return result/c16pi2/E1/p1*degeneracy;
 }
 
 template class rates<Xsection_2to2>;
+template class rates<Xsection_2to3>;
 
 

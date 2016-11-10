@@ -10,6 +10,7 @@ int main(){
 	//for(int i=0; i< 1000000; i++) std::cout << sampler1d.sample(test, 0., 1., p) << std::endl;
 
 	//--------test MC sampler------------
+	/*
 	double * p = new double[3]; //s, T, M
 	double M = 1.3;
 	double sqrts = M*5.;
@@ -23,12 +24,25 @@ int main(){
 	guess[3] = 0.2;
 	AiMS sampler;
 	for (size_t i = 0; i<1000; i++)
-	sampler.sample(M2_Qq2Qqg, n_dims, p, guess);	
+	sampler.sample(M2_Qq2Qqg, n_dims, p, guess);	*/
+	
+	// Xsection: Q+q->Q+q
+	Xsection_2to2 XQq2Qq(&dX_Qq2Qq_dPS, &approx_XQq2Qq, 1.3);
+	// Xsection: Q+g->Q+g
+	Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, 1.3);
+	// Xsection: Q+q->Q+q+g
+	//Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, 1.3);
+	// Xsection: Q+g->Q+g+g
+	Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, 1.3);
 
-	//Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dt, &approx_XQg2Qg, 1.3);
-	//Xsection_2to2 XQq2Qq(&dX_Qq2Qq_dt, &approx_XQq2Qq, 1.3);
-	//rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2);
-	//rates<Xsection_2to2> RQq2Qq(&XQq2Qq, 3*4);
+	// Rate: Q+q->Q+q
+	rates<Xsection_2to2> RQq2Qq(&XQq2Qq, 3*4);
+	// Rate: Q+g->Q+g
+	rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2);
+	// Rate: Q+q->Q+q+g
+	//rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4);
+	// Rate: Q+g->Q+g+g
+	rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2);
 
 	return 0;
 }
