@@ -1,79 +1,20 @@
-#include "Rates.h"
+#include "rates.h"
+#include "constants.h"
 #include <cmath>
 #include <vector>
 #include <thread> 
 #include <fstream>
+
 using std::placeholders::_1;
 using std::placeholders::_2;
+
 //=============Thernalized Distribution funtion=================================
 // xi = 1: Fermi Dirac; xi = -1 Bose Einsterin; xi = 0, Maxwell-Boltzmann
 double inline f_0(double x, double xi){
-    if (x<1e-6) x=1e-64;
+    if (x<1e-6) x=1e-6;
     return 1./(std::exp(x)+xi);
 }
 
-//=============running coupling=================================================
-double inline alpha_s(double Q2){
-    if (Q2 < Q2cut_l)
-        return alpha0 / std::log( -Q2/Lambda2 );
-    else if (Q2 <= Q2cut_h)
-        return 1.0;
-    else
-        return alpha0 * ( .5 - std::atan( std::log(Q2/Lambda2)/M_PI ) / M_PI );
-}
-
-//=============Baisc function for Q+q --> Q+q==================================
-double dX_Qq2Qq_dt(double t, void * params){
-	// unpacking parameters
-	double * p = static_cast<double*>(params);
-	double s = p[0], T2 = p[1]*p[1], M2 = p[2]*p[2];
-	// define energy scales for each channel
-	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
-	// define coupling constant for each channel
-	double At = alpha_s(Q2t);
-	// define Deybe mass for each channel
-	double mt2 = 0.2*At*pf_g*T2;
-	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2*M2*Q2t)/std::pow(Q2t - mt2, 2);
-	return result/c16pi/std::pow(s-M2, 2);
-}
-double approx_XQq2Qq(double s, double t, double M){
-	(void)s;
-	(void)t;
-	(void)M;
-	return 1.0;
-}
-
-//=============Baisc function for Q+g --> Q+g==================================
-double dX_Qg2Qg_dt(double t, void * params){
-	// unpacking parameters
-	double * p = static_cast<double *>(params);
-	double s = p[0], T2 = p[1]*p[1], M2 = p[2]*p[2];
-	// define energy scales for each channel
-	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
-	// define coupling constant for each channel
-	double As = alpha_s(Q2s), At = alpha_s(Q2t), Au = alpha_s(Q2u);
-	// define Deybe mass for each channel
-	double mt2 = 0.2*At*pf_g*T2, mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
-	double result = 0.0;
-	// t*t
-	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
-	// s*s
-	result += c4d9*As*As * ( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(Q2s + ms2, 2);
-	// u*u
-	result += c4d9*Au*Au * ( Q2s*(-Q2u) + 2.*M2*(Q2u + 2.*M2) ) / std::pow(-Q2u + mu2, 2);
-	// s*u
-	result += c1d9*As*Au * M2*(4.*M2 - Q2t) / (Q2s + ms2) / (-Q2u + mu2);
-	// t*s
-	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / (Q2t - mt2) / (Q2s + ms2);
-    // t*u
-	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / (Q2t - mt2) / (-Q2u + mu2);
-	return result*c16pi2/c16pi/std::pow(s-M2, 2);
-}
-double approx_XQg2Qg(double s, double Temp, double M){	
-	double Q2s = s-M*M, T2 = Temp*Temp, M2 = M*M;
-	double abstmax = Q2s*Q2s/s;
-	return 1./T2 - 1./(T2+abstmax) + 10.*M2/Q2s/Q2s;
-}
 //=============Xsection_2to2===================================================
 // Integrate 2->2 type cross-section and tabulate at grid points, and provide
 // fast interpolator for 2->2 type cross-section

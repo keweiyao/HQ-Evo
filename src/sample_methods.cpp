@@ -65,7 +65,7 @@ double rejection_1d::plain_sample(double (*f_) (double x, void * params), double
 
 // ----------Affine-invariant metropolis sample-------------------
 AiMS::AiMS(void)
-:	a(0.6), rd(), gen(rd()), sqrtZ(std::sqrt(1./a), std::sqrt(a)),
+:	a(0.3), rd(), gen(rd()), sqrtZ(std::sqrt(1./a), std::sqrt(a)),
 	reject(0.0, 1.0)
 {
 }
@@ -73,7 +73,7 @@ void AiMS::initialize(void){
     std::uniform_real_distribution<double> init_dis(-1, 1);
 	for (auto&& w : walkers){
 		for (size_t j=0; j < n_dims; ++j){
-			w[j] = guess[j]*(1.0+0.01*init_dis(gen));
+			w[j] = guess[j]*(1.0+0.1*init_dis(gen));
 		}
 	}
 }
@@ -116,15 +116,30 @@ double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void 
 	for (auto&& w : buff_walkers)w = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*1000; i++){
+	for (size_t i = 0; i<Nwalker*100; i++){
 		update();
 	}
-	std::ofstream initf("samples.dat");
-	for (size_t i = 0; i<100000; i++){
+	std::ofstream initf("samples.dat", std::ofstream::out | std::ofstream::app);
+	for (size_t i = 0; i<100; i++){
 		update();
 		for (auto&& w : walkers){
-			for (size_t j=0; j < n_dims; ++j) initf << w[j] << " ";
-			initf << std::endl;
+			double k = w[0], p4 = w[1], phi4k = w[2], cos4 = w[3];
+			double * p_ = static_cast<double*>(params);
+			double s = p_[0], T = p_[1], M = p_[2];
+			double sqrts = std::sqrt(s);
+			double cos_star = ((s-M*M)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
+			double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
+			double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
+			double kx = k*(sin_star*cos_4k*cos4 - sin4*cos_star), ky = sin_star*sin_4k,
+		   			kz = k*(sin_star*cos_4k*sin4 + cos4*cos_star);
+			double kt2 = kx*kx + ky*ky;
+			double qx = -p4*sin4;
+			double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+			double Qx = -p4*sin4-kx, Qy = -ky, Qz = -kz-p4*cos4;
+			double EQ = std::sqrt(Qx*Qx+Qy*Qy+Qz*Qz+M*M);
+			initf << std::atan2(ky, kx) << " "
+				  << 0.5*std::log((EQ+Qz)/(EQ-Qz)) <<  " "
+				  << 0.5*std::log((k+kz)/(k-kz)) << std::endl;
 		}
 	}
 	return 1.0;

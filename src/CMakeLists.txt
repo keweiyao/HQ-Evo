@@ -1,8 +1,9 @@
 # compile everything except the main source file into a statis lib to be linked 
 # to the main executable
 add_library(${LIBRARY_NAME} STATIC
-  Rates.cpp
+  rates.cpp
   sample_methods.cpp
+  matrix_elements.cpp
 )
 
 set_target_properties(${LIBRARY_NAME} PROPERTIES PREFIX "")
