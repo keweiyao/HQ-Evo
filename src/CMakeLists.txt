@@ -3,6 +3,7 @@
 add_library(${LIBRARY_NAME} STATIC
   rates.cpp
   sample_methods.cpp
+  Xsection.cpp
   matrix_elements.cpp
 )
 

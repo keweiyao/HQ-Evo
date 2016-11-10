@@ -116,7 +116,7 @@ double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void 
 	for (auto&& w : buff_walkers)w = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*100; i++){
+	for (size_t i = 0; i<Nwalker*200; i++){
 		update();
 	}
 	std::ofstream initf("samples.dat", std::ofstream::out | std::ofstream::app);

@@ -4,17 +4,6 @@
 #include "matrix_elements.h"
 #include "rates.h"
 
-double test(double * x, size_t n_dims, void * params){
-	double * p = static_cast<double*>(params);
-	double result = 0.0;
-	for (size_t i=0; i<n_dims; ++i){
-		result += std::pow(x[i]/p[i], 2);
-	}
-	return std::exp(-0.5*result);
-	//	return std::exp(-(100.*std::pow(x2-x1*x1, 2)+std::pow(1.-x1, 2))/20.);
-}
-
-
 int main(){
 	//rejection_1d sampler1d;
 	//double * p = new double[2]; p[0] = 0.1; p[1] = 0.1;
@@ -23,9 +12,9 @@ int main(){
 	//--------test MC sampler------------
 	double * p = new double[3]; //s, T, M
 	double M = 1.3;
-	double sqrts = M*20.;
+	double sqrts = M*5.;
 	double s = sqrts*sqrts;
-	p[0] = s; p[1] = 0.4;  p[2] = M;
+	p[0] = s; p[1] = 0.2;  p[2] = M;
 	size_t n_dims = 4;
 	double * guess = new double[n_dims];
 	guess[0] = sqrts/2. - M/2.;
