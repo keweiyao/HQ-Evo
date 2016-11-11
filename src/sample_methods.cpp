@@ -65,75 +65,72 @@ double rejection_1d::plain_sample(double (*f_) (double x, void * params), double
 
 // ----------Affine-invariant metropolis sample-------------------
 AiMS::AiMS(void)
-:	a(0.3), rd(), gen(rd()), sqrtZ(std::sqrt(1./a), std::sqrt(a)),
+:	a(0.5), rd(), gen(rd()), sqrtZ(std::sqrt(1./a), std::sqrt(a)),
 	reject(0.0, 1.0)
 {
 }
 void AiMS::initialize(void){
     std::uniform_real_distribution<double> init_dis(0, 1);
-	for (auto&& w : walkers){
-		for (size_t j=0; j < n_dims; ++j){
-			w[j] = guessl[j] + (guessh[j]-guessl[j])*init_dis(gen);
-		}
+	for (size_t i=0; i<Nwalker; ++i){
+		do{
+			for (size_t j=0; j < n_dims; ++j) walkers[i].posi[j] = guessl[j] + (guessh[j]-guessl[j])*init_dis(gen);
+			walkers[i].P = f(walkers[i].posi, n_dims, params);
+		} while(walkers[i].P <= 1e-22);
+		for (size_t j=0; j < n_dims; ++j)
+				buff_walkers[i].posi[j] = walkers[i].posi[j];
+		buff_walkers[i].P = walkers[i].P;
 	}
 }
 void AiMS::update(void){
 	size_t ri;
-	double sqz, z, Pnow, Ptry, Paccept;
+	double sqz, z, Ptry, Paccept;
 	double * xtry = new double[n_dims];
+	walker w, wr;
     for (size_t i=0; i<Nwalker; ++i){
 		do{ 
 			ri = rd() % Nwalker;
 		}while(i==ri);
+		w = walkers[i];
+		wr = walkers[ri];
 		sqz = sqrtZ(gen);
 		z = sqz*sqz;
-		for (size_t j=0; j < n_dims; ++j) xtry[j] = walkers[ri][j] + z*(walkers[i][j] - walkers[ri][j]);
-		Pnow = f(walkers[i], n_dims, params);
+		for (size_t j=0; j < n_dims; ++j) xtry[j] = wr.posi[j] + z*(w.posi[j] - wr.posi[j]);
 		Ptry = f(xtry, n_dims, params);
-		Paccept = Ptry/Pnow*std::pow(z, n_dims-1);
+		Paccept = Ptry/w.P*std::pow(z, n_dims-1);
 		if (Paccept >= 1.0){
-			for (size_t j=0; j < n_dims; ++j) buff_walkers[i][j] = xtry[j];
+			for (size_t j=0; j < n_dims; ++j) buff_walkers[i].posi[j] = xtry[j];
+			buff_walkers[i].P = Ptry;
 		}
 		else if (Paccept >= reject(gen)){
-			for (size_t j=0; j < n_dims; ++j) buff_walkers[i][j] = xtry[j];
-		}
-		else{
-			for (size_t j=0; j < n_dims; ++j) buff_walkers[i][j] = walkers[i][j];
+			for (size_t j=0; j < n_dims; ++j) buff_walkers[i].posi[j] = xtry[j];
+			buff_walkers[i].P = Ptry;
 		}
 	}
 	for (size_t i=0; i<Nwalker; ++i){
-		for (size_t j=0; j < n_dims; ++j) walkers[i][j] = buff_walkers[i][j];
+		for (size_t j=0; j < n_dims; ++j) walkers[i].posi[j] = buff_walkers[i].posi[j];
+		walkers[i].P = buff_walkers[i].P;
 	}
 	delete[] xtry;
 }
-double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
+double * AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
 	walkers.clear();
 	f = f_; n_dims = n_dims_; params = params_; guessl = guessl_; guessh = guessh_;
-	Nwalker = n_dims*3;
+	Nwalker = n_dims*2;
 	walkers.resize(Nwalker);
 	buff_walkers.resize(Nwalker);
-	for (auto&& w : walkers) w = new double[n_dims];
-	for (auto&& w : buff_walkers) w = new double[n_dims];
+	for (auto&& w : walkers) w.posi = new double[n_dims];
+	for (auto&& w : buff_walkers) w.posi = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*100; i++){
-		update();
-	}
-	std::ofstream initf("samples.dat", std::ofstream::out | std::ofstream::app);
-	for (size_t i = 0; i<1; i++){
-		update();
-		for (auto&& w : walkers){
-			double kp = w[0], km = w[1], phi4k = w[2], cos4 = w[3];
-			initf << 0.5*(kp+km) << " "
-				  << 0.5*(kp-km) <<  " "
-				  << phi4k << " "
-				  << cos4 << std::endl;
-		}
-	}
-	for (auto&& w : walkers) delete[] w;
-	for (auto&& w : buff_walkers) delete[] w;
+	for (size_t i = 0; i<Nwalker*70; i++) update();
 
-	return 1.0;
+	double * result = new double[n_dims];
+	for (size_t i = 0; i<n_dims; i++) result[i] = walkers[0].posi[i];
+
+	for (auto&& w : walkers) delete[] w.posi;
+	for (auto&& w : buff_walkers) delete[] w.posi;
+
+	return result;
 }
 
 

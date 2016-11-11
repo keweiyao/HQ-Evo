@@ -5,6 +5,7 @@
 const double c4d9 = 4./9.;
 const double c1d9 = 1./9.;
 const double c16pi = 16.*M_PI;
+const double c48pi = 48.*M_PI;
 const double c16pi2 = 16.*M_PI*M_PI;
 const double c64d9pi2 = 64./9.*M_PI*M_PI;
 const double c256pi4 = 256.*std::pow(M_PI, 4);

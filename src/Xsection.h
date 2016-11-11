@@ -4,7 +4,9 @@
 #include <cstdlib>
 #include <vector>
 #include <string>
+#include <random>
 #include "matrix_elements.h"
+#include "sample_methods.h"
 
 struct integrate_params{
 	double (*dXdPS)(double * PS, size_t n_dims, void * params);
@@ -34,7 +36,7 @@ public:
 	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
 	double interpX(double s, double Temp);
 	virtual double calculate(double s, double Temp) = 0;
-	virtual double sample_dXdPS(double s, double Temp) = 0;
+	virtual void sample_dXdPS(double s, double Temp, double * result) = 0;
 };
 
 //============Derived 2->2 Xsection class============================================
@@ -42,15 +44,21 @@ class Xsection_2to2 : public Xsection{
 public:
     Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
     double calculate(double s, double Temp);
-	double sample_dXdPS(double s, double Temp);
+	void sample_dXdPS(double s, double Temp, double * result);
 };
 
 //============Derived 2->3 Xsection class============================================
 class Xsection_2to3 : public Xsection{
+private:
+	AiMS sampler;
+	std::random_device rd;
+    std::mt19937 gen;
+    std::uniform_real_distribution<double> dist_phi4;
+	
 public:
     Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
     double calculate(double s, double Temp);
-	double sample_dXdPS(double s, double Temp);
+	void sample_dXdPS(double s, double Temp, double * result);
 };
 
 #endif

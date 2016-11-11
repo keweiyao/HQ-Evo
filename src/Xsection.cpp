@@ -109,15 +109,15 @@ double Xsection_2to2::calculate(double s, double Temp){
     return result;
 }
 
-double Xsection_2to2::sample_dXdPS(double s, double Temp){
-	(void)s;
-	(void)Temp;
-	return 1.0;
+void Xsection_2to2::sample_dXdPS(double s_, double Temp_, double * result_){
+	(void)s_;
+	(void)Temp_;
+	result_ = static_cast<double*>(NULL);
 }
 
 //============Derived 2->3 Xsection class===================================
 Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_)
+:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI)
 {
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
@@ -178,10 +178,51 @@ double Xsection_2to3::calculate(double s, double Temp){
 	return result/c256pi4/(s-M2)*Jacobian;
 }
 
-double Xsection_2to3::sample_dXdPS(double s, double Temp){
-	(void)s;
-	(void)Temp;
-	return 1.0;
+void Xsection_2to3::sample_dXdPS(double s, double Temp, double * result_){
+	// for 2->3, dXdPS is a 5-dimensional distribution,
+	// In center of mass frame:
+	// there is an overall azimuthal symmetry which allows a flat sampling 
+	// the rese 4 variables are sampled from Affine-invariant MCMC procedure,
+	// since the distribution scale of each variable could vary a lot.
+	// returns heavy quark 4-momentum and radiated gluon 4-momentum
+	double * p = new double[3]; //s, T, M
+	double sqrts = std::sqrt(s);
+	double M2 = M1*M1;
+	p[0] = s; p[1] = Temp;  p[2] = M1;
+	size_t n_dims = 4;
+	double * guessl = new double[n_dims];
+	double * guessh = new double[n_dims];
+	double scale1 = 0.5*sqrts*(1.0 - M2/s);
+	double scale2 = sqrts-M1;
+	guessl[0] = scale1;
+	guessl[1] = -scale1;
+	guessl[2] = M_PI;
+	guessl[3] = -1.0;
+	guessh[0] = scale1 + ( scale2 - scale1 )*0.1;
+	guessh[1] = -scale1*0.9;
+	guessh[2] = 2.0*M_PI;
+	guessh[3] = -0.5;
+	double * vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
+	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
+	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
+	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
+	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
+	// k-vec	
+	double kxp = k*(sin_star*cos_4k*cos4 + sin4*cos_star), 
+		   kyp = k*sin_star*sin_4k,
+		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
+	// HQ-vec
+	double HQxp = -kxp - p4*sin4,
+		   HQyp = -kyp,
+		   HQz = -kz - p4*cos4,
+		   EQ = std::sqrt(HQxp*HQxp+HQyp*HQyp+HQz*HQz+M2);
+	// --- randomize the azimuthal angle phi4----
+	double phi4 = dist_phi4(gen);
+	double cos_phi4 = std::cos(phi4), sin_phi4 = std::sin(phi4);
+	double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
+	double HQx = HQxp*cos_phi4 + HQyp*sin_phi4, HQy = -HQxp*sin_phi4 + HQyp*cos_phi4;
+	result_[0] = EQ; result_[1] = HQx; result_[2] = HQy; result_[3] = HQz;
+	result_[4] = k; result_[5] = kx; result_[6] = ky; result_[7] = kz;
 }
 
 

@@ -28,12 +28,17 @@ public:
 
 
 // ----------Affine-invariant metropolis sample-------------------
+struct walker{
+	double * posi;
+	double P;
+};
+
 class AiMS{
 private:
 	double (*f) (double*, size_t, void*);	
     void * params;
 	size_t n_dims, Nwalker;
-	std::vector< double * > walkers, buff_walkers;
+	std::vector<walker> walkers, buff_walkers;
 	void initialize(void);
 	void update(void);
 	double a;
@@ -44,7 +49,7 @@ private:
 	double * guessl, * guessh;
 public:
 	AiMS(void);
-	double sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_);
+	double * sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_);
 };
 
 #endif

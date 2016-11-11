@@ -23,8 +23,7 @@ double M2_Qq2Qq(double t, void * params){
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
 	double mt2 = 0.2*At*pf_g*T2;
-	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2*M2*Q2t)/std::pow(Q2t - mt2, 2);
-	return result;
+	return c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2*M2*Q2t)/std::pow(Q2t - mt2, 2);
 }
 
 double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params){
@@ -168,7 +167,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 
 	// 2->3 = 2->2 * 1->2
-	return 48*M_PI*the_M2_Qg2Qg*Pg;
+	return c48pi*the_M2_Qg2Qg*Pg;
 }
 
 double approx_XQg2Qgg(double s, double Temp, double M){
