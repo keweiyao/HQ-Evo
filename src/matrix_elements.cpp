@@ -90,12 +90,15 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double * params = static_cast<double*>(params_);
 	double s = params[0], sqrts = std::sqrt(params[0]);
 	double T2 = params[1]*params[1];
-	double M2 = params[2]*params[2];
+	double M = params[2];
+	double M2 = M*M;
 	// unpack variables
 	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	// check integration range	
-	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star ) return 0.0;
+	if ( phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
+	if ( p4 <= 0. || k <= 0. || p4 >= 0.5*sqrts*(1.-M/s) || k >= 0.5*sqrts*(1.-M/s) ) return 0.0;
+	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star) return 0.0;
 	// more useful variables
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
@@ -134,11 +137,14 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double * params = static_cast<double*>(params_);
 	double s = params[0], sqrts = std::sqrt(params[0]);
 	double T2 = params[1]*params[1];
-	double M2 = params[2]*params[2];
+	double M = params[2];
+	double M2 = M*M;
 	// unpack variables
 	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	// check integration range	
+	if ( phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
+	if ( p4 <= 0. || k <= 0. || p4 >= 0.5*sqrts*(1.-M/s) || k >= 0.5*sqrts*(1.-M/s) ) return 0.0;
 	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star ) return 0.0;
 	// more useful variables
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);

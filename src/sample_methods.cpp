@@ -70,10 +70,10 @@ AiMS::AiMS(void)
 {
 }
 void AiMS::initialize(void){
-    std::uniform_real_distribution<double> init_dis(-1, 1);
+    std::uniform_real_distribution<double> init_dis(0, 1);
 	for (auto&& w : walkers){
 		for (size_t j=0; j < n_dims; ++j){
-			w[j] = guess[j]*(1.0+0.1*init_dis(gen));
+			w[j] = guessl[j] + (guessh[j]-guessl[j])*init_dis(gen);
 		}
 	}
 }
@@ -106,9 +106,9 @@ void AiMS::update(void){
 	}
 	delete[] xtry;
 }
-double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guess_){
+double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
 	walkers.clear();
-	f = f_; n_dims = n_dims_; params = params_; guess = guess_;
+	f = f_; n_dims = n_dims_; params = params_; guessl = guessl_; guessh = guessh_;
 	Nwalker = n_dims*3;
 	walkers.resize(Nwalker);
 	buff_walkers.resize(Nwalker);
@@ -116,11 +116,11 @@ double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void 
 	for (auto&& w : buff_walkers) w = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*200; i++){
+	for (size_t i = 0; i<Nwalker*100; i++){
 		update();
 	}
 	std::ofstream initf("samples.dat", std::ofstream::out | std::ofstream::app);
-	for (size_t i = 0; i<100; i++){
+	for (size_t i = 0; i<1; i++){
 		update();
 		for (auto&& w : walkers){
 			double kp = w[0], km = w[1], phi4k = w[2], cos4 = w[3];
