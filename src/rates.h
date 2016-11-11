@@ -5,6 +5,7 @@
 #include <random>
 #include <functional>
 #include <vector>
+#include <string>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
@@ -30,7 +31,7 @@ private:
 	const size_t NE1, NT;
 	std::vector< std::vector<double> > Rtab;
 public:
-	rates(T * Xprocess_, int degeneracy_);
+	rates(T * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double E1, double Temp);
 	void sample_initial(double E1, double Temp, double &E2, double &s);
 };

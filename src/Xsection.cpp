@@ -1,10 +1,15 @@
 #include <iostream>
+#include <fstream>
 #include <cmath>
+#include <thread>
+#include <vector>
+#include <string>
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
 #include "Xsection.h"
+#include "constants.h"
 
 double gsl_1dfunc_wrapper(double x, void * params_){
 	integrate_params * params = static_cast<integrate_params*>(params_);
@@ -13,32 +18,27 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
-Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
-: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(50), 
-	sL(M1*M1*1.01), sM(4.*M1*M1), sH(400*M1*M1), 
+Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
+: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(40), 
+	sL(M1*M1*1.01), sM(25.*M1*M1), sH(400*M1*M1), 
 	ds1((sM-sL)/(Ns-1.)), ds2((sH-sM)/(Ns-1.)),
 	TL(0.1), TH(1.0), dT((TH-TL)/(NT-1.))
 {
-	std::cout << "initialize base Xsection class" << std::endl;
+	std::cout << __func__<< " " << name_  << std::endl;
+	Xtab.resize(Ns*2);
+	for (auto&& ele : Xtab) ele.resize(NT);
 }
 
-void Xsection::tabulate_s_Temp(void){
-	std::cout << "Making Xsection table --" << std::endl;
-	
+void Xsection::tabulate_s_Temp(size_t T_start, size_t dnT){
 	double s, Temp;
-	Xtab.resize(Ns*2);
 	for (size_t i=0; i<2*Ns; ++i) {
 		if (i<Ns) s = sL + i*ds1;
 		else s = sM + (i-Ns)*ds2;
-		Xtab[i].resize(NT);
-		for (size_t j=0; j<NT; ++j) {
+		for (size_t j=T_start; j<(T_start+dnT); j++) {
 			Temp = TL + j*dT;
-			
 			Xtab[i][j] = calculate(s, Temp)/approx_X(s, Temp, M1);
-			std::cout <<Xtab[i][j]<<std::endl;
 		}
 	}
-	std::cout << "X-section done" << std::endl;
 }
 
 double Xsection::interpX(double s, double Temp){
@@ -60,12 +60,29 @@ double Xsection::interpX(double s, double Temp){
 }
 
 //============Derived 2->2 Xsection class===================================
-Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
-:	Xsection(dXdPS_, approx_X_, M1_)
+Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
+:	Xsection(dXdPS_, approx_X_, M1_, name_)
 {
-	std::cout << "starting " << __func__ << std::endl;
-	// making table
-	tabulate_s_Temp();
+	std::vector<std::thread> threads;
+	size_t Ncores = std::thread::hardware_concurrency();
+	size_t call_per_core = std::ceil(NT*1./Ncores);
+	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+	for (size_t i=0; i< Ncores ; i++)
+	{	
+		size_t Nstart = i*call_per_core;
+		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_s_Temp(NTstart_, dNT_); };
+		threads.push_back( std::thread(code, Nstart, dN) );
+	}
+	for (std::thread& t : threads)	t.join();
+
+	std::ofstream file(name_);
+	for (auto roll : Xtab) {
+		for (auto item : roll) {
+			file << item << " ";
+		}
+		file << std::endl;
+	}
 }
 
 double Xsection_2to2::calculate(double s, double Temp){
@@ -99,11 +116,30 @@ double Xsection_2to2::sample_dXdPS(double s, double Temp){
 }
 
 //============Derived 2->3 Xsection class===================================
-Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_)
-:	Xsection(dXdPS_, approx_X_, M1_)
+Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
+:	Xsection(dXdPS_, approx_X_, M1_, name_)
 {
-	// making table
-	tabulate_s_Temp();
+	std::vector<std::thread> threads;
+	size_t Ncores = std::thread::hardware_concurrency();
+	size_t call_per_core = std::ceil(NT*1./Ncores);
+	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+	for (size_t i=0; i< Ncores ; i++)
+	{	
+		size_t Nstart = i*call_per_core;
+		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_s_Temp(NTstart_, dNT_); };
+		threads.push_back( std::thread(code, Nstart, dN) );
+	}
+	
+	for (std::thread& t : threads)	t.join();
+
+	std::ofstream file(name_);
+	for (auto roll : Xtab) {
+		for (auto item : roll) {
+			file << item << " ";
+		}
+		file << std::endl;
+	}
 }
 
 double Xsection_2to3::calculate(double s, double Temp){
@@ -117,28 +153,29 @@ double Xsection_2to3::calculate(double s, double Temp){
 	
 	gsl_monte_function G;
 	G.f = dXdPS; 
-	G.dim = 4; // k+p4, k-p4, phi4k, cos4
+	G.dim = 4; // k, p4, phi4k, cos4
 	G.params = params;
 	
 	// limits of the integration
 	double sqrts = std::sqrt(s), M2 = M1*M1;
-	double xl[4], xu[4];
-	xl[0] = 0.0; xu[0] = 0.5*(sqrts-M2/sqrts);
-	xl[1] = 0.0; xu[1] = 0.5*(sqrts-M2/sqrts);
+	double xl[4], xu[4]; // k+p4, k-p4, phi4k, cos4
+	xl[0] = 0.5*sqrts*(1.-M2/s); xu[0] = sqrts - M1;
+	xl[1] = -0.5*sqrts*(1.-M2/s); xu[1] = 0.5*sqrts*(1.-M2/s);
 	xl[2] = 0.0; xu[2] = 2.*M_PI;
 	xl[3] = -1.; xu[3] = 1.;
+	double Jacobian = 0.5;
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
-	gsl_monte_vegas_integrate(&G, xl, xu, 4, 20000, r, sv, &result, & error);
-	while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>1.0)
+	gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, & error);
+	while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5)
 	{
-		gsl_monte_vegas_integrate(&G, xl, xu, 4, 40000, r, sv, &result, & error);
+		gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, & error);
 	}
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
 	delete params;
-	return result/(s-M2)/8./std::pow(2.*M_PI, 5);
+	return result/c256pi4/(s-M2)*Jacobian;
 }
 
 double Xsection_2to3::sample_dXdPS(double s, double Temp){

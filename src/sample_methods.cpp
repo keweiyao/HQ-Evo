@@ -123,20 +123,11 @@ double AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void 
 	for (size_t i = 0; i<100; i++){
 		update();
 		for (auto&& w : walkers){
-			double k = w[0], p4 = w[1], phi4k = w[2], cos4 = w[3];
-			double * p_ = static_cast<double*>(params);
-			double s = p_[0], M = p_[2];
-			double sqrts = std::sqrt(s);
-			double cos_star = ((s-M*M)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
-			double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
-			double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
-			double kx = k*(sin_star*cos_4k*cos4 - sin4*cos_star), ky = sin_star*sin_4k,
-		   			kz = k*(sin_star*cos_4k*sin4 + cos4*cos_star);
-			double Qx = -p4*sin4-kx, Qy = -ky, Qz = -kz-p4*cos4;
-			double EQ = std::sqrt(Qx*Qx+Qy*Qy+Qz*Qz+M*M);
-			initf << std::atan2(ky, kx) << " "
-				  << 0.5*std::log((EQ+Qz)/(EQ-Qz)) <<  " "
-				  << 0.5*std::log((k+kz)/(k-kz)) << std::endl;
+			double kp = w[0], km = w[1], phi4k = w[2], cos4 = w[3];
+			initf << 0.5*(kp+km) << " "
+				  << 0.5*(kp-km) <<  " "
+				  << phi4k << " "
+				  << cos4 << std::endl;
 		}
 	}
 	for (auto&& w : walkers) delete[] w;

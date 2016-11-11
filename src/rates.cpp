@@ -2,6 +2,7 @@
 #include <vector>
 #include <thread> 
 #include <fstream>
+#include <string>
 #include "rates.h"
 
 using std::placeholders::_1;
@@ -41,7 +42,7 @@ double Vegas_func_wrapper(double * var, size_t n_dims, void * params_)
 //=======================Scattering Rate================================
 
 template <class T>
-rates<T>::rates(T * Xprocess_, int degeneracy_)
+rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 :	Xprocess(Xprocess_),
 	degeneracy(degeneracy_),
 	NE1(50),
@@ -50,14 +51,13 @@ rates<T>::rates(T * Xprocess_, int degeneracy_)
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
 	// the last core could take less jobs
-	
+	std::cout << __func__ << " " << name_ << std::endl;
 	Rtab.resize(NE1);
 	for (auto&& R : Rtab){
 		R.resize(NT);
 	}
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
-	std::cout << "Available cores" << Ncores << std::endl;
 	size_t call_per_core = std::ceil(NT*1./Ncores);
 	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 	for (size_t i=0; i< Ncores ; i++)
@@ -70,7 +70,7 @@ rates<T>::rates(T * Xprocess_, int degeneracy_)
 	
 	for (std::thread& t : threads)	t.join();
 	
-	std::ofstream file("data_rate.dat");
+	std::ofstream file(name_);
 	for (auto roll : Rtab) {
 		for (auto item : roll) {
 			file << item << " ";
@@ -81,7 +81,6 @@ rates<T>::rates(T * Xprocess_, int degeneracy_)
 
 template <class T>
 void rates<T>::tabulate_E1_T(size_t T_start, size_t dnT){
-	std:: cout << "ID " << std::this_thread::get_id()  << std::endl;
 	for (size_t i=0; i<NE1; i++){
 		double E1 = 1.301+1*i;
 		for (size_t j=T_start; j<(T_start+dnT); j++){

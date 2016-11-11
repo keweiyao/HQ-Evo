@@ -92,27 +92,33 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double T2 = params[1]*params[1];
 	double M2 = params[2]*params[2];
 	// unpack variables
-	double k = x_[0], p4 = x_[1], phi4k = x_[2], cos4 = x_[3];
+	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	// check integration range	
-	if (phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.
-		|| k <= 0. || p4 < 0. || (p4+k) > sqrts || cos_star <= -1. || cos_star >= 1.)return 0.0;
+	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star ) return 0.0;
 	// more useful variables
-	double t = -0.5*(sqrts - M2/sqrts)*p4*(1.+cos4);
-	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
-	double kx = k*(sin_star*cos_4k*cos4 - sin4*cos_star), ky = sin_star*sin_4k,
-		   kz = k*(sin_star*cos_4k*sin4 + cos4*cos_star);
+	// k-vec	
+	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star), 
+		   ky = k*sin_star*sin_4k,
+		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	double qx = -p4*sin4;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	// q-perp-vec
+	double qx = -p4*sin4;
+
+	// 2->2
+	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
+	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
+	// 1->2
 	double alpha_rad = alpha_s(kt2);
-	double LPM_cut = 0.2*alpha_rad *pf_g*T2;
-	double iD1 = 1./(kt2 + x*x*M2 + LPM_cut), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + 0.2*alpha_rad *pf_g*T2);
-	double Pg = std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1+iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1+iD2)*iD2 );
-	return 48.*M_PI*alpha_rad*Pg*the_M2_Qq2Qq;
+	double iD1 = 1./(kt2 + x*x*M2 + alpha_rad *pf_g*T2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + alpha_rad *pf_g*T2);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+
+	// 2->3 = 2->2 * 1->2
+	return 48*M_PI*the_M2_Qq2Qq*Pg;
 }
 
 double approx_XQq2Qqg(double s, double Temp, double M){
@@ -130,27 +136,33 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double T2 = params[1]*params[1];
 	double M2 = params[2]*params[2];
 	// unpack variables
-	double k = x_[0], p4 = x_[1], phi4k = x_[2], cos4 = x_[3];
+	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	// check integration range	
-	if (phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.
-		|| k <= 0. || p4 <= 0. || (p4+k) > sqrts || cos_star <= -1. || cos_star >= 1.) return 0.0;
+	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star ) return 0.0;
 	// more useful variables
-	double t = -0.5*(sqrts - M2/sqrts)*p4*(1.+cos4);
-	double the_M2_Qg2Qg = M2_Qg2Qg(t, params);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
-	double kx = k*(sin_star*cos_4k*cos4 - sin4*cos_star), ky = sin_star*sin_4k,
-		   kz = k*(sin_star*cos_4k*sin4 + cos4*cos_star);
+	// k-vec	
+	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star), 
+		   ky = k*sin_star*sin_4k,
+		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	if (kt2 < T2) return 0.0;
-	double qx = -p4*sin4;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	// q-perp-vec
+	double qx = -p4*sin4;
+
+	// 2->2
+	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
+	double the_M2_Qg2Qg = M2_Qg2Qg(t, params);
+	// 1->2
 	double alpha_rad = alpha_s(kt2);
-	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + 0.2*alpha_rad *pf_g*T2);
-	double Pg = std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1+iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1+iD2)*iD2 );
-	return 48.*M_PI*alpha_rad*Pg*the_M2_Qg2Qg;
+	double iD1 = 1./(kt2 + x*x*M2 + alpha_rad *pf_g*T2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + alpha_rad *pf_g*T2);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+
+	// 2->3 = 2->2 * 1->2
+	return 48*M_PI*the_M2_Qg2Qg*Pg;
 }
 
 double approx_XQg2Qgg(double s, double Temp, double M){
