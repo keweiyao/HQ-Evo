@@ -19,8 +19,8 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
 Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(40), 
-	sL(M1*M1*1.01), sM(25.*M1*M1), sH(400*M1*M1), 
+: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(24), 
+	sL(M1*M1*1.01), sM(M1*M1*16), sH(M1*M1*400.), 
 	ds1((sM-sL)/(Ns-1.)), ds2((sH-sM)/(Ns-1.)),
 	TL(0.1), TH(1.0), dT((TH-TL)/(NT-1.))
 {
@@ -77,9 +77,13 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 	for (std::thread& t : threads)	t.join();
 
 	std::ofstream file(name_);
-	for (auto roll : Xtab) {
-		for (auto item : roll) {
-			file << item << " ";
+	double s, Temp;
+	for (size_t i=0; i<2*Ns; ++i) {
+		if (i<Ns) s = sL + i*ds1;
+		else s = sM + (i-Ns)*ds2;
+		for (size_t j=0; j<NT; j++) {
+			Temp = TL + j*dT;
+			file << Xtab[i][j] * approx_X(s, Temp, M1) << " ";
 		}
 		file << std::endl;
 	}
@@ -109,10 +113,11 @@ double Xsection_2to2::calculate(double s, double Temp){
     return result;
 }
 
-void Xsection_2to2::sample_dXdPS(double s_, double Temp_, double * result_){
-	(void)s_;
-	(void)Temp_;
-	result_ = static_cast<double*>(NULL);
+void Xsection_2to2::sample_dXdPS(double s, double Temp, double * result_){
+	double * p = new double[3]; //s, T, M
+	p[0] = s; p[1] = Temp;  p[2] = M1;
+	result_[0] = sampler1d.sample(dXdPS, -pow(s-M1*M1, 2)/s, 0.0, p);
+	delete[] p;
 }
 
 //============Derived 2->3 Xsection class===================================
@@ -167,10 +172,10 @@ double Xsection_2to3::calculate(double s, double Temp){
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
-	gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, & error);
+	gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, &error);
 	while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5)
-	{
-		gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, & error);
+	{	
+		gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, &error);
 	}
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
@@ -194,14 +199,8 @@ void Xsection_2to3::sample_dXdPS(double s, double Temp, double * result_){
 	double * guessh = new double[n_dims];
 	double scale1 = 0.5*sqrts*(1.0 - M2/s);
 	double scale2 = sqrts-M1;
-	guessl[0] = scale1;
-	guessl[1] = -scale1;
-	guessl[2] = M_PI;
-	guessl[3] = -1.0;
-	guessh[0] = scale1 + ( scale2 - scale1 )*0.1;
-	guessh[1] = -scale1*0.9;
-	guessh[2] = 2.0*M_PI;
-	guessh[3] = -0.5;
+	guessl[0] = scale1; guessl[1] = -scale1; guessl[2] = M_PI; guessl[3] = -1.0;
+	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; guessh[1] = -scale1*0.9; guessh[2] = 2.0*M_PI; guessh[3] = -0.5;
 	double * vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
 	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;

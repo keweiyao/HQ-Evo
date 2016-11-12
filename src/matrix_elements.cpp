@@ -1,6 +1,7 @@
 #include "matrix_elements.h"
 #include "constants.h"
 #include <cmath>
+#include <iostream>
 
 //=============running coupling=================================================
 double inline alpha_s(double Q2){
@@ -120,7 +121,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 
 	// 2->3 = 2->2 * 1->2
-	return 48*M_PI*the_M2_Qq2Qq*Pg;
+	return c48pi*the_M2_Qq2Qq*Pg;
 }
 
 double approx_XQq2Qqg(double s, double Temp, double M){

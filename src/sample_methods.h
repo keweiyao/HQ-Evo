@@ -15,15 +15,15 @@ struct rectangle{
 
 class rejection_1d{
 private:
-	double (*f) (double x, void * params);
+	double (*f) (double * x, size_t n_dims, void * params);
 	void * params;
 	double xlo, xhi, total_weight;
 	std::vector<rectangle> intervals;
 	void build_interval(double xL, double xH, double fxL, double fxH);
 public:
 	rejection_1d(void){};
-	double sample(double (*f_) (double x, void * params), double xlo_, double xhi_, void * params_);
-	double plain_sample(double (*f_) (double x, void * params), double xlo_, double xhi_, void * params_);
+	double sample(double (*f_) (double * x, size_t n_dims, void * params), double xlo_, double xhi_, void * params_);
+	double plain_sample(double (*f_) (double * x, size_t n_dims, void * params), double xlo_, double xhi_, void * params_);
 };
 
 

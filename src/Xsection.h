@@ -41,6 +41,8 @@ public:
 
 //============Derived 2->2 Xsection class============================================
 class Xsection_2to2 : public Xsection{
+private:
+	rejection_1d sampler1d;
 public:
     Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
     double calculate(double s, double Temp);

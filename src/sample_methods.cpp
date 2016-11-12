@@ -5,7 +5,7 @@
 
 void rejection_1d::build_interval(double xL, double xH, double fxL, double fxH){
 	double xM = 0.5*(xL+xH);
-	double fxM = f(xM, params);
+	double fxM = f(&xM, 1, params);
 	double mid_h = 0.5*(fxL+fxH);
 	if (fxM < mid_h*0.1){
 		build_interval(xL, xM, fxL, fxM);
@@ -19,7 +19,7 @@ void rejection_1d::build_interval(double xL, double xH, double fxL, double fxH){
 	}
 }
 
-double rejection_1d::sample(double (*f_) (double x, void * params), double xlo_, double xhi_, void * params_){
+double rejection_1d::sample(double (*f_) (double * x, size_t n_dims, void * params), double xlo_, double xhi_, void * params_){
 	f = f_;
 	xlo = xlo_;
 	xhi = xhi_;
@@ -27,7 +27,7 @@ double rejection_1d::sample(double (*f_) (double x, void * params), double xlo_,
 	intervals.clear();
 	total_weight = 0.0;
 			
-	double fL = f(xlo, params), fH = f(xhi, params);
+	double fL = f(&xlo, 1, params), fH = f(&xhi, 1, params);
 	build_interval(xlo, xhi, fL, fH);
 	double cumulate = 0.0;
 	for (auto&& ele : intervals){
@@ -46,20 +46,20 @@ double rejection_1d::sample(double (*f_) (double x, void * params), double xlo_,
 		r2 = std::rand()*1./RAND_MAX;
 		lambda = ( std::sqrt(fl*fl*(1.-r2) + fh*fh*r2) -fl )/df;
 		xtry = xl + lambda*dx;
-		}while (f(xtry, params)/(fl + df*lambda)*RAND_MAX < std::rand());
+		}while (f(&xtry, 1, params)/(fl + df*lambda)*RAND_MAX < std::rand());
 	return xtry;
 }
 
-double rejection_1d::plain_sample(double (*f_) (double x, void * params), double xlo_, double xhi_, void * params_){
+double rejection_1d::plain_sample(double (*f_) (double * x, size_t n_dims, void * params), double xlo_, double xhi_, void * params_){
 	f = f_;
 	xlo = xlo_;
 	xhi = xhi_;
 	params = params_;
 	double dx = (xhi-xlo), xtry;
-	double h = std::max(f(xlo, params), f(xhi, params));
+	double h = std::max(f(&xlo, 1, params), f(&xhi, 1, params));
 	do{
 		xtry = xlo + dx*std::rand()*1./RAND_MAX;
-	}while (f(xtry, params)/h < std::rand()*1./RAND_MAX);
+	}while (f(&xtry, 1, params)/h < std::rand()*1./RAND_MAX);
 	return xtry;
 }
 
