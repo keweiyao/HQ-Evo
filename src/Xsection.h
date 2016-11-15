@@ -34,6 +34,7 @@ protected:
 	const double TL, TH, dT;
 public:
 	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
+	double get_M1(void) {return M1;};
 	double interpX(double s, double Temp);
 	virtual double calculate(double s, double Temp) = 0;
 	virtual void sample_dXdPS(double s, double Temp, double * result) = 0;

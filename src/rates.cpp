@@ -42,9 +42,15 @@ double Vegas_func_wrapper(double * var, size_t n_dims, void * params_)
 template <class T>
 rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 :	Xprocess(Xprocess_),
+	M(Xprocess->get_M1()),
 	degeneracy(degeneracy_),
 	NE1(50),
-	NT(40)
+	NT(40),
+	rd(), 
+	gen(rd()),
+	dist_x(3.0, 1.0),
+	dist_norm_y(-1.0, 1.0),
+	dist_reject(0.0, 1.0)
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
@@ -80,7 +86,7 @@ rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 template <class T>
 void rates<T>::tabulate_E1_T(size_t T_start, size_t dnT){
 	for (size_t i=0; i<NE1; i++){
-		double E1 = 1.301+1*i;
+		double E1 = M*1.01+1*i;
 		for (size_t j=T_start; j<(T_start+dnT); j++){
 			double Temp = 0.1+0.02*j;		
 			double result = calculate(E1, Temp);
@@ -93,8 +99,6 @@ template <class T>
 double rates<T>::calculate(double E1, double Temp)
 {
 	double result, error;
-		
-	double M = 1.3; 
 	double p1 = std::sqrt(E1*E1-M*M);
 	const gsl_rng_type * Tr = gsl_rng_default;
 	gsl_rng * r = gsl_rng_alloc(Tr);
@@ -133,6 +137,26 @@ double rates<T>::calculate(double E1, double Temp)
 
 template <class T>
 void rates<T>::sample_initial(double E1, double Temp, double &E2, double &s){
+	// this function samples x = E2/T and y = (s-M^2)/(2*E2*E1) from the distribution:
+	// P(x, y) ~ x^2*exp(-x) * y*sigma(M^2 + 2*E1*T*x*y, T)
+	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
+	// and uniform sample y within (1-v1, 1+v1)
+	// and finally rejected with P_rej(x,y) = y*sigma(M^2 + 2*E1*T*x*y, T);
+	double M2 = M*M, x, y, max, smax, stemp, coeff = 2.*E1*Temp;
+	double v1 = std::sqrt(E1*E1 - M2)/E1;
+	smax = M2 + coeff*20.*(1.+v1);
+	if (smax < 2.*M2) smax = 2.*M2;
+	max = (1.+v1)*Xprocess->interpX(smax, Temp);
+	double Nd=0.;
+	do{
+		do{ x = dist_x(gen); }while(x>20.);
+		y = 1. + dist_norm_y(gen)*v1;
+		stemp = M2 + coeff*x*y;
+		Nd += 1.;
+	}while( y*Xprocess->interpX(stemp, Temp) <= max*dist_reject(gen) );
+	E2 = x*Temp;
+	s = M2 + coeff*x*y;
+	std::cout << Nd << std::endl;
 }
 
 template class rates<Xsection_2to2>;

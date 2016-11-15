@@ -45,14 +45,13 @@ double Xsection::interpX(double s, double Temp){
 	if (Temp < TL) Temp = TL;
 	if (Temp >= TH) Temp = TH-dT;
 	if (s < sL) s = sL;
-	if (s > sH) s = sH-ds2;
+	if (s >= sH) s = sH-ds2;
 	double xT, rT, xs, rs, ds, smin;
 	size_t iT, is, Noffsets;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	if (s < sM) {ds = ds1; smin=sL; Noffsets=0;}
 	else {ds = ds2; smin=sM; Noffsets=Ns;}
 	xs = (s - smin)/ds; is = floor(xs); rs = xs - is; is += Noffsets;
-	
 	return approx_X(s, Temp, M1)*(Xtab[is][iT]*(1.-rs)*(1.-rT)
 			+Xtab[is+1][iT]*rs*(1.-rT)
 			+Xtab[is][iT+1]*(1.-rs)*rT

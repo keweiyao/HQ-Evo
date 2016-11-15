@@ -26,10 +26,16 @@ class rates{
 private:
 	Vegas_params * params;
 	T * Xprocess;
-	void tabulate_E1_T(size_t T_start, size_t dnT);
+	double M;
 	const int degeneracy;
 	const size_t NE1, NT;
 	std::vector< std::vector<double> > Rtab;
+    std::random_device rd;
+    std::mt19937 gen;
+    std::gamma_distribution<double> dist_x;
+	std::uniform_real_distribution<double> dist_norm_y;
+	std::uniform_real_distribution<double> dist_reject;
+	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:
 	rates(T * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double E1, double Temp);
