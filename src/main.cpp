@@ -37,42 +37,67 @@ int main(){
 
 	// Here is a sample code for a medium cell
 	double temp=0.3;
-	std::vector<double> u(4), v(3), p_lab(4), p_cell(4), p_cell_z(4), p_com(4);
-	v[0] = 0.0; v[1] = 0.2; v[2] = 0.2;
+	std::vector<double> vcell(3), p_lab(4), p_cell(4), p_cell_z(4);
+	vcell[0] = 0.0; vcell[1] = 0.0; vcell[2] = 0.0;
 	
-	p_lab[0] = 10.0; p_lab[1] = 0.0; p_lab[2] = std::sqrt(10.0*10.0-M*M); p_lab[3] = 0.0;
+	p_lab[0] = 10.0; p_lab[1] = 0.0; p_lab[2] = 0.0; p_lab[3] = std::sqrt(10.0*10.0-M*M);
 	std::cout << "Heavy quark momentum in Lab frame" << std::endl;
-	std::cout << p_lab[0] << "\t" << p_lab[1] << "\t" << p_lab[2] << "\t" << p_lab[3] << std::endl;
+	print4vec(p_lab);
+
+	for (int i=0; i<100000; i++){
+	// Step1: boost to cell frame 
+	boost_by3(p_lab, p_cell, vcell);
 	
-	// boost to cell frame 
-	boost_by3(p_lab, p_cell, v);
-	std::cout << "Heavy quark momentum in Cell frame" << std::endl;
-	std::cout << p_cell[0] << "\t" << p_cell[1] << "\t" << p_cell[2] << "\t" << p_cell[3] << std::endl;
-	
-	// within z axis;
-	// sample E2, s; given E1, temp 
+	// Step2: sample E2, s; given E1, temp within cell rest frame assuming p1 in z-direction
 	double s, E2;
 	RQq2Qq.sample_initial(p_cell[0], temp, E2, s);
-	std::cout << "E2 and s " << std::endl << E2 << "\t" << s << std::endl;
+
+	// Step3: construct (E1, 0, 0, p1) and (E2, p2x, p2y, p2z) assuming incident HQ in z-direction
 	double E1 = p_cell[0], p1 = std::sqrt(E1*E1-M*M);
 	double costheta2 = (M*M + 2.*p_cell[0]*E2 - s)/2./p1/E2;
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
-	std::cout << "cos2 "<< std::endl << costheta2 << std::endl;
-	double phi = 2*M_PI*(std::rand()*1./RAND_MAX);
+	double phi = 2.*M_PI*(std::rand()*1./RAND_MAX);
 	double cosphi = std::cos(phi), sinphi = std::sin(phi);
-	std::vector<double> p2(4);
+	std::vector<double> pQ(4), p2(4);
+	pQ[0] = E1; pQ[1] = 0.; pQ[2] = 0.; pQ[3] = p1;
 	p2[0] = E2; p2[1] = E2*sintheta2*cosphi; p2[2] = E2*sintheta2*sinphi; p2[3] = E2*costheta2;
-	std::cout << "p2"<< std::endl;
-	std::cout << p2[0] << "\t" << p2[1] << "\t" << p2[2] << "\t" << p2[3] << std::endl;
 	
-	// rotate to back to Cell frame;
+	// Step4: Boost to center of mass frame of pQ and p2:
+	std::vector<double> pQcom(4), vcom(3);
+	vcom[0] = (pQ[1] + p2[1])/(pQ[0] + p2[0]);
+	vcom[1] = (pQ[2] + p2[2])/(pQ[0] + p2[0]);
+	vcom[2] = (pQ[3] + p2[3])/(pQ[0] + p2[0]);
+	boost_by3(pQ, pQcom, vcom);
+	
+	// Step5: Sample final state momentum in CoM, assuming incident HQ in z-direction
+	std::vector<std::vector<double> > fs;
+	XQq2Qq.sample_dXdPS(s, temp, fs);
+
+	// Step-5: rotate final state momentum back to CoM frame with the original orientation
+	std::vector<double> pnew_com(4);
+	double alpha1 = std::atan2(pQcom[2], pQcom[1])+M_PI/2.;
+	double beta1 = std::atan2(std::sqrt(pQcom[1]*pQcom[1]+pQcom[2]*pQcom[2]), pQcom[3]);
+	double gamma1 = 0.0;
+	rotate_Euler(fs[0], pnew_com, -gamma1, -beta1, -alpha1);
+
+	// Step-3: boost back to cell rest frame
+	std::vector<double> pnew_cell_z(4), ivcom(3);
+	ivcom[0] = -vcom[0]; ivcom[1] = -vcom[1]; ivcom[2] = -vcom[2];
+	boost_by3(pnew_com, pnew_cell_z, ivcom);
+
+	// Step-2: rotate back to Cell frame with the original orientation;
+	std::vector<double> pnew_cell(4);
 	double alpha = std::atan2(p_cell[2], p_cell[1])+M_PI/2.;
 	double beta = std::atan2(std::sqrt(p_cell[1]*p_cell[1]+p_cell[2]*p_cell[2]), p_cell[3]);
 	double gamma = 0.0;
-	rotate_Euler(p_cell_z, p_cell, -gamma, -beta, -alpha);
-
-	std::cout << p_cell[0] << "\t" << p_cell[1] << "\t" << p_cell[2] << "\t" << p_cell[3] << std::endl;
-
+	rotate_Euler(pnew_cell_z, pnew_cell, -gamma, -beta, -alpha);
 	
+	// Step-1: boost back to lab frame
+	std::vector<double> pnew_lab(4), ivcell(3);
+	ivcell[0] = -vcell[0]; ivcell[1] = -vcell[1]; ivcell[2] = -vcell[2]; 
+	boost_by3(pnew_cell, pnew_lab, ivcell);
+
+	print4vec(pnew_lab);}
+		
 	return 0;
 }

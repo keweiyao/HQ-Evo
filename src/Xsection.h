@@ -37,17 +37,20 @@ public:
 	double get_M1(void) {return M1;};
 	double interpX(double s, double Temp);
 	virtual double calculate(double s, double Temp) = 0;
-	virtual void sample_dXdPS(double s, double Temp, double * result) = 0;
+	virtual void sample_dXdPS(double s, double Temp, std::vector<std::vector<double> > & fs) = 0;
 };
 
 //============Derived 2->2 Xsection class============================================
 class Xsection_2to2 : public Xsection{
 private:
 	rejection_1d sampler1d;
+	std::random_device rd;
+    std::mt19937 gen;
+    std::uniform_real_distribution<double> dist_phi3;
 public:
     Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
     double calculate(double s, double Temp);
-	void sample_dXdPS(double s, double Temp, double * result);
+	void sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states);
 };
 
 //============Derived 2->3 Xsection class============================================
@@ -61,7 +64,7 @@ private:
 public:
     Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
     double calculate(double s, double Temp);
-	void sample_dXdPS(double s, double Temp, double * result);
+	void sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states);
 };
 
 #endif

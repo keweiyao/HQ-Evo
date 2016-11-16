@@ -60,7 +60,7 @@ double Xsection::interpX(double s, double Temp){
 
 //============Derived 2->2 Xsection class===================================
 Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_)
+:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI)
 {
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
@@ -112,10 +112,22 @@ double Xsection_2to2::calculate(double s, double Temp){
     return result;
 }
 
-void Xsection_2to2::sample_dXdPS(double s, double Temp, double * result_){
+void Xsection_2to2::sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states){
 	double * p = new double[3]; //s, T, M
 	p[0] = s; p[1] = Temp;  p[2] = M1;
-	result_[0] = sampler1d.sample(dXdPS, -pow(s-M1*M1, 2)/s, 0.0, p);
+	double psq = std::pow(s-M1*M1, 2)/4./s;
+	double pQ = std::sqrt(psq);
+	double t = sampler1d.sample(dXdPS, -std::pow(s-M1*M1, 2)/s, 0.0, p);
+	double costheta3 = 1. + t/psq/2.;
+	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
+	double phi3 = dist_phi3(gen);
+	double cosphi3 = std::cos(phi3), sinphi3 = std::sin(phi3);
+	final_states.resize(1);
+	final_states[0].resize(4);
+	final_states[0][0] = std::sqrt(psq + M1*M1);
+	final_states[0][1] = pQ*sintheta3*cosphi3;
+	final_states[0][2] = pQ*sintheta3*sinphi3;
+	final_states[0][3] = pQ*costheta3;
 	delete[] p;
 }
 
@@ -182,7 +194,7 @@ double Xsection_2to3::calculate(double s, double Temp){
 	return result/c256pi4/(s-M2)*Jacobian;
 }
 
-void Xsection_2to3::sample_dXdPS(double s, double Temp, double * result_){
+void Xsection_2to3::sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states){
 	// for 2->3, dXdPS is a 5-dimensional distribution,
 	// In center of mass frame:
 	// there is an overall azimuthal symmetry which allows a flat sampling 
@@ -219,8 +231,14 @@ void Xsection_2to3::sample_dXdPS(double s, double Temp, double * result_){
 	double cos_phi4 = std::cos(phi4), sin_phi4 = std::sin(phi4);
 	double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
 	double HQx = HQxp*cos_phi4 + HQyp*sin_phi4, HQy = -HQxp*sin_phi4 + HQyp*cos_phi4;
-	result_[0] = EQ; result_[1] = HQx; result_[2] = HQy; result_[3] = HQz;
-	result_[4] = k; result_[5] = kx; result_[6] = ky; result_[7] = kz;
+	final_states.resize(2);
+	final_states[0].resize(4); final_states[1].resize(4);
+	final_states[0][0] = EQ; final_states[0][1] = HQx; 
+	final_states[0][2] = HQy; final_states[0][3] = HQz;
+
+	final_states[1][0] = k; final_states[1][1] = kx; 
+	final_states[1][2] = ky; final_states[1][3] = kz;
+	delete[] p;
 }
 
 

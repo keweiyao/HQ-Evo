@@ -2,9 +2,13 @@
 #define UTILITY_H
 #include <cmath>
 #include <vector>
-
+#include <iostream>
 double inline product4(std::vector<double> const& A, std::vector<double> const& B){
 	return A[0]*B[0] - A[1]*B[1] - A[2]*B[2] - A[3]*B[3];
+}
+
+void inline print4vec(std::vector<double> const& A){
+	std::cout << A[0] << "\t" << A[1] << "\t" << A[2] << "\t" << A[3] << std::endl;
 }
  
 //=======================Rotation==============================================================
@@ -63,7 +67,7 @@ void boost_by3(std::vector<double> const& A, std::vector<double> &Ap, std::vecto
 // And returns the A vector by its components in the new frame.
 void boost_by4(std::vector<double> const& A, std::vector<double> &Ap, std::vector<double> const& u){
 	double gamma = u[0];
-	double gb = gamma - 1., gv = std::sqrt(gamma*gamma - 1.);
+	double gb = gamma - 1., gv = std::sqrt(gamma*gamma - 1.) + 1e-32;
 	double nx = u[1]/gv, ny = u[2]/gv, nz = u[3]/gv;
 	Ap[0] = gamma*A[0]	 + (-u[1])*A[1] 		+ (-u[2])*A[2]		   + (-u[3])*A[3];
 	Ap[1] = (-u[1])*A[0] + (1. + gb*nx*nx)*A[1] + gb*nx*ny*A[2] 	   + gb*nx*nz*A[3];
@@ -83,6 +87,16 @@ void boost_axis(std::vector<double> const& A, std::vector<double> &Ap, double co
 	Ap[i3] = A[i3];
 }
 
+// boost two 4-vectors to their center of mass frame:
+void go_to_CoM(std::vector<double> const& Pcom,
+			   std::vector<double> const& A, std::vector<double> const& B,
+			   std::vector<double> & Ap, std::vector<double> & Bp){
+	// center of mass velocity relative to the present frame
+	std::vector<double> vcom(3);
+	vcom[0] = Pcom[1]/Pcom[0]; vcom[1] =  Pcom[2]/Pcom[0]; vcom[2] =  Pcom[3]/Pcom[0];
+	boost_by3(A, Ap, vcom);
+	boost_by3(B, Bp, vcom);
+}
 
 
 #endif
