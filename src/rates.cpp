@@ -156,7 +156,6 @@ void rates<T>::sample_initial(double E1, double Temp, double &E2, double &s){
 	}while( y*Xprocess->interpX(stemp, Temp) <= max*dist_reject(gen) );
 	E2 = x*Temp;
 	s = M2 + coeff*x*y;
-	std::cout << Nd << std::endl;
 }
 
 template class rates<Xsection_2to2>;
