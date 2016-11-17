@@ -146,9 +146,9 @@ double rates<T>::calculate(double E1, double Temp)
     gsl_function F;
 	F.function = fx_wrapper;
 	F.params = px;
-	xmax = 6.0;
+	xmax = 5.0;
 	xmin = 0.0;
-	gsl_integration_qag(&F, xmin, xmax, 0, 1e-4, 2000, 6, w, &result, &error);
+	gsl_integration_qag(&F, xmin, xmax, 0, 1e-3, 2000, 6, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
 	delete px;

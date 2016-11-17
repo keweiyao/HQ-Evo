@@ -17,10 +17,10 @@ int main(){
 	Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, M, "./tables/X-Qg-Qg.dat");
 
 	// Xsection: Q+q->Q+q+g
-	Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
+	//Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
 
 	// Xsection: Q+g->Q+g+g
-	Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
+	//Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
 
 	// Rate: Q+q->Q+q
 	rates<Xsection_2to2> RQq2Qq(&XQq2Qq, 3*4, "./tables/R-Qq-Qq.dat");
@@ -29,14 +29,14 @@ int main(){
 	rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2, "./tables/R-Qg-Qg.dat");
 	
 	// Rate: Q+q->Q+q+g
-	rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
+	//rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
 	
 	// Rate: Q+g->Q+g+g
-	rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
+	//rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
 	
 
 	// Here is a sample code for a medium cell
-	/*double temp=0.3;
+	double temp=0.3;
 	std::vector<double> vcell(3);
 	vcell[0] = 0.0; vcell[1] = 0.0; vcell[2] = 0.0;
 	
@@ -48,14 +48,28 @@ int main(){
 
 	for (auto&& p1 : ensamble){
 	std::vector<double> p_lab = p1;
-	for (int i=0; i<200; i++){
-	// Step1: boost to cell frame 
+	double t = 0.0, dt = 0.04/0.197;
+	for (int i=0; i<1500; i++){
+	// Step1: boost to cell frame and sample scattering rates
 	std::vector<double>  p_cell(4), p_cell_z(4);
 	boost_by3(p_lab, p_cell, vcell);
 	
+	double rQg2Qg = RQg2Qg.interpR(p_cell[0], temp);	
+	double rQq2Qq = RQq2Qq.interpR(p_cell[0], temp);
+	double rtot = rQg2Qg + rQq2Qq;
+	double P = dt*rtot;
+	if (P > 0.15) std::cout << " P too large " << P << std::endl;
+	double r = std::rand()*1./RAND_MAX;
+	if (r > P) {
+		print4vec(p_lab);
+		continue;
+	}
+	// sample channel;
+	
 	// Step2: sample E2, s; given E1, temp within cell rest frame assuming p1 in z-direction
 	double s, E2;
-	RQg2Qg.sample_initial(p_cell[0], temp, E2, s);
+	if (r/P > rQg2Qg/rtot) RQg2Qg.sample_initial(p_cell[0], temp, E2, s);
+	else  RQq2Qq.sample_initial(p_cell[0], temp, E2, s);
 
 	// Step3: construct (E1, 0, 0, p1) and (E2, p2x, p2y, p2z) assuming incident HQ in z-direction
 	
@@ -104,7 +118,7 @@ int main(){
 	boost_by3(pnew_cell, p_lab, ivcell);
 
 	print4vec(p_lab);}
-	}*/
+	}
 		
 	return 0;
 }

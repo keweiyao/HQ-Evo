@@ -175,12 +175,11 @@ double Xsection_2to3::calculate(double s, double Temp){
 	
 	// limits of the integration
 	double sqrts = std::sqrt(s), M2 = M1*M1;
-	double xl[4], xu[4]; // k+p4, k-p4, phi4k, cos4
-	xl[0] = 0.5*sqrts*(1.-M2/s); xu[0] = sqrts - M1;
+	double xl[4], xu[4]; // (k+p4), k-p4, phi4k, cos4
+	xl[0] = 0.5*sqrts*(1.-M2/s); xu[0] = sqrts-M1;
 	xl[1] = -0.5*sqrts*(1.-M2/s); xu[1] = 0.5*sqrts*(1.-M2/s);
 	xl[2] = 0.0; xu[2] = 2.*M_PI;
 	xl[3] = -1.; xu[3] = 1.;
-	double Jacobian = 0.5;
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
@@ -190,7 +189,7 @@ double Xsection_2to3::calculate(double s, double Temp){
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
 	delete params;
-	return result/c256pi4/(s-M2)*Jacobian;
+	return result/c256pi4/(s-M2);
 }
 
 void Xsection_2to3::sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states){
