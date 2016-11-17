@@ -14,45 +14,51 @@ int main(){
 	Xsection_2to2 XQq2Qq(&dX_Qq2Qq_dPS, &approx_XQq2Qq, M, "./tables/X-Qq-Qq.dat");
 
 	// Xsection: Q+g->Q+g
-	//Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, M, "./tables/X-Qg-Qg.dat");
+	Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, M, "./tables/X-Qg-Qg.dat");
 
 	// Xsection: Q+q->Q+q+g
-	//Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
+	Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
 
 	// Xsection: Q+g->Q+g+g
-	//Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
+	Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
 
 	// Rate: Q+q->Q+q
 	rates<Xsection_2to2> RQq2Qq(&XQq2Qq, 3*4, "./tables/R-Qq-Qq.dat");
 
 	// Rate: Q+g->Q+g
-	//rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2, "./tables/R-Qg-Qg.dat");
+	rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2, "./tables/R-Qg-Qg.dat");
 	
 	// Rate: Q+q->Q+q+g
-	//rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
+	rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
 	
 	// Rate: Q+g->Q+g+g
-	//rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
+	rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
 	
 
 	// Here is a sample code for a medium cell
-	double temp=0.3;
-	std::vector<double> vcell(3), p_lab(4), p_cell(4), p_cell_z(4);
+	/*double temp=0.3;
+	std::vector<double> vcell(3);
 	vcell[0] = 0.0; vcell[1] = 0.0; vcell[2] = 0.0;
 	
-	p_lab[0] = 10.0; p_lab[1] = 0.0; p_lab[2] = 0.0; p_lab[3] = std::sqrt(10.0*10.0-M*M);
-	std::cout << "Heavy quark momentum in Lab frame" << std::endl;
-	print4vec(p_lab);
+	std::vector<std::vector<double> > ensamble(10000);
+	for (auto&& p_lab : ensamble){
+		p_lab.resize(4);
+		p_lab[0] = 10.0; p_lab[1] = 0.0; p_lab[2] = 0.0; p_lab[3] = std::sqrt(10.0*10.0-M*M);
+	}
 
-	for (int i=0; i<100000; i++){
+	for (auto&& p1 : ensamble){
+	std::vector<double> p_lab = p1;
+	for (int i=0; i<200; i++){
 	// Step1: boost to cell frame 
+	std::vector<double>  p_cell(4), p_cell_z(4);
 	boost_by3(p_lab, p_cell, vcell);
 	
 	// Step2: sample E2, s; given E1, temp within cell rest frame assuming p1 in z-direction
 	double s, E2;
-	RQq2Qq.sample_initial(p_cell[0], temp, E2, s);
+	RQg2Qg.sample_initial(p_cell[0], temp, E2, s);
 
 	// Step3: construct (E1, 0, 0, p1) and (E2, p2x, p2y, p2z) assuming incident HQ in z-direction
+	
 	double E1 = p_cell[0], p1 = std::sqrt(E1*E1-M*M);
 	double costheta2 = (M*M + 2.*p_cell[0]*E2 - s)/2./p1/E2;
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
@@ -71,7 +77,7 @@ int main(){
 	
 	// Step5: Sample final state momentum in CoM, assuming incident HQ in z-direction
 	std::vector<std::vector<double> > fs;
-	XQq2Qq.sample_dXdPS(s, temp, fs);
+	XQg2Qg.sample_dXdPS(s, temp, fs);
 
 	// Step-5: rotate final state momentum back to CoM frame with the original orientation
 	std::vector<double> pnew_com(4);
@@ -95,9 +101,10 @@ int main(){
 	// Step-1: boost back to lab frame
 	std::vector<double> pnew_lab(4), ivcell(3);
 	ivcell[0] = -vcell[0]; ivcell[1] = -vcell[1]; ivcell[2] = -vcell[2]; 
-	boost_by3(pnew_cell, pnew_lab, ivcell);
+	boost_by3(pnew_cell, p_lab, ivcell);
 
-	print4vec(pnew_lab);}
+	print4vec(p_lab);}
+	}*/
 		
 	return 0;
 }

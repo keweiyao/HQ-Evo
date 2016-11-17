@@ -108,6 +108,7 @@ double Xsection_2to2::calculate(double s, double Temp){
 
 	delete[] p;
 	delete params;
+	gsl_integration_workspace_free(w);
 
     return result;
 }
@@ -159,7 +160,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 }
 
 double Xsection_2to3::calculate(double s, double Temp){
-	double result, error;
+	double result, error, count, sum=0.;
 
 	const gsl_rng_type * Tr = gsl_rng_default;
 	gsl_rng * r = gsl_rng_alloc(Tr);
@@ -183,11 +184,9 @@ double Xsection_2to3::calculate(double s, double Temp){
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
-	gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, &error);
-	while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5)
-	{	
+	do{ 
 		gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, &error);
-	}
+	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5); 
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
 	delete params;

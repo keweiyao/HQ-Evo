@@ -15,42 +15,58 @@ double inline f_0(double x, double xi){
     return 1./(std::exp(x)+xi);
 }
 
-//=============function wrapper for GSL vegas integration======================
-double Vegas_func_wrapper(double * var, size_t n_dims, void * params_)
-{
-	(void) n_dims;
-	// unpack variabel x = E2/T, y = (s-M2)/2/E2/E1
-	double x = var[0];
-	double y = var[1];
-	
+//=============function wrapper for GSL integration======================
+double fy_wrapper(double y, void * params_){
 	// unpack Vegas params
-	Vegas_params * params = static_cast<Vegas_params *>(params_);
-	double * p = static_cast<double*>(params->params);
-	double E1 = p[0];
-	double Temp = p[1];
-	double M2 = p[2]*p[2];
-	double E2 = x*Temp;
-	double s = M2 + 2*E1*E2*y;
-	
-	if (x < 0 || x > 5.) std::cout << "?" << std::endl;
+	integrate1d_params * params = static_cast<integrate1d_params *>(params_);
+	double coeff = params->params[0];
+	double Temp = params->params[1];
+	double M2 = params->params[2];
+	double s = M2 + coeff*y;
 	double Xsection = params->interp(s, Temp);
-	
-	return x*x*f_0(x, p[3])*y*Xsection;
+	//delete[] params;
+	return y*Xsection;
 } 
+
+double fx_wrapper(double x, void * px_){
+	integrate1d_params * px = static_cast<integrate1d_params *>(px_);
+	double E1 = px->params[0];
+	double v1 = px->params[1];
+	double Temp = px->params[2];
+	double M2 = px->params[3];
+	double zeta = px->params[4];
+
+	double result, error, ymin, ymax;
+	gsl_integration_workspace *w = gsl_integration_workspace_alloc(2000);
+	integrate1d_params * py = new integrate1d_params;
+	py->interp = px->interp;
+	py->params = new double[3];
+	py->params[0] = 2.*E1*x*Temp;
+	py->params[1] = Temp;
+	py->params[2] = M2;
+
+    gsl_function F;
+	F.function = fy_wrapper;
+	F.params = py;
+	ymax = 1.+v1;
+	ymin = 1.-v1;
+	gsl_integration_qag(&F, ymin, ymax, 0, 1e-4, 2000, 6, w, &result, &error);
+
+	delete py;
+	//delete px;
+	gsl_integration_workspace_free(w);
+	return x*x*f_0(x, zeta)*result;
+}
+
 //=======================Scattering Rate================================
 
 template <class T>
 rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
-:	Xprocess(Xprocess_),
-	M(Xprocess->get_M1()),
-	degeneracy(degeneracy_),
-	NE1(50),
-	NT(40),
-	rd(), 
-	gen(rd()),
-	dist_x(3.0, 1.0),
-	dist_norm_y(-1.0, 1.0),
-	dist_reject(0.0, 1.0)
+:	Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
+	NE1(50), NT(40), E1L(M*1.01), E1H(M*50), TL(0.1), TH(1.0),
+	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
+	rd(), gen(rd()),
+	dist_x(3.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
@@ -81,14 +97,15 @@ rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 		}
 		file << std::endl;
 	}
+	file.close();
 }
 
 template <class T>
 void rates<T>::tabulate_E1_T(size_t T_start, size_t dnT){
 	for (size_t i=0; i<NE1; i++){
-		double E1 = M*1.01+1*i;
+		double E1 = E1L + i*dE1;
 		for (size_t j=T_start; j<(T_start+dnT); j++){
-			double Temp = 0.1+0.02*j;		
+			double Temp = TL + j*dT;		
 			double result = calculate(E1, Temp);
 			Rtab[i][j] = result;
 		}
@@ -96,42 +113,45 @@ void rates<T>::tabulate_E1_T(size_t T_start, size_t dnT){
 }
 
 template <class T>
+double rates<T>::interpR(double E1, double Temp){
+	if (Temp < TL) Temp = TL;
+	if (Temp >= TH) Temp = TH-dT;
+	if (E1 < E1L) E1 = E1L;
+	if (E1 >= E1H) E1 = E1H-dE1;
+	double xT, rT, xE1, rE1;
+	size_t iT, iE1;
+	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
+	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
+	return   Rtab[iE1][iT]*(1.-rE1)*(1.-rT)
+			+Rtab[iE1+1][iT]*rE1*(1.-rT)
+			+Rtab[iE1][iT+1]*(1.-rE1)*rT
+			+Rtab[iE1+1][iT+1]*rE1*rT;
+}
+
+template <class T>
 double rates<T>::calculate(double E1, double Temp)
 {
-	double result, error;
 	double p1 = std::sqrt(E1*E1-M*M);
-	const gsl_rng_type * Tr = gsl_rng_default;
-	gsl_rng * r = gsl_rng_alloc(Tr);
-	
-	// wrap parameters and interpolating function to Vega_params and Vega_func_wrapper
-	Vegas_params * params = new Vegas_params;
-	params->interp = std::bind( &Xsection_2to2::interpX, Xprocess, _1, _2);
-	double *p = new double[4];
-	p[0] = E1; p[1] = Temp; p[2] = M; p[3] = 0.0;
-	params->params = p;
-	
-	gsl_monte_function G;
-	G.f = &Vegas_func_wrapper;
-	G.dim = 2;
-	G.params = params;
-	
-	// limits of the integration
-	// variables:x = E2/T,  y = (s-M2)/2/E2/E1
-	double xl[2], xu[2];
-	xl[0] = 0.0; xu[0] = 5.;
-	xl[1] = 1. - p1/E1; xu[1] = 1 + p1/E1; 
-	
-	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
-	gsl_monte_vegas_state *s = gsl_monte_vegas_alloc(2);
-	gsl_monte_vegas_integrate(&G, xl, xu, 2, 10000, r, s, &result, & error);
-	while(std::abs(gsl_monte_vegas_chisq(s)-1.0)>0.5)
-	{
-		gsl_monte_vegas_integrate(&G, xl, xu, 2, 10000, r, s, &result, & error);
-	}
-	gsl_monte_vegas_free(s);
-	gsl_rng_free(r);
-	delete params;
-	delete[] p;
+	double result, error, xmin, xmax;
+	gsl_integration_workspace *w = gsl_integration_workspace_alloc(2000);
+	integrate1d_params * px = new integrate1d_params;
+	px->interp = std::bind( &Xsection_2to2::interpX, Xprocess, _1, _2);
+	px->params = new double[5];
+	px->params[0] = E1;
+	px->params[1] = p1/E1;
+	px->params[2] = Temp;
+	px->params[3] = M*M;
+	px->params[4] = 0.0;
+
+    gsl_function F;
+	F.function = fx_wrapper;
+	F.params = px;
+	xmax = 6.0;
+	xmin = 0.0;
+	gsl_integration_qag(&F, xmin, xmax, 0, 1e-4, 2000, 6, w, &result, &error);
+
+	gsl_integration_workspace_free(w);
+	delete px;
 	return result*std::pow(Temp, 3)*4./c16pi2*E1/p1*degeneracy;
 }
 
