@@ -17,10 +17,10 @@ int main(){
 	Xsection_2to2 XQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, M, "./tables/X-Qg-Qg.dat");
 
 	// Xsection: Q+q->Q+q+g
-	//Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
+	Xsection_2to3 XQq2Qqg(&M2_Qq2Qqg, &approx_XQq2Qqg, M, "./tables/X-Qq-Qqg.dat");
 
 	// Xsection: Q+g->Q+g+g
-	//Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
+	Xsection_2to3 XQg2Qgg(&M2_Qg2Qgg, &approx_XQg2Qgg, M, "./tables/X-Qg-Qgg.dat");
 
 	// Rate: Q+q->Q+q
 	rates<Xsection_2to2> RQq2Qq(&XQq2Qq, 3*4, "./tables/R-Qq-Qq.dat");
@@ -29,16 +29,16 @@ int main(){
 	rates<Xsection_2to2> RQg2Qg(&XQg2Qg, 8*2, "./tables/R-Qg-Qg.dat");
 	
 	// Rate: Q+q->Q+q+g
-	//rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
+	rates<Xsection_2to3> RQq2Qqg(&XQq2Qqg, 3*4, "./tables/R-Qq-Qqg.dat");
 	
 	// Rate: Q+g->Q+g+g
-	//rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
+	rates<Xsection_2to3> RQg2Qgg(&XQg2Qgg, 8*2, "./tables/R-Qg-Qgg.dat");
 	
-
+/*
 	// Here is a sample code for a medium cell
 	double temp=0.3;
 	std::vector<double> vcell(3);
-	vcell[0] = 0.0; vcell[1] = 0.0; vcell[2] = 0.0;
+	vcell[0] = 0.7; vcell[1] = 0.0; vcell[2] = 0.0;
 	
 	std::vector<std::vector<double> > ensamble(10000);
 	for (auto&& p_lab : ensamble){
@@ -119,6 +119,6 @@ int main(){
 
 	print4vec(p_lab);}
 	}
-		
+*/	
 	return 0;
 }
