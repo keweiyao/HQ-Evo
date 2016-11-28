@@ -111,7 +111,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
-	double u = 0.1/tauk;
+	double u = .5/tauk;
 	// q-perp-vec
 	double qx = -p4*sin4;
 	
@@ -162,7 +162,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
-	double u = 0.1/tauk;
+	double u = .5/tauk;
 	// q-perp-vec
 	double qx = -p4*sin4;
 
