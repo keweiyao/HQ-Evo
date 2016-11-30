@@ -19,10 +19,10 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
 Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(40), 
-	sL(M1*M1*1.01), sM(M1*M1*16.), sH(M1*M1*400.), 
+: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(60), NT(32), 
+	sL(M1*M1*1.01), sM(M1*M1*25.), sH(M1*M1*900.), 
 	ds1((sM-sL)/(Ns-1.)), ds2((sH-sM)/(Ns-1.)),
-	TL(0.1), TH(1.0), dT((TH-TL)/(NT-1.))
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.))
 {
 	std::cout << __func__<< " " << name_  << std::endl;
 	Xtab.resize(Ns*2);

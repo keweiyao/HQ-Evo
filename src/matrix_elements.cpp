@@ -111,7 +111,15 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
+<<<<<<< Updated upstream
 	double u = .5/tauk;
+=======
+	double u = 2./tauk;
+	double LPM;
+	LPM = 1. - std::sin(u)/u;
+	//if (u*u < 6.) LPM = 1./6.*u*u;
+	//else LPM = 1.0;
+>>>>>>> Stashed chan
 	// q-perp-vec
 	double qx = -p4*sin4;
 	
@@ -121,9 +129,9 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// 1->2
 	double alpha_rad = alpha_s(kt2);
 	double mD2 = alpha_rad *pf_g*T2;
-	double iD1 = 1./(kt2 + x*x*M2 + mD2*0.0), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
+	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*(1. - std::sin(u)/u);
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qq2Qq*Pg;
@@ -162,7 +170,11 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
-	double u = .5/tauk;
+
+	double u = 2./tauk;
+	double LPM;
+	LPM = 1. - std::sin(u)/u;
+
 	// q-perp-vec
 	double qx = -p4*sin4;
 
@@ -172,9 +184,9 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// 1->2
 	double alpha_rad = alpha_s(kt2);
 	double mD2 = alpha_rad *pf_g*T2;
-	double iD1 = 1./(kt2 + x*x*M2 + mD2*0.0), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
+	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*(1. - std::sin(u)/u);
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qg2Qg*Pg;

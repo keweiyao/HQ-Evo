@@ -22,10 +22,11 @@ double fy_wrapper(double y, void * params_){
 	double coeff = params->params[0];
 	double Temp = params->params[1];
 	double M2 = params->params[2];
-	double s = M2 + coeff*y;
+	double v1 = params->params[3];
+	double s = M2 + coeff*(1.-v1*y);
 	double Xsection = params->interp(s, Temp);
 	//delete[] params;
-	return y*Xsection;
+	return (1.-v1*y)*Xsection;
 } 
 
 double fx_wrapper(double x, void * px_){
@@ -40,16 +41,17 @@ double fx_wrapper(double x, void * px_){
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(10000);
 	integrate1d_params * py = new integrate1d_params;
 	py->interp = px->interp;
-	py->params = new double[3];
+	py->params = new double[4];
 	py->params[0] = 2.*E1*x*Temp;
 	py->params[1] = Temp;
 	py->params[2] = M2;
+	py->params[3] = v1;
 
     gsl_function F;
 	F.function = fy_wrapper;
 	F.params = py;
-	ymax = 1.+v1;
-	ymin = 1.-v1;
+	ymax = 1.;
+	ymin = -1.;
 	gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
 
 	delete py;
@@ -63,7 +65,7 @@ double fx_wrapper(double x, void * px_){
 template <class T>
 rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 :	Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(50), NT(40), E1L(M*1.01), E1H(M*50), TL(0.1), TH(1.0),
+	NE1(50), NT(20), E1L(M*1.01), E1H(M*50), TL(0.15), TH(0.6),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	rd(), gen(rd()),
 	dist_x(3.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
@@ -152,30 +154,29 @@ double rates<T>::calculate(double E1, double Temp)
 
 	gsl_integration_workspace_free(w);
 	delete px;
-	return result*std::pow(Temp, 3)*4./c16pi2*E1/p1*degeneracy;
+	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
 
 template <class T>
 void rates<T>::sample_initial(double E1, double Temp, double &E2, double &s){
-	// this function samples x = E2/T and y = (s-M^2)/(2*E2*E1) from the distribution:
-	// P(x, y) ~ x^2*exp(-x) * y*sigma(M^2 + 2*E1*T*x*y, T)
+	// this function samples x = E2/T and y = cos(theta2) from the distribution:
+	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
 	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
-	// and uniform sample y within (1-v1, 1+v1)
-	// and finally rejected with P_rej(x,y) = y*sigma(M^2 + 2*E1*T*x*y, T);
-	double M2 = M*M, x, y, max, smax, stemp, coeff = 2.*E1*Temp;
+	// and uniform sample y within (-1., 1.)
+	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
+	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
-	smax = M2 + coeff*20.*(1.+v1);
+	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
+	smax = M2 + coeff1*20. + coeff2*20.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	max = (1.+v1)*Xprocess->interpX(smax, Temp);
-	double Nd=0.;
 	do{
 		do{ x = dist_x(gen); }while(x>20.);
-		y = 1. + dist_norm_y(gen)*v1;
-		stemp = M2 + coeff*x*y;
-		Nd += 1.;
-	}while( y*Xprocess->interpX(stemp, Temp) <= max*dist_reject(gen) );
+		y = dist_norm_y(gen);
+		stemp = intersection + coeff1*x + coeff2*x*y;
+	}while( (1.-v1*y)*Xprocess->interpX(stemp, Temp) <= max*dist_reject(gen) );
 	E2 = x*Temp;
-	s = M2 + coeff*x*y;
+	s = intersection + coeff1*x + coeff2*x*y;
 }
 
 template class rates<Xsection_2to2>;
