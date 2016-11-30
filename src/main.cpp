@@ -2,13 +2,13 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
-#include "update.h"
+
 int main(){
 	//double M = 1.3;
 	//update updater(M);
 	//updater.sample_channel(10.0, 0.4);
 	
-/*
+
 	// Here is a sample code for a medium cell
 	double temp=0.3;
 	std::vector<double> vcell(3);
@@ -93,6 +93,6 @@ int main(){
 
 	print4vec(p_lab);}
 	}
-*/	
+
 	return 0;
 }

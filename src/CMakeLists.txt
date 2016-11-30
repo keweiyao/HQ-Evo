@@ -5,7 +5,6 @@ add_library(${LIBRARY_NAME} STATIC
   sample_methods.cpp
   Xsection.cpp
   matrix_elements.cpp
-  update.cpp
 )
 
 set_target_properties(${LIBRARY_NAME} PROPERTIES PREFIX "")
