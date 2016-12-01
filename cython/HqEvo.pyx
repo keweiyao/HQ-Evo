@@ -136,8 +136,8 @@ cdef class HqEvo:
 			self.Ninelastic = len(self.X23list)
 			self.Nchannels += self.Ninelastic 
 
-	cpdef sample_channel(self, double E1, double T, double dt_max):
-		cdef double r, psum = 0.0, dt, Pmax = 0.2
+	cpdef sample_channel(self, double E1, double T):
+		cdef double r, psum = 0.0, dt, Pmax = 0.1
 		cdef int i=0, channel_index
 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
 		if self.elastic:
@@ -151,7 +151,7 @@ cdef class HqEvo:
 				p[i] = psum
 				i += 1
 
-		dt = fmin(Pmax/psum, dt_max)
+		dt = Pmax/psum
 		r = (<double>rand())/dt/RAND_MAX
 		if r >= p[self.Nchannels-1]:
 			return -1, dt

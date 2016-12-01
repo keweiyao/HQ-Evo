@@ -111,15 +111,11 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
-<<<<<<< Updated upstream
-	double u = .5/tauk;
-=======
-	double u = 2./tauk;
+
+	double u = 5./tauk;
 	double LPM;
 	LPM = 1. - std::sin(u)/u;
-	//if (u*u < 6.) LPM = 1./6.*u*u;
-	//else LPM = 1.0;
->>>>>>> Stashed chan
+
 	// q-perp-vec
 	double qx = -p4*sin4;
 	
