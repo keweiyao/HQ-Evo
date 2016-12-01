@@ -270,6 +270,7 @@ static CYTHON_INLINE float __PYX_NAN() {
 #include "typeinfo"
 #include <vector>
 #include "stdlib.h"
+#include "math.h"
 #include "../src/matrix_elements.h"
 #include "../src/Xsection.h"
 #include "../src/rates.h"
@@ -492,7 +493,7 @@ struct __pyx_obj_5HqEvo_pyR2to2;
 struct __pyx_obj_5HqEvo_pyR2to3;
 struct __pyx_obj_5HqEvo_HqEvo;
 
-/* "HqEvo.pyx":40
+/* "HqEvo.pyx":41
  * 
  * #-------------------Wrap Xsection and rate class---------------------------
  * cdef class pyX2to2:             # <<<<<<<<<<<<<<
@@ -506,7 +507,7 @@ struct __pyx_obj_5HqEvo_pyX2to2 {
 };
 
 
-/* "HqEvo.pyx":58
+/* "HqEvo.pyx":59
  * 		return self.cX2to2.interpX(s, Temp)
  * 
  * cdef class pyX2to3:             # <<<<<<<<<<<<<<
@@ -520,7 +521,7 @@ struct __pyx_obj_5HqEvo_pyX2to3 {
 };
 
 
-/* "HqEvo.pyx":76
+/* "HqEvo.pyx":77
  * 		return self.cX2to3.interpX(s, Temp)
  * 
  * cdef class pyR2to2:             # <<<<<<<<<<<<<<
@@ -534,7 +535,7 @@ struct __pyx_obj_5HqEvo_pyR2to2 {
 };
 
 
-/* "HqEvo.pyx":89
+/* "HqEvo.pyx":90
  * 		return E2, s
  * 
  * cdef class pyR2to3:             # <<<<<<<<<<<<<<
@@ -548,7 +549,7 @@ struct __pyx_obj_5HqEvo_pyR2to3 {
 };
 
 
-/* "HqEvo.pyx":105
+/* "HqEvo.pyx":106
  * #-------------Heavy quark evolution class------------------------
  * 
  * cdef class HqEvo:             # <<<<<<<<<<<<<<
@@ -571,7 +572,7 @@ struct __pyx_obj_5HqEvo_HqEvo {
 
 
 
-/* "HqEvo.pyx":40
+/* "HqEvo.pyx":41
  * 
  * #-------------------Wrap Xsection and rate class---------------------------
  * cdef class pyX2to2:             # <<<<<<<<<<<<<<
@@ -587,7 +588,7 @@ struct __pyx_vtabstruct_5HqEvo_pyX2to2 {
 static struct __pyx_vtabstruct_5HqEvo_pyX2to2 *__pyx_vtabptr_5HqEvo_pyX2to2;
 
 
-/* "HqEvo.pyx":58
+/* "HqEvo.pyx":59
  * 		return self.cX2to2.interpX(s, Temp)
  * 
  * cdef class pyX2to3:             # <<<<<<<<<<<<<<
@@ -603,7 +604,7 @@ struct __pyx_vtabstruct_5HqEvo_pyX2to3 {
 static struct __pyx_vtabstruct_5HqEvo_pyX2to3 *__pyx_vtabptr_5HqEvo_pyX2to3;
 
 
-/* "HqEvo.pyx":76
+/* "HqEvo.pyx":77
  * 		return self.cX2to3.interpX(s, Temp)
  * 
  * cdef class pyR2to2:             # <<<<<<<<<<<<<<
@@ -619,7 +620,7 @@ struct __pyx_vtabstruct_5HqEvo_pyR2to2 {
 static struct __pyx_vtabstruct_5HqEvo_pyR2to2 *__pyx_vtabptr_5HqEvo_pyR2to2;
 
 
-/* "HqEvo.pyx":89
+/* "HqEvo.pyx":90
  * 		return E2, s
  * 
  * cdef class pyR2to3:             # <<<<<<<<<<<<<<
@@ -635,7 +636,7 @@ struct __pyx_vtabstruct_5HqEvo_pyR2to3 {
 static struct __pyx_vtabstruct_5HqEvo_pyR2to3 *__pyx_vtabptr_5HqEvo_pyR2to3;
 
 
-/* "HqEvo.pyx":105
+/* "HqEvo.pyx":106
  * #-------------Heavy quark evolution class------------------------
  * 
  * cdef class HqEvo:             # <<<<<<<<<<<<<<
@@ -644,7 +645,7 @@ static struct __pyx_vtabstruct_5HqEvo_pyR2to3 *__pyx_vtabptr_5HqEvo_pyR2to3;
  */
 
 struct __pyx_vtabstruct_5HqEvo_HqEvo {
-  PyObject *(*sample_channel)(struct __pyx_obj_5HqEvo_HqEvo *, double, double, int __pyx_skip_dispatch);
+  PyObject *(*sample_channel)(struct __pyx_obj_5HqEvo_HqEvo *, double, double, double, int __pyx_skip_dispatch);
   PyObject *(*sample_initial)(struct __pyx_obj_5HqEvo_HqEvo *, int, double, double, int __pyx_skip_dispatch);
   PyObject *(*sample_final)(struct __pyx_obj_5HqEvo_HqEvo *, int, double, double, int __pyx_skip_dispatch);
 };
@@ -861,7 +862,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
 static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 *__pyx_v_self, double __pyx_v_E1, double __pyx_v_Temp, int __pyx_skip_dispatch); /* proto*/
 static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *__pyx_v_self, double __pyx_v_E1, double __pyx_v_Temp, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_pyR2to3 *__pyx_v_self, double __pyx_v_E1, double __pyx_v_Temp, int __pyx_skip_dispatch); /* proto*/
-static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, int __pyx_skip_dispatch); /* proto*/
+static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, double __pyx_v_dt_max, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, int __pyx_v_channel, double __pyx_v_E1, double __pyx_v_T, int __pyx_skip_dispatch); /* proto*/
 static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, int __pyx_v_channel, double __pyx_v_s, double __pyx_v_T, int __pyx_skip_dispatch); /* proto*/
 
@@ -874,6 +875,8 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
 /* Module declarations from 'libcpp' */
 
 /* Module declarations from 'libc.stdlib' */
+
+/* Module declarations from 'libc.math' */
 
 /* Module declarations from 'HqEvo' */
 static PyTypeObject *__pyx_ptype_5HqEvo_pyX2to2 = 0;
@@ -908,6 +911,7 @@ static char __pyx_k_x2to2[] = "x2to2";
 static char __pyx_k_x2to3[] = "x2to3";
 static char __pyx_k_Qg_Qgg[] = "Qg->Qgg";
 static char __pyx_k_Qq_Qqg[] = "Qq->Qqg";
+static char __pyx_k_dt_max[] = "dt_max";
 static char __pyx_k_exists[] = "exists";
 static char __pyx_k_import[] = "__import__";
 static char __pyx_k_tables[] = "./tables";
@@ -952,6 +956,7 @@ static PyObject *__pyx_kp_s_channel_d_not_implememented;
 static PyObject *__pyx_kp_s_channel_must_be_0_channel_0_corr;
 static PyObject *__pyx_kp_s_channel_s_not_implemented;
 static PyObject *__pyx_n_s_degeneracy;
+static PyObject *__pyx_n_s_dt_max;
 static PyObject *__pyx_n_s_elastic;
 static PyObject *__pyx_n_s_exists;
 static PyObject *__pyx_n_s_filename;
@@ -1001,7 +1006,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_2calculate(struct __pyx_obj_5HqEvo_pyR
 static PyObject *__pyx_pf_5HqEvo_7pyR2to3_4interpR(struct __pyx_obj_5HqEvo_pyR2to3 *__pyx_v_self, double __pyx_v_E1, double __pyx_v_Temp); /* proto */
 static PyObject *__pyx_pf_5HqEvo_7pyR2to3_6sample_initial(struct __pyx_obj_5HqEvo_pyR2to3 *__pyx_v_self, double __pyx_v_E1, double __pyx_v_Temp); /* proto */
 static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, PyObject *__pyx_v_mass, PyObject *__pyx_v_elastic, PyObject *__pyx_v_inelastic, PyObject *__pyx_v_table_folder); /* proto */
-static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T); /* proto */
+static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, double __pyx_v_dt_max); /* proto */
 static PyObject *__pyx_pf_5HqEvo_5HqEvo_4sample_initial(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, int __pyx_v_channel, double __pyx_v_E1, double __pyx_v_T); /* proto */
 static PyObject *__pyx_pf_5HqEvo_5HqEvo_6sample_final(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, int __pyx_v_channel, double __pyx_v_s, double __pyx_v_T); /* proto */
 static PyObject *__pyx_tp_new_5HqEvo_pyX2to2(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -1016,7 +1021,7 @@ static PyObject *__pyx_int_neg_1;
 static PyObject *__pyx_tuple_;
 static PyObject *__pyx_tuple__2;
 
-/* "HqEvo.pyx":42
+/* "HqEvo.pyx":43
  * cdef class pyX2to2:
  * 	cdef Xsection_2to2 * cX2to2
  * 	def __cinit__(self, channel, double mass, string filename):             # <<<<<<<<<<<<<<
@@ -1057,16 +1062,16 @@ static int __pyx_pw_5HqEvo_7pyX2to2_1__cinit__(PyObject *__pyx_v_self, PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mass)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1076,12 +1081,12 @@ static int __pyx_pw_5HqEvo_7pyX2to2_1__cinit__(PyObject *__pyx_v_self, PyObject 
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_channel = values[0];
-    __pyx_v_mass = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mass == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_mass = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mass == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 42; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to2.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1105,17 +1110,17 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "HqEvo.pyx":43
+  /* "HqEvo.pyx":44
  * 	cdef Xsection_2to2 * cX2to2
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qq':             # <<<<<<<<<<<<<<
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename)
  * 		elif channel == 'Qg->Qg':
  */
-  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qq_Qq, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 43; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qq_Qq, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 44; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_1) {
 
-    /* "HqEvo.pyx":44
+    /* "HqEvo.pyx":45
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qq':
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename)             # <<<<<<<<<<<<<<
@@ -1124,7 +1129,7 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
  */
     __pyx_v_self->cX2to2 = new Xsection_2to2((&dX_Qq2Qq_dPS), (&approx_XQq2Qq), __pyx_v_mass, __pyx_v_filename);
 
-    /* "HqEvo.pyx":43
+    /* "HqEvo.pyx":44
  * 	cdef Xsection_2to2 * cX2to2
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qq':             # <<<<<<<<<<<<<<
@@ -1134,17 +1139,17 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
     goto __pyx_L3;
   }
 
-  /* "HqEvo.pyx":45
+  /* "HqEvo.pyx":46
  * 		if channel == 'Qq->Qq':
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename)
  * 		elif channel == 'Qg->Qg':             # <<<<<<<<<<<<<<
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename)
  * 		else:
  */
-  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qg_Qg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 45; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qg_Qg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 46; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_1) {
 
-    /* "HqEvo.pyx":46
+    /* "HqEvo.pyx":47
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename)
  * 		elif channel == 'Qg->Qg':
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename)             # <<<<<<<<<<<<<<
@@ -1153,7 +1158,7 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
  */
     __pyx_v_self->cX2to2 = new Xsection_2to2((&dX_Qg2Qg_dPS), (&approx_XQg2Qg), __pyx_v_mass, __pyx_v_filename);
 
-    /* "HqEvo.pyx":45
+    /* "HqEvo.pyx":46
  * 		if channel == 'Qq->Qq':
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename)
  * 		elif channel == 'Qg->Qg':             # <<<<<<<<<<<<<<
@@ -1163,7 +1168,7 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
     goto __pyx_L3;
   }
 
-  /* "HqEvo.pyx":48
+  /* "HqEvo.pyx":49
  * 			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename)
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)             # <<<<<<<<<<<<<<
@@ -1171,23 +1176,23 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
  * 		return self.cX2to2.calculate(s, Temp)
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_channel_s_not_implemented, __pyx_v_channel); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_channel_s_not_implemented, __pyx_v_channel); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_L3:;
 
-  /* "HqEvo.pyx":42
+  /* "HqEvo.pyx":43
  * cdef class pyX2to2:
  * 	cdef Xsection_2to2 * cX2to2
  * 	def __cinit__(self, channel, double mass, string filename):             # <<<<<<<<<<<<<<
@@ -1208,7 +1213,7 @@ static int __pyx_pf_5HqEvo_7pyX2to2___cinit__(struct __pyx_obj_5HqEvo_pyX2to2 *_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":49
+/* "HqEvo.pyx":50
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1237,12 +1242,12 @@ static double __pyx_f_5HqEvo_7pyX2to2_calculate(struct __pyx_obj_5HqEvo_pyX2to2 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to2_3calculate)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -1257,7 +1262,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_calculate(struct __pyx_obj_5HqEvo_pyX2to2 
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -1268,11 +1273,11 @@ static double __pyx_f_5HqEvo_7pyX2to2_calculate(struct __pyx_obj_5HqEvo_pyX2to2 
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -1281,7 +1286,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_calculate(struct __pyx_obj_5HqEvo_pyX2to2 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":50
+  /* "HqEvo.pyx":51
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to2.calculate(s, Temp)             # <<<<<<<<<<<<<<
@@ -1291,7 +1296,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_calculate(struct __pyx_obj_5HqEvo_pyX2to2 
   __pyx_r = __pyx_v_self->cX2to2->calculate(__pyx_v_s, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":49
+  /* "HqEvo.pyx":50
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1346,11 +1351,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_3calculate(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1358,12 +1363,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_3calculate(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to2.calculate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1385,7 +1390,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_2calculate(struct __pyx_obj_5HqEvo_pyX
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to2_calculate(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to2_calculate(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 50; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1402,7 +1407,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_2calculate(struct __pyx_obj_5HqEvo_pyX
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":51
+/* "HqEvo.pyx":52
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to2.calculate(s, Temp)
  * 	cpdef sample_dXdPS(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1431,13 +1436,13 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to2_5sample_dXdPS)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -1452,7 +1457,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -1463,7 +1468,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -1475,7 +1480,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":53
+  /* "HqEvo.pyx":54
  * 	cpdef sample_dXdPS(self, double s, double Temp):
  * 		cdef vector[ vector[double] ] final_states
  * 		self.cX2to2.sample_dXdPS(s, Temp, final_states)             # <<<<<<<<<<<<<<
@@ -1484,7 +1489,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
  */
   __pyx_v_self->cX2to2->sample_dXdPS(__pyx_v_s, __pyx_v_Temp, __pyx_v_final_states);
 
-  /* "HqEvo.pyx":54
+  /* "HqEvo.pyx":55
  * 		cdef vector[ vector[double] ] final_states
  * 		self.cX2to2.sample_dXdPS(s, Temp, final_states)
  * 		return final_states             # <<<<<<<<<<<<<<
@@ -1492,13 +1497,13 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(struct __pyx_obj_5HqEvo_py
  * 		return self.cX2to2.interpX(s, Temp)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_final_states); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 54; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_final_states); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":51
+  /* "HqEvo.pyx":52
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to2.calculate(s, Temp)
  * 	cpdef sample_dXdPS(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1554,11 +1559,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_5sample_dXdPS(PyObject *__pyx_v_self, 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_dXdPS") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_dXdPS") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1566,12 +1571,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_5sample_dXdPS(PyObject *__pyx_v_self, 
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to2.sample_dXdPS", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1593,7 +1598,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_4sample_dXdPS(struct __pyx_obj_5HqEvo_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_dXdPS", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 51; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_7pyX2to2_sample_dXdPS(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 52; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1610,7 +1615,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_4sample_dXdPS(struct __pyx_obj_5HqEvo_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":55
+/* "HqEvo.pyx":56
  * 		self.cX2to2.sample_dXdPS(s, Temp, final_states)
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1639,12 +1644,12 @@ static double __pyx_f_5HqEvo_7pyX2to2_interpX(struct __pyx_obj_5HqEvo_pyX2to2 *_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to2_7interpX)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -1659,7 +1664,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_interpX(struct __pyx_obj_5HqEvo_pyX2to2 *_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -1670,11 +1675,11 @@ static double __pyx_f_5HqEvo_7pyX2to2_interpX(struct __pyx_obj_5HqEvo_pyX2to2 *_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -1683,7 +1688,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_interpX(struct __pyx_obj_5HqEvo_pyX2to2 *_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":56
+  /* "HqEvo.pyx":57
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):
  * 		return self.cX2to2.interpX(s, Temp)             # <<<<<<<<<<<<<<
@@ -1693,7 +1698,7 @@ static double __pyx_f_5HqEvo_7pyX2to2_interpX(struct __pyx_obj_5HqEvo_pyX2to2 *_
   __pyx_r = __pyx_v_self->cX2to2->interpX(__pyx_v_s, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":55
+  /* "HqEvo.pyx":56
  * 		self.cX2to2.sample_dXdPS(s, Temp, final_states)
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -1748,11 +1753,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_7interpX(PyObject *__pyx_v_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpX") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpX") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -1760,12 +1765,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to2_7interpX(PyObject *__pyx_v_self, PyObj
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to2.interpX", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1787,7 +1792,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_6interpX(struct __pyx_obj_5HqEvo_pyX2t
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interpX", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to2_interpX(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 55; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to2_interpX(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 56; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -1804,7 +1809,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to2_6interpX(struct __pyx_obj_5HqEvo_pyX2t
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":60
+/* "HqEvo.pyx":61
  * cdef class pyX2to3:
  * 	cdef Xsection_2to3 * cX2to3
  * 	def __cinit__(self, channel, double mass, string filename):             # <<<<<<<<<<<<<<
@@ -1845,16 +1850,16 @@ static int __pyx_pw_5HqEvo_7pyX2to3_1__cinit__(PyObject *__pyx_v_self, PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_mass)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -1864,12 +1869,12 @@ static int __pyx_pw_5HqEvo_7pyX2to3_1__cinit__(PyObject *__pyx_v_self, PyObject 
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_channel = values[0];
-    __pyx_v_mass = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mass == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_mass = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_mass == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 60; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to3.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -1893,17 +1898,17 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "HqEvo.pyx":61
+  /* "HqEvo.pyx":62
  * 	cdef Xsection_2to3 * cX2to3
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qqg':             # <<<<<<<<<<<<<<
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename)
  * 		elif channel == 'Qg->Qgg':
  */
-  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qq_Qqg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 61; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qq_Qqg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 62; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_1) {
 
-    /* "HqEvo.pyx":62
+    /* "HqEvo.pyx":63
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qqg':
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename)             # <<<<<<<<<<<<<<
@@ -1912,7 +1917,7 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
  */
     __pyx_v_self->cX2to3 = new Xsection_2to3((&M2_Qq2Qqg), (&approx_XQq2Qqg), __pyx_v_mass, __pyx_v_filename);
 
-    /* "HqEvo.pyx":61
+    /* "HqEvo.pyx":62
  * 	cdef Xsection_2to3 * cX2to3
  * 	def __cinit__(self, channel, double mass, string filename):
  * 		if channel == 'Qq->Qqg':             # <<<<<<<<<<<<<<
@@ -1922,17 +1927,17 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
     goto __pyx_L3;
   }
 
-  /* "HqEvo.pyx":63
+  /* "HqEvo.pyx":64
  * 		if channel == 'Qq->Qqg':
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename)
  * 		elif channel == 'Qg->Qgg':             # <<<<<<<<<<<<<<
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename)
  * 		else:
  */
-  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qg_Qgg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 63; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = (__Pyx_PyString_Equals(__pyx_v_channel, __pyx_kp_s_Qg_Qgg, Py_EQ)); if (unlikely(__pyx_t_1 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 64; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   if (__pyx_t_1) {
 
-    /* "HqEvo.pyx":64
+    /* "HqEvo.pyx":65
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename)
  * 		elif channel == 'Qg->Qgg':
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename)             # <<<<<<<<<<<<<<
@@ -1941,7 +1946,7 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
  */
     __pyx_v_self->cX2to3 = new Xsection_2to3((&M2_Qg2Qgg), (&approx_XQg2Qgg), __pyx_v_mass, __pyx_v_filename);
 
-    /* "HqEvo.pyx":63
+    /* "HqEvo.pyx":64
  * 		if channel == 'Qq->Qqg':
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename)
  * 		elif channel == 'Qg->Qgg':             # <<<<<<<<<<<<<<
@@ -1951,7 +1956,7 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
     goto __pyx_L3;
   }
 
-  /* "HqEvo.pyx":66
+  /* "HqEvo.pyx":67
  * 			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename)
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)             # <<<<<<<<<<<<<<
@@ -1959,23 +1964,23 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
  * 		return self.cX2to3.calculate(s, Temp)
  */
   /*else*/ {
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_channel_s_not_implemented, __pyx_v_channel); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_channel_s_not_implemented, __pyx_v_channel); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = PyTuple_New(1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_3, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __Pyx_Raise(__pyx_t_2, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 66; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_L3:;
 
-  /* "HqEvo.pyx":60
+  /* "HqEvo.pyx":61
  * cdef class pyX2to3:
  * 	cdef Xsection_2to3 * cX2to3
  * 	def __cinit__(self, channel, double mass, string filename):             # <<<<<<<<<<<<<<
@@ -1996,7 +2001,7 @@ static int __pyx_pf_5HqEvo_7pyX2to3___cinit__(struct __pyx_obj_5HqEvo_pyX2to3 *_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":67
+/* "HqEvo.pyx":68
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2025,12 +2030,12 @@ static double __pyx_f_5HqEvo_7pyX2to3_calculate(struct __pyx_obj_5HqEvo_pyX2to3 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to3_3calculate)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2045,7 +2050,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_calculate(struct __pyx_obj_5HqEvo_pyX2to3 
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2056,11 +2061,11 @@ static double __pyx_f_5HqEvo_7pyX2to3_calculate(struct __pyx_obj_5HqEvo_pyX2to3 
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2069,7 +2074,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_calculate(struct __pyx_obj_5HqEvo_pyX2to3 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":68
+  /* "HqEvo.pyx":69
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to3.calculate(s, Temp)             # <<<<<<<<<<<<<<
@@ -2079,7 +2084,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_calculate(struct __pyx_obj_5HqEvo_pyX2to3 
   __pyx_r = __pyx_v_self->cX2to3->calculate(__pyx_v_s, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":67
+  /* "HqEvo.pyx":68
  * 		else:
  * 			raise ValueError("channel %s not implemented"%channel)
  * 	cpdef double calculate(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2134,11 +2139,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_3calculate(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2146,12 +2151,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_3calculate(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to3.calculate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2173,7 +2178,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_2calculate(struct __pyx_obj_5HqEvo_pyX
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to3_calculate(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 67; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to3_calculate(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 68; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2190,7 +2195,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_2calculate(struct __pyx_obj_5HqEvo_pyX
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":69
+/* "HqEvo.pyx":70
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to3.calculate(s, Temp)
  * 	cpdef sample_dXdPS(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2219,13 +2224,13 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to3_5sample_dXdPS)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2240,7 +2245,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2251,7 +2256,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -2263,7 +2268,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":71
+  /* "HqEvo.pyx":72
  * 	cpdef sample_dXdPS(self, double s, double Temp):
  * 		cdef vector[ vector[double] ] final_states
  * 		self.cX2to3.sample_dXdPS(s, Temp, final_states)             # <<<<<<<<<<<<<<
@@ -2272,7 +2277,7 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
  */
   __pyx_v_self->cX2to3->sample_dXdPS(__pyx_v_s, __pyx_v_Temp, __pyx_v_final_states);
 
-  /* "HqEvo.pyx":72
+  /* "HqEvo.pyx":73
  * 		cdef vector[ vector[double] ] final_states
  * 		self.cX2to3.sample_dXdPS(s, Temp, final_states)
  * 		return final_states             # <<<<<<<<<<<<<<
@@ -2280,13 +2285,13 @@ static PyObject *__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(struct __pyx_obj_5HqEvo_py
  * 		return self.cX2to3.interpX(s, Temp)
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_final_states); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 72; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_final_states); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":69
+  /* "HqEvo.pyx":70
  * 	cpdef double calculate(self, double s, double Temp):
  * 		return self.cX2to3.calculate(s, Temp)
  * 	cpdef sample_dXdPS(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2342,11 +2347,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_5sample_dXdPS(PyObject *__pyx_v_self, 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_dXdPS") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_dXdPS") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2354,12 +2359,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_5sample_dXdPS(PyObject *__pyx_v_self, 
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_dXdPS", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to3.sample_dXdPS", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2381,7 +2386,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_4sample_dXdPS(struct __pyx_obj_5HqEvo_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_dXdPS", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 69; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_7pyX2to3_sample_dXdPS(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 70; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2398,7 +2403,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_4sample_dXdPS(struct __pyx_obj_5HqEvo_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":73
+/* "HqEvo.pyx":74
  * 		self.cX2to3.sample_dXdPS(s, Temp, final_states)
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2427,12 +2432,12 @@ static double __pyx_f_5HqEvo_7pyX2to3_interpX(struct __pyx_obj_5HqEvo_pyX2to3 *_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpX); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyX2to3_7interpX)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2447,7 +2452,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_interpX(struct __pyx_obj_5HqEvo_pyX2to3 *_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2458,11 +2463,11 @@ static double __pyx_f_5HqEvo_7pyX2to3_interpX(struct __pyx_obj_5HqEvo_pyX2to3 *_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2471,7 +2476,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_interpX(struct __pyx_obj_5HqEvo_pyX2to3 *_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":74
+  /* "HqEvo.pyx":75
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):
  * 		return self.cX2to3.interpX(s, Temp)             # <<<<<<<<<<<<<<
@@ -2481,7 +2486,7 @@ static double __pyx_f_5HqEvo_7pyX2to3_interpX(struct __pyx_obj_5HqEvo_pyX2to3 *_
   __pyx_r = __pyx_v_self->cX2to3->interpX(__pyx_v_s, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":73
+  /* "HqEvo.pyx":74
  * 		self.cX2to3.sample_dXdPS(s, Temp, final_states)
  * 		return final_states
  * 	cpdef double interpX(self, double s, double Temp):             # <<<<<<<<<<<<<<
@@ -2536,11 +2541,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_7interpX(PyObject *__pyx_v_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpX") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpX") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2548,12 +2553,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyX2to3_7interpX(PyObject *__pyx_v_self, PyObj
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("interpX", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyX2to3.interpX", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2575,7 +2580,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_6interpX(struct __pyx_obj_5HqEvo_pyX2t
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interpX", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to3_interpX(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 73; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyX2to3_interpX(__pyx_v_self, __pyx_v_s, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 74; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2592,7 +2597,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyX2to3_6interpX(struct __pyx_obj_5HqEvo_pyX2t
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":78
+/* "HqEvo.pyx":79
  * cdef class pyR2to2:
  * 	cdef rates[Xsection_2to2] * cR2to2
  * 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):             # <<<<<<<<<<<<<<
@@ -2633,16 +2638,16 @@ static int __pyx_pw_5HqEvo_7pyR2to2_1__cinit__(PyObject *__pyx_v_self, PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_degeneracy)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -2652,18 +2657,18 @@ static int __pyx_pw_5HqEvo_7pyR2to2_1__cinit__(PyObject *__pyx_v_self, PyObject 
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_x2to2 = ((struct __pyx_obj_5HqEvo_pyX2to2 *)values[0]);
-    __pyx_v_degeneracy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_degeneracy == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_degeneracy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_degeneracy == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to2.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x2to2), __pyx_ptype_5HqEvo_pyX2to2, 1, "x2to2", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 78; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x2to2), __pyx_ptype_5HqEvo_pyX2to2, 1, "x2to2", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 79; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_5HqEvo_7pyR2to2___cinit__(((struct __pyx_obj_5HqEvo_pyR2to2 *)__pyx_v_self), __pyx_v_x2to2, __pyx_v_degeneracy, __pyx_v_filename);
 
   /* function exit code */
@@ -2680,7 +2685,7 @@ static int __pyx_pf_5HqEvo_7pyR2to2___cinit__(struct __pyx_obj_5HqEvo_pyR2to2 *_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "HqEvo.pyx":79
+  /* "HqEvo.pyx":80
  * 	cdef rates[Xsection_2to2] * cR2to2
  * 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
  * 		self.cR2to2 = new rates[Xsection_2to2](x2to2.cX2to2, degeneracy, filename)             # <<<<<<<<<<<<<<
@@ -2689,7 +2694,7 @@ static int __pyx_pf_5HqEvo_7pyR2to2___cinit__(struct __pyx_obj_5HqEvo_pyR2to2 *_
  */
   __pyx_v_self->cR2to2 = new rates<Xsection_2to2> (__pyx_v_x2to2->cX2to2, __pyx_v_degeneracy, __pyx_v_filename);
 
-  /* "HqEvo.pyx":78
+  /* "HqEvo.pyx":79
  * cdef class pyR2to2:
  * 	cdef rates[Xsection_2to2] * cR2to2
  * 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):             # <<<<<<<<<<<<<<
@@ -2703,7 +2708,7 @@ static int __pyx_pf_5HqEvo_7pyR2to2___cinit__(struct __pyx_obj_5HqEvo_pyR2to2 *_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":80
+/* "HqEvo.pyx":81
  * 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
  * 		self.cR2to2 = new rates[Xsection_2to2](x2to2.cX2to2, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -2732,12 +2737,12 @@ static double __pyx_f_5HqEvo_7pyR2to2_calculate(struct __pyx_obj_5HqEvo_pyR2to2 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to2_3calculate)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2752,7 +2757,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_calculate(struct __pyx_obj_5HqEvo_pyR2to2 
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2763,11 +2768,11 @@ static double __pyx_f_5HqEvo_7pyR2to2_calculate(struct __pyx_obj_5HqEvo_pyR2to2 
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2776,7 +2781,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_calculate(struct __pyx_obj_5HqEvo_pyR2to2 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":81
+  /* "HqEvo.pyx":82
  * 		self.cR2to2 = new rates[Xsection_2to2](x2to2.cX2to2, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to2.calculate(E1, Temp)             # <<<<<<<<<<<<<<
@@ -2786,7 +2791,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_calculate(struct __pyx_obj_5HqEvo_pyR2to2 
   __pyx_r = __pyx_v_self->cR2to2->calculate(__pyx_v_E1, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":80
+  /* "HqEvo.pyx":81
  * 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
  * 		self.cR2to2 = new rates[Xsection_2to2](x2to2.cX2to2, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -2841,11 +2846,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_3calculate(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -2853,12 +2858,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_3calculate(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to2.calculate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -2880,7 +2885,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_2calculate(struct __pyx_obj_5HqEvo_pyR
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to2_calculate(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 80; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to2_calculate(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 81; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -2897,7 +2902,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_2calculate(struct __pyx_obj_5HqEvo_pyR
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":82
+/* "HqEvo.pyx":83
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to2.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -2926,12 +2931,12 @@ static double __pyx_f_5HqEvo_7pyR2to2_interpR(struct __pyx_obj_5HqEvo_pyR2to2 *_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpR); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpR); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to2_5interpR)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -2946,7 +2951,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_interpR(struct __pyx_obj_5HqEvo_pyR2to2 *_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -2957,11 +2962,11 @@ static double __pyx_f_5HqEvo_7pyR2to2_interpR(struct __pyx_obj_5HqEvo_pyR2to2 *_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -2970,7 +2975,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_interpR(struct __pyx_obj_5HqEvo_pyR2to2 *_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":83
+  /* "HqEvo.pyx":84
  * 		return self.cR2to2.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to2.interpR(E1, Temp)             # <<<<<<<<<<<<<<
@@ -2980,7 +2985,7 @@ static double __pyx_f_5HqEvo_7pyR2to2_interpR(struct __pyx_obj_5HqEvo_pyR2to2 *_
   __pyx_r = __pyx_v_self->cR2to2->interpR(__pyx_v_E1, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":82
+  /* "HqEvo.pyx":83
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to2.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3035,11 +3040,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_5interpR(PyObject *__pyx_v_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpR") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpR") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3047,12 +3052,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_5interpR(PyObject *__pyx_v_self, PyObj
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to2.interpR", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3074,7 +3079,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_4interpR(struct __pyx_obj_5HqEvo_pyR2t
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interpR", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to2_interpR(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 82; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to2_interpR(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 83; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3091,7 +3096,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_4interpR(struct __pyx_obj_5HqEvo_pyR2t
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":84
+/* "HqEvo.pyx":85
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to2.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3121,13 +3126,13 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to2_7sample_initial)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3142,7 +3147,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3153,7 +3158,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -3165,7 +3170,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":85
+  /* "HqEvo.pyx":86
  * 		return self.cR2to2.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):
  * 		cdef double E2 = 0.0, s = 0.0             # <<<<<<<<<<<<<<
@@ -3175,7 +3180,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
   __pyx_v_E2 = 0.0;
   __pyx_v_s = 0.0;
 
-  /* "HqEvo.pyx":86
+  /* "HqEvo.pyx":87
  * 	cpdef sample_initial(self, double E1, double Temp):
  * 		cdef double E2 = 0.0, s = 0.0
  * 		self.cR2to2.sample_initial(E1, Temp, E2, s)             # <<<<<<<<<<<<<<
@@ -3184,7 +3189,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
  */
   __pyx_v_self->cR2to2->sample_initial(__pyx_v_E1, __pyx_v_Temp, __pyx_v_E2, __pyx_v_s);
 
-  /* "HqEvo.pyx":87
+  /* "HqEvo.pyx":88
  * 		cdef double E2 = 0.0, s = 0.0
  * 		self.cR2to2.sample_initial(E1, Temp, E2, s)
  * 		return E2, s             # <<<<<<<<<<<<<<
@@ -3192,11 +3197,11 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
  * cdef class pyR2to3:
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 87; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 88; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -3208,7 +3213,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to2_sample_initial(struct __pyx_obj_5HqEvo_
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":84
+  /* "HqEvo.pyx":85
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to2.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3264,11 +3269,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_7sample_initial(PyObject *__pyx_v_self
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3276,12 +3281,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to2_7sample_initial(PyObject *__pyx_v_self
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to2.sample_initial", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3303,7 +3308,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_6sample_initial(struct __pyx_obj_5HqEv
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_initial", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_7pyR2to2_sample_initial(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 84; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_7pyR2to2_sample_initial(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 85; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3320,7 +3325,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to2_6sample_initial(struct __pyx_obj_5HqEv
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":91
+/* "HqEvo.pyx":92
  * cdef class pyR2to3:
  * 	cdef rates[Xsection_2to3] * cR2to3
  * 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):             # <<<<<<<<<<<<<<
@@ -3361,16 +3366,16 @@ static int __pyx_pw_5HqEvo_7pyR2to3_1__cinit__(PyObject *__pyx_v_self, PyObject 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_degeneracy)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_filename)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -3380,18 +3385,18 @@ static int __pyx_pw_5HqEvo_7pyR2to3_1__cinit__(PyObject *__pyx_v_self, PyObject 
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
     __pyx_v_x2to3 = ((struct __pyx_obj_5HqEvo_pyX2to3 *)values[0]);
-    __pyx_v_degeneracy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_degeneracy == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_degeneracy = __Pyx_PyInt_As_int(values[1]); if (unlikely((__pyx_v_degeneracy == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_filename = __pyx_convert_string_from_py_std__in_string(values[2]); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to3.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return -1;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x2to3), __pyx_ptype_5HqEvo_pyX2to3, 1, "x2to3", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 91; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_x2to3), __pyx_ptype_5HqEvo_pyX2to3, 1, "x2to3", 0))) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 92; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_r = __pyx_pf_5HqEvo_7pyR2to3___cinit__(((struct __pyx_obj_5HqEvo_pyR2to3 *)__pyx_v_self), __pyx_v_x2to3, __pyx_v_degeneracy, __pyx_v_filename);
 
   /* function exit code */
@@ -3408,7 +3413,7 @@ static int __pyx_pf_5HqEvo_7pyR2to3___cinit__(struct __pyx_obj_5HqEvo_pyR2to3 *_
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "HqEvo.pyx":92
+  /* "HqEvo.pyx":93
  * 	cdef rates[Xsection_2to3] * cR2to3
  * 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):
  * 		self.cR2to3 = new rates[Xsection_2to3](x2to3.cX2to3, degeneracy, filename)             # <<<<<<<<<<<<<<
@@ -3417,7 +3422,7 @@ static int __pyx_pf_5HqEvo_7pyR2to3___cinit__(struct __pyx_obj_5HqEvo_pyR2to3 *_
  */
   __pyx_v_self->cR2to3 = new rates<Xsection_2to3> (__pyx_v_x2to3->cX2to3, __pyx_v_degeneracy, __pyx_v_filename);
 
-  /* "HqEvo.pyx":91
+  /* "HqEvo.pyx":92
  * cdef class pyR2to3:
  * 	cdef rates[Xsection_2to3] * cR2to3
  * 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):             # <<<<<<<<<<<<<<
@@ -3431,7 +3436,7 @@ static int __pyx_pf_5HqEvo_7pyR2to3___cinit__(struct __pyx_obj_5HqEvo_pyR2to3 *_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":93
+/* "HqEvo.pyx":94
  * 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):
  * 		self.cR2to3 = new rates[Xsection_2to3](x2to3.cX2to3, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3460,12 +3465,12 @@ static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_calculate); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to3_3calculate)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3480,7 +3485,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3491,11 +3496,11 @@ static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3504,7 +3509,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":94
+  /* "HqEvo.pyx":95
  * 		self.cR2to3 = new rates[Xsection_2to3](x2to3.cX2to3, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to3.calculate(E1, Temp)             # <<<<<<<<<<<<<<
@@ -3514,7 +3519,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_calculate(struct __pyx_obj_5HqEvo_pyR2to3 
   __pyx_r = __pyx_v_self->cR2to3->calculate(__pyx_v_E1, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":93
+  /* "HqEvo.pyx":94
  * 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):
  * 		self.cR2to3 = new rates[Xsection_2to3](x2to3.cX2to3, degeneracy, filename)
  * 	cpdef double calculate(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3569,11 +3574,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_3calculate(PyObject *__pyx_v_self, PyO
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "calculate") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3581,12 +3586,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_3calculate(PyObject *__pyx_v_self, PyO
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("calculate", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to3.calculate", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3608,7 +3613,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_2calculate(struct __pyx_obj_5HqEvo_pyR
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("calculate", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to3_calculate(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 93; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to3_calculate(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 94; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3625,7 +3630,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_2calculate(struct __pyx_obj_5HqEvo_pyR
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":95
+/* "HqEvo.pyx":96
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to3.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3654,12 +3659,12 @@ static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpR); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_interpR); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to3_5interpR)) {
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3674,7 +3679,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3685,11 +3690,11 @@ static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_9 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_r = __pyx_t_9;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -3698,7 +3703,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":96
+  /* "HqEvo.pyx":97
  * 		return self.cR2to3.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to3.interpR(E1, Temp)             # <<<<<<<<<<<<<<
@@ -3708,7 +3713,7 @@ static double __pyx_f_5HqEvo_7pyR2to3_interpR(struct __pyx_obj_5HqEvo_pyR2to3 *_
   __pyx_r = __pyx_v_self->cR2to3->interpR(__pyx_v_E1, __pyx_v_Temp);
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":95
+  /* "HqEvo.pyx":96
  * 	cpdef double calculate(self, double E1, double Temp):
  * 		return self.cR2to3.calculate(E1, Temp)
  * 	cpdef double interpR(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3763,11 +3768,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_5interpR(PyObject *__pyx_v_self, PyObj
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpR") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "interpR") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -3775,12 +3780,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_5interpR(PyObject *__pyx_v_self, PyObj
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("interpR", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to3.interpR", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -3802,7 +3807,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_4interpR(struct __pyx_obj_5HqEvo_pyR2t
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("interpR", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to3_interpR(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 95; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_f_5HqEvo_7pyR2to3_interpR(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1)); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 96; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -3819,7 +3824,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_4interpR(struct __pyx_obj_5HqEvo_pyR2t
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":97
+/* "HqEvo.pyx":98
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to3.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3849,13 +3854,13 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_7pyR2to3_7sample_initial)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_Temp); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
@@ -3870,7 +3875,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
           __pyx_t_7 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_8);
       if (__pyx_t_6) {
         __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
@@ -3881,7 +3886,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
       PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
       __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
@@ -3893,7 +3898,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":98
+  /* "HqEvo.pyx":99
  * 		return self.cR2to3.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):
  * 		cdef double E2 = 0.0, s = 0.0             # <<<<<<<<<<<<<<
@@ -3903,7 +3908,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
   __pyx_v_E2 = 0.0;
   __pyx_v_s = 0.0;
 
-  /* "HqEvo.pyx":99
+  /* "HqEvo.pyx":100
  * 	cpdef sample_initial(self, double E1, double Temp):
  * 		cdef double E2 = 0.0, s = 0.0
  * 		self.cR2to3.sample_initial(E1, Temp, E2, s)             # <<<<<<<<<<<<<<
@@ -3912,7 +3917,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
  */
   __pyx_v_self->cR2to3->sample_initial(__pyx_v_E1, __pyx_v_Temp, __pyx_v_E2, __pyx_v_s);
 
-  /* "HqEvo.pyx":100
+  /* "HqEvo.pyx":101
  * 		cdef double E2 = 0.0, s = 0.0
  * 		self.cR2to3.sample_initial(E1, Temp, E2, s)
  * 		return E2, s             # <<<<<<<<<<<<<<
@@ -3920,11 +3925,11 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
  * 
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_E2); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 100; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 101; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_5);
   __Pyx_GIVEREF(__pyx_t_1);
   PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_1);
@@ -3936,7 +3941,7 @@ static PyObject *__pyx_f_5HqEvo_7pyR2to3_sample_initial(struct __pyx_obj_5HqEvo_
   __pyx_t_5 = 0;
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":97
+  /* "HqEvo.pyx":98
  * 	cpdef double interpR(self, double E1, double Temp):
  * 		return self.cR2to3.interpR(E1, Temp)
  * 	cpdef sample_initial(self, double E1, double Temp):             # <<<<<<<<<<<<<<
@@ -3992,11 +3997,11 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_7sample_initial(PyObject *__pyx_v_self
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_Temp)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
       goto __pyx_L5_argtuple_error;
@@ -4004,12 +4009,12 @@ static PyObject *__pyx_pw_5HqEvo_7pyR2to3_7sample_initial(PyObject *__pyx_v_self
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_Temp = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_Temp == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.pyR2to3.sample_initial", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4031,7 +4036,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_6sample_initial(struct __pyx_obj_5HqEv
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_initial", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_7pyR2to3_sample_initial(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 97; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_7pyR2to3_sample_initial(__pyx_v_self, __pyx_v_E1, __pyx_v_Temp, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 98; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -4048,7 +4053,7 @@ static PyObject *__pyx_pf_5HqEvo_7pyR2to3_6sample_initial(struct __pyx_obj_5HqEv
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":109
+/* "HqEvo.pyx":110
  * 	cdef object X22list, X23list, R22list, R23list
  * 	cdef size_t Nchannels, Nelastic, Ninelastic
  * 	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, table_folder='./tables'):             # <<<<<<<<<<<<<<
@@ -4111,7 +4116,7 @@ static int __pyx_pw_5HqEvo_5HqEvo_1__cinit__(PyObject *__pyx_v_self, PyObject *_
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "__cinit__") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else {
       switch (PyTuple_GET_SIZE(__pyx_args)) {
@@ -4130,7 +4135,7 @@ static int __pyx_pw_5HqEvo_5HqEvo_1__cinit__(PyObject *__pyx_v_self, PyObject *_
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 109; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("__cinit__", 0, 0, 4, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.HqEvo.__cinit__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -4167,34 +4172,34 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__cinit__", 0);
 
-  /* "HqEvo.pyx":110
+  /* "HqEvo.pyx":111
  * 	cdef size_t Nchannels, Nelastic, Ninelastic
  * 	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, table_folder='./tables'):
  * 		self.elastic=elastic             # <<<<<<<<<<<<<<
  * 		self.inelastic=inelastic
  * 		self.X22list = []
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_elastic); if (unlikely((__pyx_t_1 == (bool)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 110; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_elastic); if (unlikely((__pyx_t_1 == (bool)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->elastic = __pyx_t_1;
 
-  /* "HqEvo.pyx":111
+  /* "HqEvo.pyx":112
  * 	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, table_folder='./tables'):
  * 		self.elastic=elastic
  * 		self.inelastic=inelastic             # <<<<<<<<<<<<<<
  * 		self.X22list = []
  * 		self.X23list = []
  */
-  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_inelastic); if (unlikely((__pyx_t_1 == (bool)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 111; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_v_inelastic); if (unlikely((__pyx_t_1 == (bool)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_v_self->inelastic = __pyx_t_1;
 
-  /* "HqEvo.pyx":112
+  /* "HqEvo.pyx":113
  * 		self.elastic=elastic
  * 		self.inelastic=inelastic
  * 		self.X22list = []             # <<<<<<<<<<<<<<
  * 		self.X23list = []
  * 		self.R22list = []
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 112; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_2);
   __Pyx_GOTREF(__pyx_v_self->X22list);
@@ -4202,14 +4207,14 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_v_self->X22list = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "HqEvo.pyx":113
+  /* "HqEvo.pyx":114
  * 		self.inelastic=inelastic
  * 		self.X22list = []
  * 		self.X23list = []             # <<<<<<<<<<<<<<
  * 		self.R22list = []
  * 		self.R23list = []
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 113; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_2);
   __Pyx_GOTREF(__pyx_v_self->X23list);
@@ -4217,14 +4222,14 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_v_self->X23list = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "HqEvo.pyx":114
+  /* "HqEvo.pyx":115
  * 		self.X22list = []
  * 		self.X23list = []
  * 		self.R22list = []             # <<<<<<<<<<<<<<
  * 		self.R23list = []
  * 		self.Nchannels = 0
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 114; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 115; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_2);
   __Pyx_GOTREF(__pyx_v_self->R22list);
@@ -4232,14 +4237,14 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_v_self->R22list = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "HqEvo.pyx":115
+  /* "HqEvo.pyx":116
  * 		self.X23list = []
  * 		self.R22list = []
  * 		self.R23list = []             # <<<<<<<<<<<<<<
  * 		self.Nchannels = 0
  * 		if not os.path.exists(table_folder):
  */
-  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 115; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 116; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_2);
   __Pyx_GOTREF(__pyx_v_self->R23list);
@@ -4247,7 +4252,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_v_self->R23list = __pyx_t_2;
   __pyx_t_2 = 0;
 
-  /* "HqEvo.pyx":116
+  /* "HqEvo.pyx":117
  * 		self.R22list = []
  * 		self.R23list = []
  * 		self.Nchannels = 0             # <<<<<<<<<<<<<<
@@ -4256,19 +4261,19 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
   __pyx_v_self->Nchannels = 0;
 
-  /* "HqEvo.pyx":117
+  /* "HqEvo.pyx":118
  * 		self.R23list = []
  * 		self.Nchannels = 0
  * 		if not os.path.exists(table_folder):             # <<<<<<<<<<<<<<
  * 			os.makedirs(table_folder)
  * 		if self.elastic:
  */
-  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_os); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_os); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
-  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_path); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_4);
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_exists); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_4, __pyx_n_s_exists); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_3);
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
   __pyx_t_4 = NULL;
@@ -4282,35 +4287,35 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     }
   }
   if (!__pyx_t_4) {
-    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_3, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
   } else {
-    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(1+1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_4); __pyx_t_4 = NULL;
     __Pyx_INCREF(__pyx_v_table_folder);
     __Pyx_GIVEREF(__pyx_v_table_folder);
     PyTuple_SET_ITEM(__pyx_t_5, 0+1, __pyx_v_table_folder);
-    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
   }
   __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 117; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_6 = __Pyx_PyObject_IsTrue(__pyx_t_2); if (unlikely(__pyx_t_6 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
   __pyx_t_7 = ((!__pyx_t_6) != 0);
   if (__pyx_t_7) {
 
-    /* "HqEvo.pyx":118
+    /* "HqEvo.pyx":119
  * 		self.Nchannels = 0
  * 		if not os.path.exists(table_folder):
  * 			os.makedirs(table_folder)             # <<<<<<<<<<<<<<
  * 		if self.elastic:
  * 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.dat"%table_folder)
  */
-    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_os); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_3 = __Pyx_GetModuleGlobalName(__pyx_n_s_os); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_makedirs); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_makedirs); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = NULL;
@@ -4324,23 +4329,23 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
       }
     }
     if (!__pyx_t_3) {
-      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_CallOneArg(__pyx_t_5, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
     } else {
-      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyTuple_New(1+1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
       __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_3); __pyx_t_3 = NULL;
       __Pyx_INCREF(__pyx_v_table_folder);
       __Pyx_GIVEREF(__pyx_v_table_folder);
       PyTuple_SET_ITEM(__pyx_t_4, 0+1, __pyx_v_table_folder);
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 118; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_4, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 119; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     }
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":117
+    /* "HqEvo.pyx":118
  * 		self.R23list = []
  * 		self.Nchannels = 0
  * 		if not os.path.exists(table_folder):             # <<<<<<<<<<<<<<
@@ -4349,7 +4354,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
   }
 
-  /* "HqEvo.pyx":119
+  /* "HqEvo.pyx":120
  * 		if not os.path.exists(table_folder):
  * 			os.makedirs(table_folder)
  * 		if self.elastic:             # <<<<<<<<<<<<<<
@@ -4359,16 +4364,16 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_t_7 = (__pyx_v_self->elastic != 0);
   if (__pyx_t_7) {
 
-    /* "HqEvo.pyx":120
+    /* "HqEvo.pyx":121
  * 			os.makedirs(table_folder)
  * 		if self.elastic:
  * 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.dat"%table_folder)
  * 			rQq2Qq = pyR2to2(xQq2Qq, 3*4, "%s/RQq2Qq.dat"%table_folder)
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQq2Qq_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQq2Qq_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(__pyx_kp_s_Qq_Qq);
     __Pyx_GIVEREF(__pyx_kp_s_Qq_Qq);
@@ -4379,22 +4384,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 120; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_xQq2Qq = ((struct __pyx_obj_5HqEvo_pyX2to2 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":121
+    /* "HqEvo.pyx":122
  * 		if self.elastic:
  * 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.dat"%table_folder)
  * 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			rQq2Qq = pyR2to2(xQq2Qq, 3*4, "%s/RQq2Qq.dat"%table_folder)
  * 			rQg2Qg = pyR2to2(xQg2Qg, 8*2, "%s/RQg2Qg.dat"%table_folder)
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQg2Qg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQg2Qg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(__pyx_kp_s_Qg_Qg);
     __Pyx_GIVEREF(__pyx_kp_s_Qg_Qg);
@@ -4405,22 +4410,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 121; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_xQg2Qg = ((struct __pyx_obj_5HqEvo_pyX2to2 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":122
+    /* "HqEvo.pyx":123
  * 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.dat"%table_folder)
  * 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.dat"%table_folder)
  * 			rQq2Qq = pyR2to2(xQq2Qq, 3*4, "%s/RQq2Qq.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			rQg2Qg = pyR2to2(xQg2Qg, 8*2, "%s/RQg2Qg.dat"%table_folder)
  * 			self.X22list = [xQq2Qq, xQg2Qg]
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQq2Qq_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQq2Qq_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQq2Qq));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQq2Qq));
@@ -4431,22 +4436,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 122; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_rQq2Qq = ((struct __pyx_obj_5HqEvo_pyR2to2 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":123
+    /* "HqEvo.pyx":124
  * 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.dat"%table_folder)
  * 			rQq2Qq = pyR2to2(xQq2Qq, 3*4, "%s/RQq2Qq.dat"%table_folder)
  * 			rQg2Qg = pyR2to2(xQg2Qg, 8*2, "%s/RQg2Qg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			self.X22list = [xQq2Qq, xQg2Qg]
  * 			self.R22list = [rQq2Qq, rQg2Qg]
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQg2Qg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQg2Qg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQg2Qg));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQg2Qg));
@@ -4457,20 +4462,20 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 123; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to2), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_rQg2Qg = ((struct __pyx_obj_5HqEvo_pyR2to2 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":124
+    /* "HqEvo.pyx":125
  * 			rQq2Qq = pyR2to2(xQq2Qq, 3*4, "%s/RQq2Qq.dat"%table_folder)
  * 			rQg2Qg = pyR2to2(xQg2Qg, 8*2, "%s/RQg2Qg.dat"%table_folder)
  * 			self.X22list = [xQq2Qq, xQg2Qg]             # <<<<<<<<<<<<<<
  * 			self.R22list = [rQq2Qq, rQg2Qg]
  * 			self.Nelastic = len(self.X22list)
  */
-    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 124; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQq2Qq));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQq2Qq));
@@ -4484,14 +4489,14 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __pyx_v_self->X22list = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":125
+    /* "HqEvo.pyx":126
  * 			rQg2Qg = pyR2to2(xQg2Qg, 8*2, "%s/RQg2Qg.dat"%table_folder)
  * 			self.X22list = [xQq2Qq, xQg2Qg]
  * 			self.R22list = [rQq2Qq, rQg2Qg]             # <<<<<<<<<<<<<<
  * 			self.Nelastic = len(self.X22list)
  * 			self.Nchannels += self.Nelastic
  */
-    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 125; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_rQq2Qq));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_rQq2Qq));
@@ -4505,7 +4510,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __pyx_v_self->R22list = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":126
+    /* "HqEvo.pyx":127
  * 			self.X22list = [xQq2Qq, xQg2Qg]
  * 			self.R22list = [rQq2Qq, rQg2Qg]
  * 			self.Nelastic = len(self.X22list)             # <<<<<<<<<<<<<<
@@ -4514,11 +4519,11 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
     __pyx_t_2 = __pyx_v_self->X22list;
     __Pyx_INCREF(__pyx_t_2);
-    __pyx_t_8 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_8 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 126; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_8 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 127; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_self->Nelastic = __pyx_t_8;
 
-    /* "HqEvo.pyx":127
+    /* "HqEvo.pyx":128
  * 			self.R22list = [rQq2Qq, rQg2Qg]
  * 			self.Nelastic = len(self.X22list)
  * 			self.Nchannels += self.Nelastic             # <<<<<<<<<<<<<<
@@ -4527,7 +4532,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
     __pyx_v_self->Nchannels = (__pyx_v_self->Nchannels + __pyx_v_self->Nelastic);
 
-    /* "HqEvo.pyx":119
+    /* "HqEvo.pyx":120
  * 		if not os.path.exists(table_folder):
  * 			os.makedirs(table_folder)
  * 		if self.elastic:             # <<<<<<<<<<<<<<
@@ -4536,7 +4541,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
   }
 
-  /* "HqEvo.pyx":128
+  /* "HqEvo.pyx":129
  * 			self.Nelastic = len(self.X22list)
  * 			self.Nchannels += self.Nelastic
  * 		if self.inelastic:             # <<<<<<<<<<<<<<
@@ -4546,16 +4551,16 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   __pyx_t_7 = (__pyx_v_self->inelastic != 0);
   if (__pyx_t_7) {
 
-    /* "HqEvo.pyx":129
+    /* "HqEvo.pyx":130
  * 			self.Nchannels += self.Nelastic
  * 		if self.inelastic:
  * 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
  * 			rQq2Qqg = pyR2to3(xQq2Qqg, 3*4, "%s/RQq2Qqg.dat"%table_folder)
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQq2Qqg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQq2Qqg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(__pyx_kp_s_Qq_Qqg);
     __Pyx_GIVEREF(__pyx_kp_s_Qq_Qqg);
@@ -4566,22 +4571,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 129; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_xQq2Qqg = ((struct __pyx_obj_5HqEvo_pyX2to3 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":130
+    /* "HqEvo.pyx":131
  * 		if self.inelastic:
  * 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)
  * 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			rQq2Qqg = pyR2to3(xQq2Qqg, 3*4, "%s/RQq2Qqg.dat"%table_folder)
  * 			rQg2Qgg = pyR2to3(xQg2Qgg, 8*2, "%s/RQg2Qgg.dat"%table_folder)
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQg2Qgg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_XQg2Qgg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(__pyx_kp_s_Qg_Qgg);
     __Pyx_GIVEREF(__pyx_kp_s_Qg_Qgg);
@@ -4592,22 +4597,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 130; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyX2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_xQg2Qgg = ((struct __pyx_obj_5HqEvo_pyX2to3 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":131
+    /* "HqEvo.pyx":132
  * 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)
  * 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
  * 			rQq2Qqg = pyR2to3(xQq2Qqg, 3*4, "%s/RQq2Qqg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			rQg2Qgg = pyR2to3(xQg2Qgg, 8*2, "%s/RQg2Qgg.dat"%table_folder)
  * 			self.X23list = [xQq2Qqg, xQg2Qgg]
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQq2Qqg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQq2Qqg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQq2Qqg));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQq2Qqg));
@@ -4618,22 +4623,22 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 131; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_rQq2Qqg = ((struct __pyx_obj_5HqEvo_pyR2to3 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":132
+    /* "HqEvo.pyx":133
  * 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
  * 			rQq2Qqg = pyR2to3(xQq2Qqg, 3*4, "%s/RQq2Qqg.dat"%table_folder)
  * 			rQg2Qgg = pyR2to3(xQg2Qgg, 8*2, "%s/RQg2Qgg.dat"%table_folder)             # <<<<<<<<<<<<<<
  * 			self.X23list = [xQq2Qqg, xQg2Qgg]
  * 			self.R23list = [rQq2Qqg, rQg2Qgg]
  */
-    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQg2Qgg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyString_Format(__pyx_kp_s_s_RQg2Qgg_dat, __pyx_v_table_folder); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQg2Qgg));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQg2Qgg));
@@ -4644,20 +4649,20 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __Pyx_GIVEREF(__pyx_t_2);
     PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_t_2);
     __pyx_t_2 = 0;
-    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 132; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = __Pyx_PyObject_Call(((PyObject *)__pyx_ptype_5HqEvo_pyR2to3), __pyx_t_5, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __pyx_v_rQg2Qgg = ((struct __pyx_obj_5HqEvo_pyR2to3 *)__pyx_t_2);
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":133
+    /* "HqEvo.pyx":134
  * 			rQq2Qqg = pyR2to3(xQq2Qqg, 3*4, "%s/RQq2Qqg.dat"%table_folder)
  * 			rQg2Qgg = pyR2to3(xQg2Qgg, 8*2, "%s/RQg2Qgg.dat"%table_folder)
  * 			self.X23list = [xQq2Qqg, xQg2Qgg]             # <<<<<<<<<<<<<<
  * 			self.R23list = [rQq2Qqg, rQg2Qgg]
  * 			self.Ninelastic = len(self.X23list)
  */
-    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 133; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_xQq2Qqg));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_xQq2Qqg));
@@ -4671,14 +4676,14 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __pyx_v_self->X23list = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":134
+    /* "HqEvo.pyx":135
  * 			rQg2Qgg = pyR2to3(xQg2Qgg, 8*2, "%s/RQg2Qgg.dat"%table_folder)
  * 			self.X23list = [xQq2Qqg, xQg2Qgg]
  * 			self.R23list = [rQq2Qqg, rQg2Qgg]             # <<<<<<<<<<<<<<
  * 			self.Ninelastic = len(self.X23list)
  * 			self.Nchannels += self.Ninelastic
  */
-    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 134; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyList_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(((PyObject *)__pyx_v_rQq2Qqg));
     __Pyx_GIVEREF(((PyObject *)__pyx_v_rQq2Qqg));
@@ -4692,7 +4697,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
     __pyx_v_self->R23list = __pyx_t_2;
     __pyx_t_2 = 0;
 
-    /* "HqEvo.pyx":135
+    /* "HqEvo.pyx":136
  * 			self.X23list = [xQq2Qqg, xQg2Qgg]
  * 			self.R23list = [rQq2Qqg, rQg2Qgg]
  * 			self.Ninelastic = len(self.X23list)             # <<<<<<<<<<<<<<
@@ -4701,20 +4706,20 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
     __pyx_t_2 = __pyx_v_self->X23list;
     __Pyx_INCREF(__pyx_t_2);
-    __pyx_t_8 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_8 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 135; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_8 = PyObject_Length(__pyx_t_2); if (unlikely(__pyx_t_8 == -1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 136; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
     __pyx_v_self->Ninelastic = __pyx_t_8;
 
-    /* "HqEvo.pyx":136
+    /* "HqEvo.pyx":137
  * 			self.R23list = [rQq2Qqg, rQg2Qgg]
  * 			self.Ninelastic = len(self.X23list)
  * 			self.Nchannels += self.Ninelastic             # <<<<<<<<<<<<<<
  * 
- * 	cpdef sample_channel(self, double E1, double T):
+ * 	cpdef sample_channel(self, double E1, double T, double dt_max):
  */
     __pyx_v_self->Nchannels = (__pyx_v_self->Nchannels + __pyx_v_self->Ninelastic);
 
-    /* "HqEvo.pyx":128
+    /* "HqEvo.pyx":129
  * 			self.Nelastic = len(self.X22list)
  * 			self.Nchannels += self.Nelastic
  * 		if self.inelastic:             # <<<<<<<<<<<<<<
@@ -4723,7 +4728,7 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
  */
   }
 
-  /* "HqEvo.pyx":109
+  /* "HqEvo.pyx":110
  * 	cdef object X22list, X23list, R22list, R23list
  * 	cdef size_t Nchannels, Nelastic, Ninelastic
  * 	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, table_folder='./tables'):             # <<<<<<<<<<<<<<
@@ -4754,16 +4759,16 @@ static int __pyx_pf_5HqEvo_5HqEvo___cinit__(struct __pyx_obj_5HqEvo_HqEvo *__pyx
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":138
+/* "HqEvo.pyx":139
  * 			self.Nchannels += self.Ninelastic
  * 
- * 	cpdef sample_channel(self, double E1, double T):             # <<<<<<<<<<<<<<
+ * 	cpdef sample_channel(self, double E1, double T, double dt_max):             # <<<<<<<<<<<<<<
  * 		cdef double r, psum = 0.0, dt, Pmax = 0.2
  * 		cdef int i=0, channel_index
  */
 
 static PyObject *__pyx_pw_5HqEvo_5HqEvo_3sample_channel(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, int __pyx_skip_dispatch) {
+static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, double __pyx_v_dt_max, int __pyx_skip_dispatch) {
   double __pyx_v_r;
   double __pyx_v_psum;
   double __pyx_v_dt;
@@ -4780,12 +4785,12 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
   PyObject *__pyx_t_6 = NULL;
-  Py_ssize_t __pyx_t_7;
-  PyObject *__pyx_t_8 = NULL;
-  int __pyx_t_9;
-  PyObject *(*__pyx_t_10)(PyObject *);
-  Py_ssize_t __pyx_t_11;
-  PyObject *__pyx_t_12 = NULL;
+  PyObject *__pyx_t_7 = NULL;
+  Py_ssize_t __pyx_t_8;
+  PyObject *__pyx_t_9 = NULL;
+  int __pyx_t_10;
+  PyObject *(*__pyx_t_11)(PyObject *);
+  Py_ssize_t __pyx_t_12;
   double __pyx_t_13;
   double __pyx_t_14;
   size_t __pyx_t_15;
@@ -4798,42 +4803,47 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_5HqEvo_3sample_channel)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_dt_max); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_1);
-      __pyx_t_5 = __pyx_t_1; __pyx_t_6 = NULL;
-      __pyx_t_7 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_5))) {
-        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_5);
-        if (likely(__pyx_t_6)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_5);
-          __Pyx_INCREF(__pyx_t_6);
+      __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
+      __pyx_t_8 = 0;
+      if (CYTHON_COMPILING_IN_CPYTHON && unlikely(PyMethod_Check(__pyx_t_6))) {
+        __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
+        if (likely(__pyx_t_7)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
+          __Pyx_INCREF(__pyx_t_7);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_5, function);
-          __pyx_t_7 = 1;
+          __Pyx_DECREF_SET(__pyx_t_6, function);
+          __pyx_t_8 = 1;
         }
       }
-      __pyx_t_8 = PyTuple_New(2+__pyx_t_7); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_8);
-      if (__pyx_t_6) {
-        __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_8, 0, __pyx_t_6); __pyx_t_6 = NULL;
+      __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      if (__pyx_t_7) {
+        __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
       }
       __Pyx_GIVEREF(__pyx_t_3);
-      PyTuple_SET_ITEM(__pyx_t_8, 0+__pyx_t_7, __pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_9, 0+__pyx_t_8, __pyx_t_3);
       __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_8, 1+__pyx_t_7, __pyx_t_4);
+      PyTuple_SET_ITEM(__pyx_t_9, 1+__pyx_t_8, __pyx_t_4);
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_9, 2+__pyx_t_8, __pyx_t_5);
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_5, __pyx_t_8, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = 0;
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       __pyx_r = __pyx_t_2;
       __pyx_t_2 = 0;
       __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
@@ -4842,9 +4852,9 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":139
+  /* "HqEvo.pyx":140
  * 
- * 	cpdef sample_channel(self, double E1, double T):
+ * 	cpdef sample_channel(self, double E1, double T, double dt_max):
  * 		cdef double r, psum = 0.0, dt, Pmax = 0.2             # <<<<<<<<<<<<<<
  * 		cdef int i=0, channel_index
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
@@ -4852,8 +4862,8 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   __pyx_v_psum = 0.0;
   __pyx_v_Pmax = 0.2;
 
-  /* "HqEvo.pyx":140
- * 	cpdef sample_channel(self, double E1, double T):
+  /* "HqEvo.pyx":141
+ * 	cpdef sample_channel(self, double E1, double T, double dt_max):
  * 		cdef double r, psum = 0.0, dt, Pmax = 0.2
  * 		cdef int i=0, channel_index             # <<<<<<<<<<<<<<
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
@@ -4861,7 +4871,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
   __pyx_v_i = 0;
 
-  /* "HqEvo.pyx":141
+  /* "HqEvo.pyx":142
  * 		cdef double r, psum = 0.0, dt, Pmax = 0.2
  * 		cdef int i=0, channel_index
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))             # <<<<<<<<<<<<<<
@@ -4870,17 +4880,17 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
   __pyx_v_p = ((double *)malloc((__pyx_v_self->Nchannels * (sizeof(double)))));
 
-  /* "HqEvo.pyx":142
+  /* "HqEvo.pyx":143
  * 		cdef int i=0, channel_index
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
  * 		if self.elastic:             # <<<<<<<<<<<<<<
  * 			for Rchannel in self.R22list:
  * 				psum += Rchannel.interpR(E1, T)
  */
-  __pyx_t_9 = (__pyx_v_self->elastic != 0);
-  if (__pyx_t_9) {
+  __pyx_t_10 = (__pyx_v_self->elastic != 0);
+  if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":143
+    /* "HqEvo.pyx":144
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
  * 		if self.elastic:
  * 			for Rchannel in self.R22list:             # <<<<<<<<<<<<<<
@@ -4888,39 +4898,39 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  * 				p[i] = psum
  */
     if (likely(PyList_CheckExact(__pyx_v_self->R22list)) || PyTuple_CheckExact(__pyx_v_self->R22list)) {
-      __pyx_t_1 = __pyx_v_self->R22list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
-      __pyx_t_10 = NULL;
+      __pyx_t_1 = __pyx_v_self->R22list; __Pyx_INCREF(__pyx_t_1); __pyx_t_8 = 0;
+      __pyx_t_11 = NULL;
     } else {
-      __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->R22list); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->R22list); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_10 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     for (;;) {
-      if (likely(!__pyx_t_10)) {
+      if (likely(!__pyx_t_11)) {
         if (likely(PyList_CheckExact(__pyx_t_1))) {
-          if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
+          if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_2 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_2); __pyx_t_8++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         } else {
-          if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+          if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_2); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_2 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_2); __pyx_t_8++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_2 = PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           __Pyx_GOTREF(__pyx_t_2);
           #endif
         }
       } else {
-        __pyx_t_2 = __pyx_t_10(__pyx_t_1);
+        __pyx_t_2 = __pyx_t_11(__pyx_t_1);
         if (unlikely(!__pyx_t_2)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 143; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           }
           break;
         }
@@ -4929,57 +4939,57 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
       __Pyx_XDECREF_SET(__pyx_v_Rchannel, __pyx_t_2);
       __pyx_t_2 = 0;
 
-      /* "HqEvo.pyx":144
+      /* "HqEvo.pyx":145
  * 		if self.elastic:
  * 			for Rchannel in self.R22list:
  * 				psum += Rchannel.interpR(E1, T)             # <<<<<<<<<<<<<<
  * 				p[i] = psum
  * 				i += 1
  */
-      __pyx_t_2 = PyFloat_FromDouble(__pyx_v_psum); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = PyFloat_FromDouble(__pyx_v_psum); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_v_Rchannel, __pyx_n_s_interpR); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_Rchannel, __pyx_n_s_interpR); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_6 = NULL;
-      __pyx_t_11 = 0;
-      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_8))) {
-        __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_8);
-        if (likely(__pyx_t_6)) {
-          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_8);
-          __Pyx_INCREF(__pyx_t_6);
+      __pyx_t_3 = NULL;
+      __pyx_t_12 = 0;
+      if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_9))) {
+        __pyx_t_3 = PyMethod_GET_SELF(__pyx_t_9);
+        if (likely(__pyx_t_3)) {
+          PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_9);
+          __Pyx_INCREF(__pyx_t_3);
           __Pyx_INCREF(function);
-          __Pyx_DECREF_SET(__pyx_t_8, function);
-          __pyx_t_11 = 1;
+          __Pyx_DECREF_SET(__pyx_t_9, function);
+          __pyx_t_12 = 1;
         }
       }
-      __pyx_t_12 = PyTuple_New(2+__pyx_t_11); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_12);
-      if (__pyx_t_6) {
-        __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_12, 0, __pyx_t_6); __pyx_t_6 = NULL;
+      __pyx_t_7 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      if (__pyx_t_3) {
+        __Pyx_GIVEREF(__pyx_t_3); PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_3); __pyx_t_3 = NULL;
       }
+      __Pyx_GIVEREF(__pyx_t_5);
+      PyTuple_SET_ITEM(__pyx_t_7, 0+__pyx_t_12, __pyx_t_5);
       __Pyx_GIVEREF(__pyx_t_4);
-      PyTuple_SET_ITEM(__pyx_t_12, 0+__pyx_t_11, __pyx_t_4);
-      __Pyx_GIVEREF(__pyx_t_3);
-      PyTuple_SET_ITEM(__pyx_t_12, 1+__pyx_t_11, __pyx_t_3);
+      PyTuple_SET_ITEM(__pyx_t_7, 1+__pyx_t_12, __pyx_t_4);
+      __pyx_t_5 = 0;
       __pyx_t_4 = 0;
-      __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_12, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_12); __pyx_t_12 = 0;
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __pyx_t_8 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_5); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_8);
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_9, __pyx_t_7, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_9 = PyNumber_InPlaceAdd(__pyx_t_2, __pyx_t_6); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_8); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 144; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_9); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 145; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __pyx_v_psum = __pyx_t_13;
 
-      /* "HqEvo.pyx":145
+      /* "HqEvo.pyx":146
  * 			for Rchannel in self.R22list:
  * 				psum += Rchannel.interpR(E1, T)
  * 				p[i] = psum             # <<<<<<<<<<<<<<
@@ -4988,7 +4998,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
       (__pyx_v_p[__pyx_v_i]) = __pyx_v_psum;
 
-      /* "HqEvo.pyx":146
+      /* "HqEvo.pyx":147
  * 				psum += Rchannel.interpR(E1, T)
  * 				p[i] = psum
  * 				i += 1             # <<<<<<<<<<<<<<
@@ -4997,7 +5007,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
       __pyx_v_i = (__pyx_v_i + 1);
 
-      /* "HqEvo.pyx":143
+      /* "HqEvo.pyx":144
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
  * 		if self.elastic:
  * 			for Rchannel in self.R22list:             # <<<<<<<<<<<<<<
@@ -5007,7 +5017,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "HqEvo.pyx":142
+    /* "HqEvo.pyx":143
  * 		cdef int i=0, channel_index
  * 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
  * 		if self.elastic:             # <<<<<<<<<<<<<<
@@ -5016,17 +5026,17 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":147
+  /* "HqEvo.pyx":148
  * 				p[i] = psum
  * 				i += 1
  * 		if self.inelastic:             # <<<<<<<<<<<<<<
  * 			for Rchannel in self.R23list:
  * 				psum += Rchannel.interpR(E1, T)
  */
-  __pyx_t_9 = (__pyx_v_self->inelastic != 0);
-  if (__pyx_t_9) {
+  __pyx_t_10 = (__pyx_v_self->inelastic != 0);
+  if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":148
+    /* "HqEvo.pyx":149
  * 				i += 1
  * 		if self.inelastic:
  * 			for Rchannel in self.R23list:             # <<<<<<<<<<<<<<
@@ -5034,98 +5044,98 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  * 				p[i] = psum
  */
     if (likely(PyList_CheckExact(__pyx_v_self->R23list)) || PyTuple_CheckExact(__pyx_v_self->R23list)) {
-      __pyx_t_1 = __pyx_v_self->R23list; __Pyx_INCREF(__pyx_t_1); __pyx_t_7 = 0;
-      __pyx_t_10 = NULL;
+      __pyx_t_1 = __pyx_v_self->R23list; __Pyx_INCREF(__pyx_t_1); __pyx_t_8 = 0;
+      __pyx_t_11 = NULL;
     } else {
-      __pyx_t_7 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->R23list); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_8 = -1; __pyx_t_1 = PyObject_GetIter(__pyx_v_self->R23list); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_1);
-      __pyx_t_10 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_10)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_11 = Py_TYPE(__pyx_t_1)->tp_iternext; if (unlikely(!__pyx_t_11)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     }
     for (;;) {
-      if (likely(!__pyx_t_10)) {
+      if (likely(!__pyx_t_11)) {
         if (likely(PyList_CheckExact(__pyx_t_1))) {
-          if (__pyx_t_7 >= PyList_GET_SIZE(__pyx_t_1)) break;
+          if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_8 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_8); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_9 = PyList_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_9); __pyx_t_8++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_8 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_9);
           #endif
         } else {
-          if (__pyx_t_7 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
+          if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_1)) break;
           #if CYTHON_COMPILING_IN_CPYTHON
-          __pyx_t_8 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_7); __Pyx_INCREF(__pyx_t_8); __pyx_t_7++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __pyx_t_9 = PyTuple_GET_ITEM(__pyx_t_1, __pyx_t_8); __Pyx_INCREF(__pyx_t_9); __pyx_t_8++; if (unlikely(0 < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           #else
-          __pyx_t_8 = PySequence_ITEM(__pyx_t_1, __pyx_t_7); __pyx_t_7++; if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-          __Pyx_GOTREF(__pyx_t_8);
+          __pyx_t_9 = PySequence_ITEM(__pyx_t_1, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+          __Pyx_GOTREF(__pyx_t_9);
           #endif
         }
       } else {
-        __pyx_t_8 = __pyx_t_10(__pyx_t_1);
-        if (unlikely(!__pyx_t_8)) {
+        __pyx_t_9 = __pyx_t_11(__pyx_t_1);
+        if (unlikely(!__pyx_t_9)) {
           PyObject* exc_type = PyErr_Occurred();
           if (exc_type) {
             if (likely(exc_type == PyExc_StopIteration || PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 148; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+            else {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
           }
           break;
         }
-        __Pyx_GOTREF(__pyx_t_8);
+        __Pyx_GOTREF(__pyx_t_9);
       }
-      __Pyx_XDECREF_SET(__pyx_v_Rchannel, __pyx_t_8);
-      __pyx_t_8 = 0;
+      __Pyx_XDECREF_SET(__pyx_v_Rchannel, __pyx_t_9);
+      __pyx_t_9 = 0;
 
-      /* "HqEvo.pyx":149
+      /* "HqEvo.pyx":150
  * 		if self.inelastic:
  * 			for Rchannel in self.R23list:
  * 				psum += Rchannel.interpR(E1, T)             # <<<<<<<<<<<<<<
  * 				p[i] = psum
  * 				i += 1
  */
-      __pyx_t_8 = PyFloat_FromDouble(__pyx_v_psum); if (unlikely(!__pyx_t_8)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_8);
-      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_Rchannel, __pyx_n_s_interpR); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = PyFloat_FromDouble(__pyx_v_psum); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_9);
+      __pyx_t_2 = __Pyx_PyObject_GetAttrStr(__pyx_v_Rchannel, __pyx_n_s_interpR); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __pyx_t_12 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_12)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_12);
-      __pyx_t_3 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = NULL;
-      __pyx_t_11 = 0;
+      __pyx_t_7 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_7)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_7);
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = NULL;
+      __pyx_t_12 = 0;
       if (CYTHON_COMPILING_IN_CPYTHON && likely(PyMethod_Check(__pyx_t_2))) {
-        __pyx_t_4 = PyMethod_GET_SELF(__pyx_t_2);
-        if (likely(__pyx_t_4)) {
+        __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_2);
+        if (likely(__pyx_t_5)) {
           PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_2);
-          __Pyx_INCREF(__pyx_t_4);
+          __Pyx_INCREF(__pyx_t_5);
           __Pyx_INCREF(function);
           __Pyx_DECREF_SET(__pyx_t_2, function);
-          __pyx_t_11 = 1;
+          __pyx_t_12 = 1;
         }
       }
-      __pyx_t_6 = PyTuple_New(2+__pyx_t_11); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_6);
-      if (__pyx_t_4) {
-        __Pyx_GIVEREF(__pyx_t_4); PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_4); __pyx_t_4 = NULL;
+      __pyx_t_3 = PyTuple_New(2+__pyx_t_12); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_3);
+      if (__pyx_t_5) {
+        __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_3, 0, __pyx_t_5); __pyx_t_5 = NULL;
       }
-      __Pyx_GIVEREF(__pyx_t_12);
-      PyTuple_SET_ITEM(__pyx_t_6, 0+__pyx_t_11, __pyx_t_12);
-      __Pyx_GIVEREF(__pyx_t_3);
-      PyTuple_SET_ITEM(__pyx_t_6, 1+__pyx_t_11, __pyx_t_3);
-      __pyx_t_12 = 0;
-      __pyx_t_3 = 0;
-      __pyx_t_5 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_6, NULL); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-      __Pyx_GOTREF(__pyx_t_5);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_GIVEREF(__pyx_t_7);
+      PyTuple_SET_ITEM(__pyx_t_3, 0+__pyx_t_12, __pyx_t_7);
+      __Pyx_GIVEREF(__pyx_t_4);
+      PyTuple_SET_ITEM(__pyx_t_3, 1+__pyx_t_12, __pyx_t_4);
+      __pyx_t_7 = 0;
+      __pyx_t_4 = 0;
+      __pyx_t_6 = __Pyx_PyObject_Call(__pyx_t_2, __pyx_t_3, NULL); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_GOTREF(__pyx_t_6);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-      __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_t_8, __pyx_t_5); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = PyNumber_InPlaceAdd(__pyx_t_9, __pyx_t_6); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
-      __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 149; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __pyx_t_13 = __pyx_PyFloat_AsDouble(__pyx_t_2); if (unlikely((__pyx_t_13 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 150; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
       __pyx_v_psum = __pyx_t_13;
 
-      /* "HqEvo.pyx":150
+      /* "HqEvo.pyx":151
  * 			for Rchannel in self.R23list:
  * 				psum += Rchannel.interpR(E1, T)
  * 				p[i] = psum             # <<<<<<<<<<<<<<
@@ -5134,16 +5144,16 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
       (__pyx_v_p[__pyx_v_i]) = __pyx_v_psum;
 
-      /* "HqEvo.pyx":151
+      /* "HqEvo.pyx":152
  * 				psum += Rchannel.interpR(E1, T)
  * 				p[i] = psum
  * 				i += 1             # <<<<<<<<<<<<<<
  * 
- * 		dt = Pmax/psum
+ * 		dt = fmin(Pmax/psum, dt_max)
  */
       __pyx_v_i = (__pyx_v_i + 1);
 
-      /* "HqEvo.pyx":148
+      /* "HqEvo.pyx":149
  * 				i += 1
  * 		if self.inelastic:
  * 			for Rchannel in self.R23list:             # <<<<<<<<<<<<<<
@@ -5153,7 +5163,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
     }
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-    /* "HqEvo.pyx":147
+    /* "HqEvo.pyx":148
  * 				p[i] = psum
  * 				i += 1
  * 		if self.inelastic:             # <<<<<<<<<<<<<<
@@ -5162,22 +5172,22 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":153
+  /* "HqEvo.pyx":154
  * 				i += 1
  * 
- * 		dt = Pmax/psum             # <<<<<<<<<<<<<<
+ * 		dt = fmin(Pmax/psum, dt_max)             # <<<<<<<<<<<<<<
  * 		r = (<double>rand())/dt/RAND_MAX
  * 		if r >= p[self.Nchannels-1]:
  */
   if (unlikely(__pyx_v_psum == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 153; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
-  __pyx_v_dt = (__pyx_v_Pmax / __pyx_v_psum);
+  __pyx_v_dt = fmin((__pyx_v_Pmax / __pyx_v_psum), __pyx_v_dt_max);
 
-  /* "HqEvo.pyx":154
+  /* "HqEvo.pyx":155
  * 
- * 		dt = Pmax/psum
+ * 		dt = fmin(Pmax/psum, dt_max)
  * 		r = (<double>rand())/dt/RAND_MAX             # <<<<<<<<<<<<<<
  * 		if r >= p[self.Nchannels-1]:
  * 			return -1, dt
@@ -5185,26 +5195,26 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   __pyx_t_13 = ((double)rand());
   if (unlikely(__pyx_v_dt == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_t_14 = (__pyx_t_13 / __pyx_v_dt);
   if (unlikely(RAND_MAX == 0)) {
     PyErr_SetString(PyExc_ZeroDivisionError, "float division");
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 154; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 155; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
   __pyx_v_r = (__pyx_t_14 / RAND_MAX);
 
-  /* "HqEvo.pyx":155
- * 		dt = Pmax/psum
+  /* "HqEvo.pyx":156
+ * 		dt = fmin(Pmax/psum, dt_max)
  * 		r = (<double>rand())/dt/RAND_MAX
  * 		if r >= p[self.Nchannels-1]:             # <<<<<<<<<<<<<<
  * 			return -1, dt
  * 		for i in range(self.Nchannels):
  */
-  __pyx_t_9 = ((__pyx_v_r >= (__pyx_v_p[(__pyx_v_self->Nchannels - 1)])) != 0);
-  if (__pyx_t_9) {
+  __pyx_t_10 = ((__pyx_v_r >= (__pyx_v_p[(__pyx_v_self->Nchannels - 1)])) != 0);
+  if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":156
+    /* "HqEvo.pyx":157
  * 		r = (<double>rand())/dt/RAND_MAX
  * 		if r >= p[self.Nchannels-1]:
  * 			return -1, dt             # <<<<<<<<<<<<<<
@@ -5212,9 +5222,9 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  * 			if r < p[i]:
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dt); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dt); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 156; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyTuple_New(2); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
     __Pyx_INCREF(__pyx_int_neg_1);
     __Pyx_GIVEREF(__pyx_int_neg_1);
@@ -5226,8 +5236,8 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
     __pyx_t_2 = 0;
     goto __pyx_L0;
 
-    /* "HqEvo.pyx":155
- * 		dt = Pmax/psum
+    /* "HqEvo.pyx":156
+ * 		dt = fmin(Pmax/psum, dt_max)
  * 		r = (<double>rand())/dt/RAND_MAX
  * 		if r >= p[self.Nchannels-1]:             # <<<<<<<<<<<<<<
  * 			return -1, dt
@@ -5235,7 +5245,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":157
+  /* "HqEvo.pyx":158
  * 		if r >= p[self.Nchannels-1]:
  * 			return -1, dt
  * 		for i in range(self.Nchannels):             # <<<<<<<<<<<<<<
@@ -5246,17 +5256,17 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   for (__pyx_t_16 = 0; __pyx_t_16 < __pyx_t_15; __pyx_t_16+=1) {
     __pyx_v_i = __pyx_t_16;
 
-    /* "HqEvo.pyx":158
+    /* "HqEvo.pyx":159
  * 			return -1, dt
  * 		for i in range(self.Nchannels):
  * 			if r < p[i]:             # <<<<<<<<<<<<<<
  * 				channel_index = i
  * 				break
  */
-    __pyx_t_9 = ((__pyx_v_r < (__pyx_v_p[__pyx_v_i])) != 0);
-    if (__pyx_t_9) {
+    __pyx_t_10 = ((__pyx_v_r < (__pyx_v_p[__pyx_v_i])) != 0);
+    if (__pyx_t_10) {
 
-      /* "HqEvo.pyx":159
+      /* "HqEvo.pyx":160
  * 		for i in range(self.Nchannels):
  * 			if r < p[i]:
  * 				channel_index = i             # <<<<<<<<<<<<<<
@@ -5265,7 +5275,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
       __pyx_v_channel_index = __pyx_v_i;
 
-      /* "HqEvo.pyx":160
+      /* "HqEvo.pyx":161
  * 			if r < p[i]:
  * 				channel_index = i
  * 				break             # <<<<<<<<<<<<<<
@@ -5274,7 +5284,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  */
       goto __pyx_L11_break;
 
-      /* "HqEvo.pyx":158
+      /* "HqEvo.pyx":159
  * 			return -1, dt
  * 		for i in range(self.Nchannels):
  * 			if r < p[i]:             # <<<<<<<<<<<<<<
@@ -5285,7 +5295,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   }
   __pyx_L11_break:;
 
-  /* "HqEvo.pyx":161
+  /* "HqEvo.pyx":162
  * 				channel_index = i
  * 				break
  * 		return channel_index, dt             # <<<<<<<<<<<<<<
@@ -5293,26 +5303,26 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
  * 	cpdef sample_initial(self, int channel, double E1, double T):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_channel_index); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_2 = __Pyx_PyInt_From_int(__pyx_v_channel_index); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dt); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = PyFloat_FromDouble(__pyx_v_dt); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_5 = PyTuple_New(2); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 161; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __Pyx_GOTREF(__pyx_t_5);
+  __pyx_t_6 = PyTuple_New(2); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 162; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __Pyx_GOTREF(__pyx_t_6);
   __Pyx_GIVEREF(__pyx_t_2);
-  PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2);
+  PyTuple_SET_ITEM(__pyx_t_6, 0, __pyx_t_2);
   __Pyx_GIVEREF(__pyx_t_1);
-  PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_t_1);
+  PyTuple_SET_ITEM(__pyx_t_6, 1, __pyx_t_1);
   __pyx_t_2 = 0;
   __pyx_t_1 = 0;
-  __pyx_r = __pyx_t_5;
-  __pyx_t_5 = 0;
+  __pyx_r = __pyx_t_6;
+  __pyx_t_6 = 0;
   goto __pyx_L0;
 
-  /* "HqEvo.pyx":138
+  /* "HqEvo.pyx":139
  * 			self.Nchannels += self.Ninelastic
  * 
- * 	cpdef sample_channel(self, double E1, double T):             # <<<<<<<<<<<<<<
+ * 	cpdef sample_channel(self, double E1, double T, double dt_max):             # <<<<<<<<<<<<<<
  * 		cdef double r, psum = 0.0, dt, Pmax = 0.2
  * 		cdef int i=0, channel_index
  */
@@ -5325,8 +5335,8 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_channel(struct __pyx_obj_5HqEvo_Hq
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
   __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_XDECREF(__pyx_t_7);
+  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_AddTraceback("HqEvo.HqEvo.sample_channel", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
@@ -5341,6 +5351,7 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_3sample_channel(PyObject *__pyx_v_self, 
 static PyObject *__pyx_pw_5HqEvo_5HqEvo_3sample_channel(PyObject *__pyx_v_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   double __pyx_v_E1;
   double __pyx_v_T;
+  double __pyx_v_dt_max;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -5348,12 +5359,13 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_3sample_channel(PyObject *__pyx_v_self, 
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("sample_channel (wrapper)", 0);
   {
-    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_E1,&__pyx_n_s_T,0};
-    PyObject* values[2] = {0,0};
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_E1,&__pyx_n_s_T,&__pyx_n_s_dt_max,0};
+    PyObject* values[3] = {0,0,0};
     if (unlikely(__pyx_kwds)) {
       Py_ssize_t kw_args;
       const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
       switch (pos_args) {
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
         case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
         case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
         case  0: break;
@@ -5367,37 +5379,44 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_3sample_channel(PyObject *__pyx_v_self, 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_T)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_channel", 1, 2, 2, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_channel", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        }
+        case  2:
+        if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_dt_max)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("sample_channel", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_channel") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_channel") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
-    } else if (PyTuple_GET_SIZE(__pyx_args) != 2) {
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
     } else {
       values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_T = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[0]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_T = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_dt_max = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_dt_max == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_channel", 1, 2, 2, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_channel", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.HqEvo.sample_channel", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_5HqEvo_5HqEvo_2sample_channel(((struct __pyx_obj_5HqEvo_HqEvo *)__pyx_v_self), __pyx_v_E1, __pyx_v_T);
+  __pyx_r = __pyx_pf_5HqEvo_5HqEvo_2sample_channel(((struct __pyx_obj_5HqEvo_HqEvo *)__pyx_v_self), __pyx_v_E1, __pyx_v_T, __pyx_v_dt_max);
 
   /* function exit code */
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T) {
+static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_HqEvo *__pyx_v_self, double __pyx_v_E1, double __pyx_v_T, double __pyx_v_dt_max) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -5406,7 +5425,7 @@ static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_channel", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_channel(__pyx_v_self, __pyx_v_E1, __pyx_v_T, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 138; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_channel(__pyx_v_self, __pyx_v_E1, __pyx_v_T, __pyx_v_dt_max, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 139; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5423,7 +5442,7 @@ static PyObject *__pyx_pf_5HqEvo_5HqEvo_2sample_channel(struct __pyx_obj_5HqEvo_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":163
+/* "HqEvo.pyx":164
  * 		return channel_index, dt
  * 
  * 	cpdef sample_initial(self, int channel, double E1, double T):             # <<<<<<<<<<<<<<
@@ -5456,15 +5475,15 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_5HqEvo_5sample_initial)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
@@ -5479,7 +5498,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
           __pyx_t_8 = 1;
         }
       }
-      __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
       if (__pyx_t_7) {
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -5493,7 +5512,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -5505,7 +5524,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":164
+  /* "HqEvo.pyx":165
  * 
  * 	cpdef sample_initial(self, int channel, double E1, double T):
  * 		cdef double E2=0.0, s=0.0             # <<<<<<<<<<<<<<
@@ -5515,7 +5534,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
   __pyx_v_E2 = 0.0;
   __pyx_v_s = 0.0;
 
-  /* "HqEvo.pyx":165
+  /* "HqEvo.pyx":166
  * 	cpdef sample_initial(self, int channel, double E1, double T):
  * 		cdef double E2=0.0, s=0.0
  * 		if channel < 0:             # <<<<<<<<<<<<<<
@@ -5525,20 +5544,20 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
   __pyx_t_10 = ((__pyx_v_channel < 0) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":166
+    /* "HqEvo.pyx":167
  * 		cdef double E2=0.0, s=0.0
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")             # <<<<<<<<<<<<<<
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple_, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "HqEvo.pyx":165
+    /* "HqEvo.pyx":166
  * 	cpdef sample_initial(self, int channel, double E1, double T):
  * 		cdef double E2=0.0, s=0.0
  * 		if channel < 0:             # <<<<<<<<<<<<<<
@@ -5547,7 +5566,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":167
+  /* "HqEvo.pyx":168
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
  * 		elif channel < self.Nelastic:             # <<<<<<<<<<<<<<
@@ -5557,7 +5576,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
   __pyx_t_10 = ((__pyx_v_channel < __pyx_v_self->Nelastic) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":169
+    /* "HqEvo.pyx":170
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  * 			return self.R22list[channel].sample_initial(E1, T)             # <<<<<<<<<<<<<<
@@ -5565,14 +5584,14 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  * 			#print "An inelastic scattering"
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->R22list, __pyx_v_channel, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->R22list, __pyx_v_channel, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = NULL;
     __pyx_t_8 = 0;
@@ -5586,7 +5605,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_4 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -5597,7 +5616,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
     PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_8, __pyx_t_9);
     __pyx_t_2 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 169; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 170; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -5605,7 +5624,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "HqEvo.pyx":167
+    /* "HqEvo.pyx":168
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
  * 		elif channel < self.Nelastic:             # <<<<<<<<<<<<<<
@@ -5614,7 +5633,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":170
+  /* "HqEvo.pyx":171
  * 			#print "An elastic scattering"
  * 			return self.R22list[channel].sample_initial(E1, T)
  * 		elif channel-self.Nelastic < self.Ninelastic:             # <<<<<<<<<<<<<<
@@ -5624,7 +5643,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
   __pyx_t_10 = (((__pyx_v_channel - __pyx_v_self->Nelastic) < __pyx_v_self->Ninelastic) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":172
+    /* "HqEvo.pyx":173
  * 		elif channel-self.Nelastic < self.Ninelastic:
  * 			#print "An inelastic scattering"
  * 			return self.R23list[channel-self.Nelastic].sample_initial(E1, T)             # <<<<<<<<<<<<<<
@@ -5633,14 +5652,14 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  */
     __Pyx_XDECREF(__pyx_r);
     __pyx_t_11 = (__pyx_v_channel - __pyx_v_self->Nelastic);
-    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_self->R23list, __pyx_t_11, size_t, 0, __Pyx_PyInt_FromSize_t, 0, 0, 1); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_self->R23list, __pyx_t_11, size_t, 0, __Pyx_PyInt_FromSize_t, 0, 0, 1); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sample_initial); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_E1); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_2 = NULL;
     __pyx_t_8 = 0;
@@ -5654,7 +5673,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_5 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     if (__pyx_t_2) {
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2); __pyx_t_2 = NULL;
@@ -5665,7 +5684,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
     PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_8, __pyx_t_9);
     __pyx_t_6 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 172; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 173; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
@@ -5673,7 +5692,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "HqEvo.pyx":170
+    /* "HqEvo.pyx":171
  * 			#print "An elastic scattering"
  * 			return self.R22list[channel].sample_initial(E1, T)
  * 		elif channel-self.Nelastic < self.Ninelastic:             # <<<<<<<<<<<<<<
@@ -5682,7 +5701,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  */
   }
 
-  /* "HqEvo.pyx":174
+  /* "HqEvo.pyx":175
  * 			return self.R23list[channel-self.Nelastic].sample_initial(E1, T)
  * 		else:
  * 			raise ValueError("channel %d not implememented"%channel)             # <<<<<<<<<<<<<<
@@ -5690,25 +5709,25 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_initial(struct __pyx_obj_5HqEvo_Hq
  * 	cpdef sample_final(self, int channel, double s, double T):
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_channel_d_not_implememented, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_channel_d_not_implememented, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_4, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 174; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 175; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
-  /* "HqEvo.pyx":163
+  /* "HqEvo.pyx":164
  * 		return channel_index, dt
  * 
  * 	cpdef sample_initial(self, int channel, double E1, double T):             # <<<<<<<<<<<<<<
@@ -5767,16 +5786,16 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_5sample_initial(PyObject *__pyx_v_self, 
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_E1)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_T)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_initial") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -5785,13 +5804,13 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_5sample_initial(PyObject *__pyx_v_self, 
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_channel = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_channel == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_T = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_channel = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_channel == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_E1 = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_E1 == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_T = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_initial", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.HqEvo.sample_initial", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -5813,7 +5832,7 @@ static PyObject *__pyx_pf_5HqEvo_5HqEvo_4sample_initial(struct __pyx_obj_5HqEvo_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_initial", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_initial(__pyx_v_self, __pyx_v_channel, __pyx_v_E1, __pyx_v_T, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 163; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_initial(__pyx_v_self, __pyx_v_channel, __pyx_v_E1, __pyx_v_T, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 164; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -5830,7 +5849,7 @@ static PyObject *__pyx_pf_5HqEvo_5HqEvo_4sample_initial(struct __pyx_obj_5HqEvo_
   return __pyx_r;
 }
 
-/* "HqEvo.pyx":176
+/* "HqEvo.pyx":177
  * 			raise ValueError("channel %d not implememented"%channel)
  * 
  * 	cpdef sample_final(self, int channel, double s, double T):             # <<<<<<<<<<<<<<
@@ -5863,15 +5882,15 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
   if (unlikely(__pyx_skip_dispatch)) ;
   /* Check if overridden in Python */
   else if (unlikely(Py_TYPE(((PyObject *)__pyx_v_self))->tp_dictoffset != 0)) {
-    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_final); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_self), __pyx_n_s_sample_final); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     if (!PyCFunction_Check(__pyx_t_1) || (PyCFunction_GET_FUNCTION(__pyx_t_1) != (PyCFunction)__pyx_pw_5HqEvo_5HqEvo_7sample_final)) {
       __Pyx_XDECREF(__pyx_r);
-      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_3 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_3)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_3);
-      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_4 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_4);
-      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_5 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_5);
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_6 = __pyx_t_1; __pyx_t_7 = NULL;
@@ -5886,7 +5905,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
           __pyx_t_8 = 1;
         }
       }
-      __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_9 = PyTuple_New(3+__pyx_t_8); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_9);
       if (__pyx_t_7) {
         __Pyx_GIVEREF(__pyx_t_7); PyTuple_SET_ITEM(__pyx_t_9, 0, __pyx_t_7); __pyx_t_7 = NULL;
@@ -5900,7 +5919,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
       __pyx_t_3 = 0;
       __pyx_t_4 = 0;
       __pyx_t_5 = 0;
-      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+      __pyx_t_2 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_9, NULL); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
       __Pyx_GOTREF(__pyx_t_2);
       __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
@@ -5912,7 +5931,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   }
 
-  /* "HqEvo.pyx":178
+  /* "HqEvo.pyx":179
  * 	cpdef sample_final(self, int channel, double s, double T):
  * 		cdef vector[ vector[double] ] results
  * 		if channel < 0:             # <<<<<<<<<<<<<<
@@ -5922,20 +5941,20 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
   __pyx_t_10 = ((__pyx_v_channel < 0) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":179
+    /* "HqEvo.pyx":180
  * 		cdef vector[ vector[double] ] results
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")             # <<<<<<<<<<<<<<
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  */
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_tuple__2, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_Raise(__pyx_t_1, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
 
-    /* "HqEvo.pyx":178
+    /* "HqEvo.pyx":179
  * 	cpdef sample_final(self, int channel, double s, double T):
  * 		cdef vector[ vector[double] ] results
  * 		if channel < 0:             # <<<<<<<<<<<<<<
@@ -5944,7 +5963,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  */
   }
 
-  /* "HqEvo.pyx":180
+  /* "HqEvo.pyx":181
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
  * 		elif channel < self.Nelastic:             # <<<<<<<<<<<<<<
@@ -5954,21 +5973,21 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
   __pyx_t_10 = ((__pyx_v_channel < __pyx_v_self->Nelastic) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":182
+    /* "HqEvo.pyx":183
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  * 			results = self.X22list[channel].sample_dXdPS(s, T)             # <<<<<<<<<<<<<<
  * 			return results
  * 		elif channel-self.Nelastic < self.Ninelastic:
  */
-    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->X22list, __pyx_v_channel, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_2 = __Pyx_GetItemInt(__pyx_v_self->X22list, __pyx_v_channel, int, 1, __Pyx_PyInt_From_int, 0, 1, 1); if (unlikely(__pyx_t_2 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
     __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_2 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_2);
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = NULL;
     __pyx_t_8 = 0;
@@ -5982,7 +6001,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_4 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     if (__pyx_t_5) {
       __Pyx_GIVEREF(__pyx_t_5); PyTuple_SET_ITEM(__pyx_t_4, 0, __pyx_t_5); __pyx_t_5 = NULL;
@@ -5993,15 +6012,15 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
     PyTuple_SET_ITEM(__pyx_t_4, 1+__pyx_t_8, __pyx_t_9);
     __pyx_t_2 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_6, __pyx_t_4, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_11 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_double_3e___(__pyx_t_1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 182; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_11 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_double_3e___(__pyx_t_1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_results = __pyx_t_11;
 
-    /* "HqEvo.pyx":183
+    /* "HqEvo.pyx":184
  * 			#print "An elastic scattering"
  * 			results = self.X22list[channel].sample_dXdPS(s, T)
  * 			return results             # <<<<<<<<<<<<<<
@@ -6009,13 +6028,13 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  * 			#print "An inelastic scattering"
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_results); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 183; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_results); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 184; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "HqEvo.pyx":180
+    /* "HqEvo.pyx":181
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
  * 		elif channel < self.Nelastic:             # <<<<<<<<<<<<<<
@@ -6024,7 +6043,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  */
   }
 
-  /* "HqEvo.pyx":184
+  /* "HqEvo.pyx":185
  * 			results = self.X22list[channel].sample_dXdPS(s, T)
  * 			return results
  * 		elif channel-self.Nelastic < self.Ninelastic:             # <<<<<<<<<<<<<<
@@ -6034,7 +6053,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
   __pyx_t_10 = (((__pyx_v_channel - __pyx_v_self->Nelastic) < __pyx_v_self->Ninelastic) != 0);
   if (__pyx_t_10) {
 
-    /* "HqEvo.pyx":186
+    /* "HqEvo.pyx":187
  * 		elif channel-self.Nelastic < self.Ninelastic:
  * 			#print "An inelastic scattering"
  * 			results = self.X23list[channel-self.Nelastic].sample_dXdPS(s, T)             # <<<<<<<<<<<<<<
@@ -6042,14 +6061,14 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  * 		else:
  */
     __pyx_t_12 = (__pyx_v_channel - __pyx_v_self->Nelastic);
-    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_self->X23list, __pyx_t_12, size_t, 0, __Pyx_PyInt_FromSize_t, 0, 0, 1); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
+    __pyx_t_6 = __Pyx_GetItemInt(__pyx_v_self->X23list, __pyx_t_12, size_t, 0, __Pyx_PyInt_FromSize_t, 0, 0, 1); if (unlikely(__pyx_t_6 == NULL)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;};
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_t_6, __pyx_n_s_sample_dXdPS); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_6 = PyFloat_FromDouble(__pyx_v_s); if (unlikely(!__pyx_t_6)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_9 = PyFloat_FromDouble(__pyx_v_T); if (unlikely(!__pyx_t_9)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_2 = NULL;
     __pyx_t_8 = 0;
@@ -6063,7 +6082,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
         __pyx_t_8 = 1;
       }
     }
-    __pyx_t_5 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_5 = PyTuple_New(2+__pyx_t_8); if (unlikely(!__pyx_t_5)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_5);
     if (__pyx_t_2) {
       __Pyx_GIVEREF(__pyx_t_2); PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_2); __pyx_t_2 = NULL;
@@ -6074,15 +6093,15 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
     PyTuple_SET_ITEM(__pyx_t_5, 1+__pyx_t_8, __pyx_t_9);
     __pyx_t_6 = 0;
     __pyx_t_9 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_4, __pyx_t_5, NULL); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    __pyx_t_11 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_double_3e___(__pyx_t_1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 186; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_11 = __pyx_convert_vector_from_py_std_3a__3a_vector_3c_double_3e___(__pyx_t_1); if (unlikely(PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __pyx_v_results = __pyx_t_11;
 
-    /* "HqEvo.pyx":187
+    /* "HqEvo.pyx":188
  * 			#print "An inelastic scattering"
  * 			results = self.X23list[channel-self.Nelastic].sample_dXdPS(s, T)
  * 			return results             # <<<<<<<<<<<<<<
@@ -6090,13 +6109,13 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  * 			raise ValueError("channel %d not implememented"%channel)
  */
     __Pyx_XDECREF(__pyx_r);
-    __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_results); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 187; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __pyx_convert_vector_to_py_std_3a__3a_vector_3c_double_3e___(__pyx_v_results); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 188; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __pyx_r = __pyx_t_1;
     __pyx_t_1 = 0;
     goto __pyx_L0;
 
-    /* "HqEvo.pyx":184
+    /* "HqEvo.pyx":185
  * 			results = self.X22list[channel].sample_dXdPS(s, T)
  * 			return results
  * 		elif channel-self.Nelastic < self.Ninelastic:             # <<<<<<<<<<<<<<
@@ -6105,7 +6124,7 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  */
   }
 
-  /* "HqEvo.pyx":189
+  /* "HqEvo.pyx":190
  * 			return results
  * 		else:
  * 			raise ValueError("channel %d not implememented"%channel)             # <<<<<<<<<<<<<<
@@ -6113,25 +6132,25 @@ static PyObject *__pyx_f_5HqEvo_5HqEvo_sample_final(struct __pyx_obj_5HqEvo_HqEv
  * 
  */
   /*else*/ {
-    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = __Pyx_PyInt_From_int(__pyx_v_channel); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
-    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_channel_d_not_implememented, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyString_Format(__pyx_kp_s_channel_d_not_implememented, __pyx_t_1); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_1 = PyTuple_New(1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_1);
     __Pyx_GIVEREF(__pyx_t_4);
     PyTuple_SET_ITEM(__pyx_t_1, 0, __pyx_t_4);
     __pyx_t_4 = 0;
-    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    __pyx_t_4 = __Pyx_PyObject_Call(__pyx_builtin_ValueError, __pyx_t_1, NULL); if (unlikely(!__pyx_t_4)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
     __Pyx_GOTREF(__pyx_t_4);
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
     __Pyx_Raise(__pyx_t_4, 0, 0, 0);
     __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 189; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+    {__pyx_filename = __pyx_f[0]; __pyx_lineno = 190; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   }
 
-  /* "HqEvo.pyx":176
+  /* "HqEvo.pyx":177
  * 			raise ValueError("channel %d not implememented"%channel)
  * 
  * 	cpdef sample_final(self, int channel, double s, double T):             # <<<<<<<<<<<<<<
@@ -6190,16 +6209,16 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_7sample_final(PyObject *__pyx_v_self, Py
         case  1:
         if (likely((values[1] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_s)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, 1); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
         case  2:
         if (likely((values[2] = PyDict_GetItem(__pyx_kwds, __pyx_n_s_T)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+          __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, 2); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_final") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "sample_final") < 0)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 3) {
       goto __pyx_L5_argtuple_error;
@@ -6208,13 +6227,13 @@ static PyObject *__pyx_pw_5HqEvo_5HqEvo_7sample_final(PyObject *__pyx_v_self, Py
       values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
       values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
     }
-    __pyx_v_channel = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_channel == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_s = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
-    __pyx_v_T = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_channel = __Pyx_PyInt_As_int(values[0]); if (unlikely((__pyx_v_channel == (int)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_s = __pyx_PyFloat_AsDouble(values[1]); if (unlikely((__pyx_v_s == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+    __pyx_v_T = __pyx_PyFloat_AsDouble(values[2]); if (unlikely((__pyx_v_T == (double)-1) && PyErr_Occurred())) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
+  __Pyx_RaiseArgtupleInvalid("sample_final", 1, 3, 3, PyTuple_GET_SIZE(__pyx_args)); {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L3_error;}
   __pyx_L3_error:;
   __Pyx_AddTraceback("HqEvo.HqEvo.sample_final", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
@@ -6236,7 +6255,7 @@ static PyObject *__pyx_pf_5HqEvo_5HqEvo_6sample_final(struct __pyx_obj_5HqEvo_Hq
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("sample_final", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_final(__pyx_v_self, __pyx_v_channel, __pyx_v_s, __pyx_v_T, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 176; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __pyx_f_5HqEvo_5HqEvo_sample_final(__pyx_v_self, __pyx_v_channel, __pyx_v_s, __pyx_v_T, 1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 177; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -7211,6 +7230,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_kp_s_channel_must_be_0_channel_0_corr, __pyx_k_channel_must_be_0_channel_0_corr, sizeof(__pyx_k_channel_must_be_0_channel_0_corr), 0, 0, 1, 0},
   {&__pyx_kp_s_channel_s_not_implemented, __pyx_k_channel_s_not_implemented, sizeof(__pyx_k_channel_s_not_implemented), 0, 0, 1, 0},
   {&__pyx_n_s_degeneracy, __pyx_k_degeneracy, sizeof(__pyx_k_degeneracy), 0, 0, 1, 1},
+  {&__pyx_n_s_dt_max, __pyx_k_dt_max, sizeof(__pyx_k_dt_max), 0, 0, 1, 1},
   {&__pyx_n_s_elastic, __pyx_k_elastic, sizeof(__pyx_k_elastic), 0, 0, 1, 1},
   {&__pyx_n_s_exists, __pyx_k_exists, sizeof(__pyx_k_exists), 0, 0, 1, 1},
   {&__pyx_n_s_filename, __pyx_k_filename, sizeof(__pyx_k_filename), 0, 0, 1, 1},
@@ -7246,8 +7266,8 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {0, 0, 0, 0, 0, 0, 0}
 };
 static int __Pyx_InitCachedBuiltins(void) {
-  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 48; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 157; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_ValueError = __Pyx_GetBuiltinName(__pyx_n_s_ValueError); if (!__pyx_builtin_ValueError) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 49; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_builtin_range = __Pyx_GetBuiltinName(__pyx_n_s_range); if (!__pyx_builtin_range) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 158; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   return 0;
   __pyx_L1_error:;
   return -1;
@@ -7257,25 +7277,25 @@ static int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "HqEvo.pyx":166
+  /* "HqEvo.pyx":167
  * 		cdef double E2=0.0, s=0.0
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")             # <<<<<<<<<<<<<<
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  */
-  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_channel_must_be_0_channel_0_corr); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 166; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple_ = PyTuple_Pack(1, __pyx_kp_s_channel_must_be_0_channel_0_corr); if (unlikely(!__pyx_tuple_)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 167; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
 
-  /* "HqEvo.pyx":179
+  /* "HqEvo.pyx":180
  * 		cdef vector[ vector[double] ] results
  * 		if channel < 0:
  * 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")             # <<<<<<<<<<<<<<
  * 		elif channel < self.Nelastic:
  * 			#print "An elastic scattering"
  */
-  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_channel_must_be_0_channel_0_corr); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 179; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_tuple__2 = PyTuple_Pack(1, __pyx_kp_s_channel_must_be_0_channel_0_corr); if (unlikely(!__pyx_tuple__2)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 180; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_tuple__2);
   __Pyx_GIVEREF(__pyx_tuple__2);
   __Pyx_RefNannyFinishContext();
@@ -7386,46 +7406,46 @@ PyMODINIT_FUNC PyInit_HqEvo(void)
   __pyx_vtable_5HqEvo_pyX2to2.calculate = (double (*)(struct __pyx_obj_5HqEvo_pyX2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to2_calculate;
   __pyx_vtable_5HqEvo_pyX2to2.sample_dXdPS = (PyObject *(*)(struct __pyx_obj_5HqEvo_pyX2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to2_sample_dXdPS;
   __pyx_vtable_5HqEvo_pyX2to2.interpX = (double (*)(struct __pyx_obj_5HqEvo_pyX2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to2_interpX;
-  if (PyType_Ready(&__pyx_type_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_5HqEvo_pyX2to2.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyX2to2.tp_dict, __pyx_vtabptr_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "pyX2to2", (PyObject *)&__pyx_type_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 40; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyX2to2.tp_dict, __pyx_vtabptr_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "pyX2to2", (PyObject *)&__pyx_type_5HqEvo_pyX2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 41; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_5HqEvo_pyX2to2 = &__pyx_type_5HqEvo_pyX2to2;
   __pyx_vtabptr_5HqEvo_pyX2to3 = &__pyx_vtable_5HqEvo_pyX2to3;
   __pyx_vtable_5HqEvo_pyX2to3.calculate = (double (*)(struct __pyx_obj_5HqEvo_pyX2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to3_calculate;
   __pyx_vtable_5HqEvo_pyX2to3.sample_dXdPS = (PyObject *(*)(struct __pyx_obj_5HqEvo_pyX2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to3_sample_dXdPS;
   __pyx_vtable_5HqEvo_pyX2to3.interpX = (double (*)(struct __pyx_obj_5HqEvo_pyX2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyX2to3_interpX;
-  if (PyType_Ready(&__pyx_type_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_5HqEvo_pyX2to3.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyX2to3.tp_dict, __pyx_vtabptr_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "pyX2to3", (PyObject *)&__pyx_type_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 58; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyX2to3.tp_dict, __pyx_vtabptr_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "pyX2to3", (PyObject *)&__pyx_type_5HqEvo_pyX2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 59; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_5HqEvo_pyX2to3 = &__pyx_type_5HqEvo_pyX2to3;
   __pyx_vtabptr_5HqEvo_pyR2to2 = &__pyx_vtable_5HqEvo_pyR2to2;
   __pyx_vtable_5HqEvo_pyR2to2.calculate = (double (*)(struct __pyx_obj_5HqEvo_pyR2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to2_calculate;
   __pyx_vtable_5HqEvo_pyR2to2.interpR = (double (*)(struct __pyx_obj_5HqEvo_pyR2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to2_interpR;
   __pyx_vtable_5HqEvo_pyR2to2.sample_initial = (PyObject *(*)(struct __pyx_obj_5HqEvo_pyR2to2 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to2_sample_initial;
-  if (PyType_Ready(&__pyx_type_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_5HqEvo_pyR2to2.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyR2to2.tp_dict, __pyx_vtabptr_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "pyR2to2", (PyObject *)&__pyx_type_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 76; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyR2to2.tp_dict, __pyx_vtabptr_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "pyR2to2", (PyObject *)&__pyx_type_5HqEvo_pyR2to2) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 77; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_5HqEvo_pyR2to2 = &__pyx_type_5HqEvo_pyR2to2;
   __pyx_vtabptr_5HqEvo_pyR2to3 = &__pyx_vtable_5HqEvo_pyR2to3;
   __pyx_vtable_5HqEvo_pyR2to3.calculate = (double (*)(struct __pyx_obj_5HqEvo_pyR2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to3_calculate;
   __pyx_vtable_5HqEvo_pyR2to3.interpR = (double (*)(struct __pyx_obj_5HqEvo_pyR2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to3_interpR;
   __pyx_vtable_5HqEvo_pyR2to3.sample_initial = (PyObject *(*)(struct __pyx_obj_5HqEvo_pyR2to3 *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_7pyR2to3_sample_initial;
-  if (PyType_Ready(&__pyx_type_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_5HqEvo_pyR2to3.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyR2to3.tp_dict, __pyx_vtabptr_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "pyR2to3", (PyObject *)&__pyx_type_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 89; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_5HqEvo_pyR2to3.tp_dict, __pyx_vtabptr_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "pyR2to3", (PyObject *)&__pyx_type_5HqEvo_pyR2to3) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 90; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_5HqEvo_pyR2to3 = &__pyx_type_5HqEvo_pyR2to3;
   __pyx_vtabptr_5HqEvo_HqEvo = &__pyx_vtable_5HqEvo_HqEvo;
-  __pyx_vtable_5HqEvo_HqEvo.sample_channel = (PyObject *(*)(struct __pyx_obj_5HqEvo_HqEvo *, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_5HqEvo_sample_channel;
+  __pyx_vtable_5HqEvo_HqEvo.sample_channel = (PyObject *(*)(struct __pyx_obj_5HqEvo_HqEvo *, double, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_5HqEvo_sample_channel;
   __pyx_vtable_5HqEvo_HqEvo.sample_initial = (PyObject *(*)(struct __pyx_obj_5HqEvo_HqEvo *, int, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_5HqEvo_sample_initial;
   __pyx_vtable_5HqEvo_HqEvo.sample_final = (PyObject *(*)(struct __pyx_obj_5HqEvo_HqEvo *, int, double, double, int __pyx_skip_dispatch))__pyx_f_5HqEvo_5HqEvo_sample_final;
-  if (PyType_Ready(&__pyx_type_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyType_Ready(&__pyx_type_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_type_5HqEvo_HqEvo.tp_print = 0;
-  if (__Pyx_SetVtable(__pyx_type_5HqEvo_HqEvo.tp_dict, __pyx_vtabptr_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
-  if (PyObject_SetAttrString(__pyx_m, "HqEvo", (PyObject *)&__pyx_type_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 105; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (__Pyx_SetVtable(__pyx_type_5HqEvo_HqEvo.tp_dict, __pyx_vtabptr_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyObject_SetAttrString(__pyx_m, "HqEvo", (PyObject *)&__pyx_type_5HqEvo_HqEvo) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 106; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __pyx_ptype_5HqEvo_HqEvo = &__pyx_type_5HqEvo_HqEvo;
   /*--- Type import code ---*/
   /*--- Variable import code ---*/
@@ -7435,16 +7455,16 @@ PyMODINIT_FUNC PyInit_HqEvo(void)
   if (__Pyx_patch_abc() < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 1; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   #endif
 
-  /* "HqEvo.pyx":6
- * from libc.stdlib cimport malloc, free
+  /* "HqEvo.pyx":7
  * from libc.stdlib cimport rand, RAND_MAX
+ * from libc.math cimport fmin
  * import os             # <<<<<<<<<<<<<<
  * 
  * #------------------Import C++ fucntions and class for Xsection and rates------------------
  */
-  __pyx_t_1 = __Pyx_Import(__pyx_n_s_os, 0, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  __pyx_t_1 = __Pyx_Import(__pyx_n_s_os, 0, -1); if (unlikely(!__pyx_t_1)) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 7; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 6; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_os, __pyx_t_1) < 0) {__pyx_filename = __pyx_f[0]; __pyx_lineno = 7; __pyx_clineno = __LINE__; goto __pyx_L1_error;}
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "HqEvo.pyx":1

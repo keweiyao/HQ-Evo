@@ -17,17 +17,3 @@ setup(
     ext_modules=cythonize(extensions)
 	)
 
-#-------------Transform Module------------------
-filelist2 = ["cython/Transform.pyx", "src/utility.cpp"]
-extensions = [
-    Extension(
-        'Transform',
-		filelist2,
-		language="c++",
-        extra_compile_args=["-std=c++11"],
-		libraries=["m"])
-]
-
-setup(
-    ext_modules=cythonize(extensions)
-	)

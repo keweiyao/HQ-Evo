@@ -3,6 +3,7 @@ from libcpp.vector cimport vector
 from libcpp cimport bool
 from libc.stdlib cimport malloc, free
 from libc.stdlib cimport rand, RAND_MAX
+from libc.math cimport fmin
 import os
 
 #------------------Import C++ fucntions and class for Xsection and rates------------------
@@ -135,7 +136,7 @@ cdef class HqEvo:
 			self.Ninelastic = len(self.X23list)
 			self.Nchannels += self.Ninelastic 
 
-	cpdef sample_channel(self, double E1, double T):
+	cpdef sample_channel(self, double E1, double T, double dt_max):
 		cdef double r, psum = 0.0, dt, Pmax = 0.2
 		cdef int i=0, channel_index
 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
@@ -150,7 +151,7 @@ cdef class HqEvo:
 				p[i] = psum
 				i += 1
 
-		dt = Pmax/psum
+		dt = fmin(Pmax/psum, dt_max)
 		r = (<double>rand())/dt/RAND_MAX
 		if r >= p[self.Nchannels-1]:
 			return -1, dt
