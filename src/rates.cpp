@@ -65,7 +65,7 @@ double fx_wrapper(double x, void * px_){
 template <class T>
 rates<T>::rates(T * Xprocess_, int degeneracy_, std::string name_)
 :	Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(50), NT(20), E1L(M*1.01), E1H(M*50), TL(0.15), TH(0.6),
+	NE1(200), NT(32), E1L(M*1.01), E1H(M*100), TL(0.12), TH(0.8),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	rd(), gen(rd()),
 	dist_x(3.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)

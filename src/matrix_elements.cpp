@@ -112,7 +112,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
 
-	double u = 5./tauk;
+	double u = 3./tauk;
 	double LPM;
 	LPM = 1. - std::sin(u)/u;
 
@@ -167,7 +167,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = k/(kt2+x*x*M2);
 
-	double u = 2./tauk;
+	double u = 1./tauk;
 	double LPM;
 	LPM = 1. - std::sin(u)/u;
 

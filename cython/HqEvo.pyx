@@ -175,17 +175,14 @@ cdef class HqEvo:
 			raise ValueError("channel %d not implememented"%channel)
 
 	cpdef sample_final(self, int channel, double s, double T):
-		cdef vector[ vector[double] ] results 
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
 		elif channel < self.Nelastic:
 			#print "An elastic scattering"
-			results = self.X22list[channel].sample_dXdPS(s, T)
-			return results
+			return self.X22list[channel].sample_dXdPS(s, T)
 		elif channel-self.Nelastic < self.Ninelastic:
 			#print "An inelastic scattering"
-			results = self.X23list[channel-self.Nelastic].sample_dXdPS(s, T)
-			return results
+			return self.X23list[channel-self.Nelastic].sample_dXdPS(s, T)
 		else:
 			raise ValueError("channel %d not implememented"%channel)
 		
