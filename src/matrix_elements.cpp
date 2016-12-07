@@ -2,7 +2,7 @@
 #include "constants.h"
 #include <cmath>
 #include <iostream>
-
+double dt = 2.0;
 //=============running coupling=================================================
 double inline alpha_s(double Q2){
     if (Q2 < Q2cut_l)
@@ -110,9 +110,9 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = k/(kt2+x*x*M2);
+	double tauk = 2.*k/(kt2+x*x*M2);
 
-	double u = 3./tauk;
+	double u = dt/tauk;
 	double LPM;
 	LPM = 1. - std::sin(u)/u;
 
@@ -165,9 +165,9 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = k/(kt2+x*x*M2);
+	double tauk = 2.*k/(kt2+x*x*M2);
 
-	double u = 1./tauk;
+	double u = dt/tauk;
 	double LPM;
 	LPM = 1. - std::sin(u)/u;
 
