@@ -18,50 +18,23 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
-Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(60), NT(32), 
+Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
+: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_), Ns(50), NT(16), 
 	sL(M1*M1*1.01), sM(M1*M1*25.), sH(M1*M1*900.), 
 	ds1((sM-sL)/(Ns-1.)), ds2((sH-sM)/(Ns-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.))
 {
 	std::cout << __func__<< " " << name_  << std::endl;
-	Xtab.resize(Ns*2);
-	for (auto&& ele : Xtab) ele.resize(NT);
 }
 
-void Xsection::tabulate_s_Temp(size_t T_start, size_t dnT){
-	double s, Temp;
-	for (size_t i=0; i<2*Ns; ++i) {
-		if (i<Ns) s = sL + i*ds1;
-		else s = sM + (i-Ns)*ds2;
-		for (size_t j=T_start; j<(T_start+dnT); j++) {
-			Temp = TL + j*dT;
-			Xtab[i][j] = calculate(s, Temp)/approx_X(s, Temp, M1);
-		}
-	}
-}
-
-double Xsection::interpX(double s, double Temp){
-	if (Temp < TL) Temp = TL;
-	if (Temp >= TH) Temp = TH-dT;
-	if (s < sL) s = sL;
-	if (s >= sH) s = sH-ds2;
-	double xT, rT, xs, rs, ds, smin;
-	size_t iT, is, Noffsets;
-	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
-	if (s < sM) {ds = ds1; smin=sL; Noffsets=0;}
-	else {ds = ds2; smin=sM; Noffsets=Ns;}
-	xs = (s - smin)/ds; is = floor(xs); rs = xs - is; is += Noffsets;
-	return approx_X(s, Temp, M1)*(Xtab[is][iT]*(1.-rs)*(1.-rT)
-			+Xtab[is+1][iT]*rs*(1.-rT)
-			+Xtab[is][iT+1]*(1.-rs)*rT
-			+Xtab[is+1][iT+1]*rs*rT);
-}
 
 //============Derived 2->2 Xsection class===================================
-Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
+Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI)
 {
+	Xtab.resize(Ns*2);
+	for (auto&& dim1 : Xtab) dim1.resize(NT);
+
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
 	size_t call_per_core = std::ceil(NT*1./Ncores);
@@ -76,19 +49,50 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 	for (std::thread& t : threads)	t.join();
 
 	std::ofstream file(name_);
-	double s, Temp;
-	for (size_t i=0; i<2*Ns; ++i) {
-		if (i<Ns) s = sL + i*ds1;
-		else s = sM + (i-Ns)*ds2;
+	double * arg = new double[2];
+	for (size_t i=0; i<2*Ns; i++) {
+		if (i<Ns) arg[0] = sL + i*ds1;
+		else arg[0] = sM + (i-Ns)*ds2;
 		for (size_t j=0; j<NT; j++) {
-			Temp = TL + j*dT;
-			file << Xtab[i][j] * approx_X(s, Temp, M1) << " ";
+			arg[1] = TL + j*dT;
+			file << Xtab[i][j] * approx_X(arg, M1) << " ";
 		}
-		file << std::endl;
 	}
 }
 
-double Xsection_2to2::calculate(double s, double Temp){
+void Xsection_2to2::tabulate_s_Temp(size_t T_start, size_t dnT){
+	double * arg = new double[2];
+	for (size_t i=0; i<2*Ns; ++i) {
+		if (i<Ns) arg[0] = sL + i*ds1;
+		else arg[0] = sM + (i-Ns)*ds2;
+		for (size_t j=T_start; j<(T_start+dnT); j++) {
+			arg[1] = TL + j*dT;
+			Xtab[i][j] = calculate(arg)/approx_X(arg, M1);
+		}
+	}
+}
+
+double Xsection_2to2::interpX(double * arg){
+	double s = arg[0], Temp = arg[1];
+	if (Temp < TL) Temp = TL;
+	if (Temp >= TH) Temp = TH-dT;
+	if (s < sL) s = sL;
+	if (s >= sH) s = sH-ds2;
+	double xT, rT, xs, rs, ds, smin;
+	size_t iT, is, Noffsets;
+	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
+	if (s < sM) {ds = ds1; smin=sL; Noffsets=0;}
+	else {ds = ds2; smin=sM; Noffsets=Ns;}
+	xs = (s - smin)/ds; is = floor(xs); rs = xs - is; is += Noffsets;
+	return approx_X(arg, M1)*(Xtab[is][iT]*(1.-rs)*(1.-rT)
+			+Xtab[is+1][iT]*rs*(1.-rT)
+			+Xtab[is][iT+1]*(1.-rs)*rT
+			+Xtab[is+1][iT+1]*rs*rT);
+}
+
+
+double Xsection_2to2::calculate(double * arg){
+	double s = arg[0], Temp = arg[1];
 	double result, error, tmin, tmax;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
 	integrate_params * params = new integrate_params;
@@ -113,7 +117,8 @@ double Xsection_2to2::calculate(double s, double Temp){
     return result;
 }
 
-void Xsection_2to2::sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states){
+void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states){
+	double s = arg[0], Temp = arg[1];
 	double * p = new double[3]; //s, T, M
 	p[0] = s; p[1] = Temp;  p[2] = M1;
 	double psq = std::pow(s-M1*M1, 2)/4./s;
@@ -133,9 +138,16 @@ void Xsection_2to2::sample_dXdPS(double s, double Temp, std::vector< std::vector
 }
 
 //============Derived 2->3 Xsection class===================================
-Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI)
+Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
+:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), Ndt(10), dtL(0.1), dtH(10.0), ddt((dtH-dtL)/(Ndt-1.))
 {
+	Xtab.resize(Ns*2);
+	for (auto&& dim1 : Xtab) {
+		dim1.resize(NT);
+		for (auto && dim2 : dim1) 
+			dim2.resize(Ndt);
+	}
+
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
 	size_t call_per_core = std::ceil(NT*1./Ncores);
@@ -151,22 +163,64 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 	for (std::thread& t : threads)	t.join();
 
 	std::ofstream file(name_);
-	for (auto roll : Xtab) {
-		for (auto item : roll) {
-			file << item << " ";
+	double * arg = new double[3];
+	for (size_t i=0; i<2*Ns; i++) {
+		if (i<Ns) arg[0] = sL + i*ds1; else arg[0] = sM + (i-Ns)*ds2;
+		for (size_t j=0; j<NT; j++) {
+			arg[1] = TL + j*dT;
+			for (size_t k=0; k<Ndt; k++) {
+				arg[2] = dtL + k*ddt;
+				file << Xtab[i][j][k] * approx_X(arg, M1) << " ";
+			}
 		}
-		file << std::endl;
 	}
 }
 
-double Xsection_2to3::calculate(double s, double Temp){
-	double result, error, count, sum=0.;
+void Xsection_2to3::tabulate_s_Temp(size_t T_start, size_t dnT){
+	double * arg = new double[3]; // s, T, dt
+	for (size_t i=0; i<2*Ns; i++) {
+		if (i<Ns) arg[0] = sL + i*ds1; else arg[0] = sM + (i-Ns)*ds2;
+		for (size_t j=T_start; j<(T_start+dnT); j++) {
+			arg[1] = TL + j*dT;
+			for (size_t k=0; k<Ndt; k++) {
+				arg[2] = dtL + k*ddt;
+				Xtab[i][j][k] = calculate(arg)/approx_X(arg, M1);
+			}
+		}
+	}
+}
+
+double Xsection_2to3::interpX(double * arg){
+	double s = arg[0], Temp = arg[1], dt = arg[2];
+	if (Temp < TL) Temp = TL;
+	if (Temp >= TH) Temp = TH-dT;
+	if (dt < dtL) dt = TL;
+	if (dt >= dtH) dt = dtH-ddt;
+	if (s < sL) s = sL;
+	if (s >= sH) s = sH-ds2;
+	double xT, rT, xs, rs, ds, smin, xdt, rdt;
+	size_t iT, is, Noffsets, idt;
+	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
+	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
+	if (s < sM) {ds = ds1; smin=sL; Noffsets=0;}
+	else {ds = ds2; smin=sM; Noffsets=Ns;}
+	xs = (s - smin)/ds; is = floor(xs); rs = xs - is; is += Noffsets;
+	return approx_X(arg, M1)*( Xtab[is][iT][idt]*(1.-rs)*(1.-rT)*(1.-rdt)	+ Xtab[is][iT][idt+1]*(1.-rs)*(1.-rT)*rdt
+								 + Xtab[is+1][iT][idt]*rs*(1.-rT)*(1.-rdt) 		+ Xtab[is+1][iT][idt+1]*rs*(1.-rT)*rdt
+								 + Xtab[is][iT+1][idt]*(1.-rs)*rT*(1.-rdt) 		+ Xtab[is][iT+1][idt+1]*(1.-rs)*rT*rdt
+								 + Xtab[is+1][iT+1][idt]*rs*rT*(1.-rdt)			+ Xtab[is+1][iT+1][idt+1]*rs*rT*rdt	
+								);
+}
+
+double Xsection_2to3::calculate(double * arg){
+	double s = arg[0], Temp = arg[1], dt = arg[2];
+	double result, error;
 
 	const gsl_rng_type * Tr = gsl_rng_default;
 	gsl_rng * r = gsl_rng_alloc(Tr);
 	
-	double * params = new double[3];
-	params[0] = s; params[1] = Temp; params[2] = M1;
+	double * params = new double[4];
+	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = dt;
 	
 	gsl_monte_function G;
 	G.f = dXdPS; 
@@ -192,17 +246,18 @@ double Xsection_2to3::calculate(double s, double Temp){
 	return result/c256pi4/(s-M2);
 }
 
-void Xsection_2to3::sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states){
+void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states){
 	// for 2->3, dXdPS is a 5-dimensional distribution,
 	// In center of mass frame:
 	// there is an overall azimuthal symmetry which allows a flat sampling 
 	// the rese 4 variables are sampled from Affine-invariant MCMC procedure,
 	// since the distribution scale of each variable could vary a lot.
 	// returns heavy quark 4-momentum and radiated gluon 4-momentum
-	double * p = new double[3]; //s, T, M
+	double s = arg[0], Temp = arg[1], dt = arg[2];
+	double * p = new double[4]; //s, T, dt, M
 	double sqrts = std::sqrt(s);
 	double M2 = M1*M1;
-	p[0] = s; p[1] = Temp;  p[2] = M1;
+	p[0] = s; p[1] = Temp; p[2] = M1; p[3] = dt; 
 	size_t n_dims = 4;
 	double * guessl = new double[n_dims];
 	double * guessh = new double[n_dims];

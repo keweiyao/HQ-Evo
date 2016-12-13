@@ -21,23 +21,22 @@ double gsl_1dfunc_wrapper(double x, void * params_);
 // The actually total Xsection calcuate function and final state sample function are virtual functions, because 2->2 and 2->3 uses quite different techniques to do these jobs.
 class Xsection{
 protected:
-	void tabulate_s_Temp(size_t T_start, size_t dnT);
+	virtual void tabulate_s_Temp(size_t T_start, size_t dnT) = 0;
 	double (*dXdPS)(double * PS, size_t n_dims, void * params);
-	double (*approx_X)(double s, double Temp, double M);
+	double (*approx_X)(double * arg, double M);
 	double M1;
 	// For interpolation
 	// Cross-section changes abruptly near the threshhold s>M2,
 	// Use different grid size for M2 < s < 5*M2 amd 5*M2 < s < 400*M2
-	std::vector< std::vector<double> > Xtab;
 	const size_t Ns, NT;
 	const double sL, sM, sH, ds1, ds2;
 	const double TL, TH, dT;
 public:
-	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
+	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double get_M1(void) {return M1;};
-	double interpX(double s, double Temp);
-	virtual double calculate(double s, double Temp) = 0;
-	virtual void sample_dXdPS(double s, double Temp, std::vector<std::vector<double> > & fs) = 0;
+	virtual double interpX(double * arg) = 0; // arg = [s, T] fot X22, arg = [s, T, dt] for X23 
+	virtual double calculate(double * arg) = 0;
+	virtual void sample_dXdPS(double * arg, std::vector<std::vector<double> > & fs) = 0;
 };
 
 //============Derived 2->2 Xsection class============================================
@@ -47,10 +46,13 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi3;
+	std::vector< std::vector<double> > Xtab;
+	void tabulate_s_Temp(size_t T_start, size_t dnT);
 public:
-    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
-    double calculate(double s, double Temp);
-	void sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states);
+    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+	double interpX(double * arg);
+    double calculate(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states);
 };
 
 //============Derived 2->3 Xsection class============================================
@@ -60,11 +62,15 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	
+	const size_t Ndt;
+	const double dtL, dtH, ddt;
+	std::vector< std::vector< std::vector<double> > > Xtab;
+	void tabulate_s_Temp(size_t T_start, size_t dnT);
 public:
-    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double, double, double), double M1_, std::string name_);
-    double calculate(double s, double Temp);
-	void sample_dXdPS(double s, double Temp, std::vector< std::vector<double> > & final_states);
+    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+	double interpX(double * arg);
+    double calculate(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states);
 };
 
 #endif

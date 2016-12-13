@@ -2,7 +2,7 @@
 #include "constants.h"
 #include <cmath>
 #include <iostream>
-double dt = 2.0;
+
 //=============running coupling=================================================
 double inline alpha_s(double Q2){
     if (Q2 < Q2cut_l)
@@ -36,9 +36,9 @@ double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params){
 	return M2_Qq2Qq(t, params)/c16pi/std::pow(s-M2, 2);
 }
 
-double approx_XQq2Qq(double s, double Temp, double M){
-	(void)s;
-	(void)Temp;
+double approx_XQq2Qq(double * arg, double M){
+	(void)arg[0]; // s
+	(void)arg[1];	  // Temp
 	(void)M;
 	return 1.0;
 }
@@ -76,7 +76,8 @@ double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params){
 	double s = p[0], M2 = p[2]*p[2];
 	return M2_Qg2Qg(t, params)/c16pi/std::pow(s-M2, 2);	
 }
-double approx_XQg2Qg(double s, double Temp, double M){	
+double approx_XQg2Qg(double * arg, double M){	
+	double s = arg[0], Temp = arg[1];
 	double Q2s = s-M*M, T2 = Temp*Temp, M2 = M*M;
 	double abstmax = Q2s*Q2s/s;
 	return 1./T2 - 1./(T2+abstmax) + 10.*M2/Q2s/Q2s;
@@ -92,6 +93,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double T2 = params[1]*params[1];
 	double M = params[2];
 	double M2 = M*M;
+	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
 	double pmax =  0.5*sqrts*(1.-M2/s);
 	// unpack variables
 	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
@@ -113,8 +115,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double tauk = 2.*k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM;
-	LPM = 1. - std::sin(u)/u;
+	double LPM = 1. - std::exp(-u*u/6.);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -133,11 +134,12 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	return c48pi*the_M2_Qq2Qq*Pg;
 }
 
-double approx_XQq2Qqg(double s, double Temp, double M){
-	(void)s;
-	(void)Temp;
+double approx_XQq2Qqg(double * arg, double M){
+	double s = arg[0];
+	double Temp = arg[1];
+	double dt = arg[2];
 	(void)M;
-	return 1.0;
+	return dt*dt;
 }
 
 double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
@@ -148,6 +150,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double T2 = params[1]*params[1];
 	double M = params[2];
 	double M2 = M*M;
+	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
 	double pmax =  0.5*sqrts*(1.-M2/s);
 	// unpack variables
 	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
@@ -168,8 +171,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double tauk = 2.*k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM;
-	LPM = 1. - std::sin(u)/u;
+	double LPM = 1. - std::exp(-u*u/6.);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -188,10 +190,11 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	return c48pi*the_M2_Qg2Qg*Pg;
 }
 
-double approx_XQg2Qgg(double s, double Temp, double M){
-	(void)s;
-	(void)Temp;
+double approx_XQg2Qgg(double * arg, double M){
+	double s = arg[0];
+	double Temp = arg[1];
+	double dt = arg[2];
 	(void)M;
-	return 1.0;
+	return dt*dt;
 }
 
