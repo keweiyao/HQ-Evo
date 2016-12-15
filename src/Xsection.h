@@ -73,4 +73,22 @@ public:
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states);
 };
 
+//============Derived 3->2 Xsection class============================================
+class f_3to2 : public Xsection{
+private:
+	std::random_device rd;
+    std::mt19937 gen;
+    std::uniform_real_distribution<double> dist_phi4;
+	const size_t Ns1k, Ns2k;
+	const double s1kL, s1kH, ds1k, s2kL, s2kH, ds2k;
+	std::vector<std::vector< std::vector< std::vector<double> > > > Xtab;
+	void tabulate_s_Temp(size_t T_start, size_t dnT);
+public:
+    Xsection_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+	double interpX(double * arg);
+    double calculate(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states);
+};
+
+
 #endif

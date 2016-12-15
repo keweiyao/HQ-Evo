@@ -12,6 +12,7 @@ cdef extern from "../src/matrix_elements.h":
 	cdef double approx_XQq2Qq(double * arg, double M)
 	cdef double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params)
 	cdef double approx_XQg2Qg(double * arg, double M)
+
 	cdef double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_)
 	cdef double approx_XQq2Qqg(double * arg, double M)
 	cdef double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_)
@@ -36,6 +37,7 @@ cdef extern from "../src/rates.h":
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg_in, double * arg_out)
+
 	cdef cppclass rates_2to3:
 		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
@@ -91,6 +93,7 @@ cdef class pyX2to3:
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cX2to3.interpX(arg)
 
+
 cdef class pyR2to2:
 	cdef rates_2to2 * cR2to2
 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
@@ -133,12 +136,13 @@ cdef class pyR2to3:
 #-------------Heavy quark evolution class------------------------
 
 cdef class HqEvo:
-	cdef bool elastic, inelastic
+	cdef bool elastic, inelastic, detailed_balance
 	cdef object X22list, X23list, R22list, R23list
 	cdef size_t Nchannels, Nelastic, Ninelastic
-	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, table_folder='./tables'):
+	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, detailed_balance=False, table_folder='./tables'):
 		self.elastic=elastic
 		self.inelastic=inelastic
+		self.detailed_balance=detailed_balance
 		self.X22list = []
 		self.X23list = []
 		self.R22list = []
@@ -155,6 +159,8 @@ cdef class HqEvo:
 			self.R22list = [rQq2Qq, rQg2Qg]
 			self.Nelastic = len(self.X22list)
 			self.Nchannels += self.Nelastic
+		else:
+			self.Nelastic = 0
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
@@ -163,7 +169,9 @@ cdef class HqEvo:
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
 			self.Ninelastic = len(self.X23list)
-			self.Nchannels += self.Ninelastic 
+			self.Nchannels += self.Ninelastic
+		else:
+			self.Ninelastic = 0
 
 	cpdef sample_channel(self, double E1, double T, double dt_from_last):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
@@ -192,6 +200,7 @@ cdef class HqEvo:
 		return channel_index, dt
 
 	cpdef sample_initial(self, int channel, double E1, double T, double t_elapse_cell):
+		#print "i"
 		cdef double E2=0.0, s=0.0
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")

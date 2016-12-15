@@ -51,7 +51,7 @@ double M2_Qg2Qg(double t, void * params) {
 	// define energy scales for each channel
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
-	double As = alpha_s(Q2s), At = alpha_s(Q2t), Au = alpha_s(Q2u);
+	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
 	// define Deybe mass for each channel
 	double mt2 = 0.2*At*pf_g*T2, mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
 	double result = 0.0;
@@ -83,7 +83,7 @@ double approx_XQg2Qg(double * arg, double M){
 	return 1./T2 - 1./(T2+abstmax) + 10.*M2/Q2s/Q2s;
 }
 
-//=============Basic for 2->2 + 1->2===========================================
+//=============Basic for 2->3===========================================
 // x: k, p4, phi4k, cos4 // both sin4 and sin* > 0
 double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
@@ -112,10 +112,10 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = 2.*k/(kt2+x*x*M2);
+	double tauk = k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM = 1. - std::exp(-u*u/6.);
+	double LPM = 1. - std::exp(-u*u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -128,7 +128,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double mD2 = alpha_rad *pf_g*T2;
 	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) + 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qq2Qq*Pg;
@@ -168,10 +168,10 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = 2.*k/(kt2+x*x*M2);
+	double tauk = k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM = 1. - std::exp(-u*u/6.);
+	double LPM = 1. - std::exp(-u*u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -184,7 +184,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double mD2 = alpha_rad *pf_g*T2;
 	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
+			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) + 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qg2Qg*Pg;
@@ -197,4 +197,114 @@ double approx_XQg2Qgg(double * arg, double M){
 	(void)M;
 	return dt*dt;
 }
+
+
+
+//=============Basic for 2->3===========================================
+double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
+	(void) n_dims_;
+	// unpack parameters
+	double * params = static_cast<double*>(params_); // s12, T, M, k, kx, kz
+	double s12 = params[0], sqrts12 = std::sqrt(params[0]);
+	double T2 = params[1]*params[1];
+	double M2 = params[2]*params[2];
+	double k = params[3], kx = params[4], kz = params[5]
+
+	// unpack variables
+	double p4 = x_[0], phi4k = x_[1];
+	double cos_star = 1. - ((s12-M2)+2.*sqrts12*(k-p4))/(2.*p4*k);
+
+	// more useful variables
+	double sin_star = std::sqrt(1. - cos_star*cos_star)
+	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
+	// p4-vec	
+	double p4x = p4/k*(kz*sin_star*cos_4k + kx*cos_star),
+		   p4y = p4*sin_star*sin_4k,
+		   p4z = p4/k*(-kx*sin_star*cos_4k + kz*cos_star);
+	// k-vec
+	double kt2 = kx*kx;
+
+	// kernel
+	double x = (-k-kz)/sqrts12, xbar = (-k+std::abs(kz))/sqrts12;
+
+	// q-perp-vec
+	double qx = -p4x,
+		   qy = -p4y;
+	double qt2 = qx*qx + qy*qy;
+	
+	// 2->2
+	double t = -(sqrts12 - M2/sqrts12)*(p4 + p4z);
+	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
+	// 1->2
+	double alpha_rad = alpha_s(kt2);
+	double mD2 = alpha_rad *pf_g*T2;
+	double iD1 = 1./k, iD2 = (kt2+x*x+M2)/k/(kt2 + qt2 + 2*qx*kx  + x*x*M2 + mD2);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
+			( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+
+	// 2->3 = 2->2 * 1->2
+	return the_M2_Qq2Qq*Pg;
+}
+
+double approx_XQqg2Qq(double * arg, double M){
+	double s = arg[0];
+	double Temp = arg[1];
+	double dt = arg[2];
+	(void)M;
+	return dt*dt;
+}
+
+double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
+	(void) n_dims_;
+	// unpack parameters
+	double * params = static_cast<double*>(params_); // s12, T, M, k, kx, kz
+	double s12 = params[0], sqrts12 = std::sqrt(params[0]);
+	double T2 = params[1]*params[1];
+	double M2 = params[2]*params[2];
+	double k = params[3], kx = params[4], kz = params[5]
+
+	// unpack variables
+	double p4 = x_[0], phi4k = x_[1];
+	double cos_star = 1. - ((s12-M2)+2.*sqrts12*(k-p4))/(2.*p4*k);
+
+	// more useful variables
+	double sin_star = std::sqrt(1. - cos_star*cos_star)
+	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
+	// p4-vec	
+	double p4x = p4/k*(kz*sin_star*cos_4k + kx*cos_star),
+		   p4y = p4*sin_star*sin_4k,
+		   p4z = p4/k*(-kx*sin_star*cos_4k + kz*cos_star);
+	// k-vec
+	double kt2 = kx*kx;
+
+	// kernel
+	double x = (-k-kz)/sqrts12, xbar = (-k+std::abs(kz))/sqrts12;
+
+	// q-perp-vec
+	double qx = -p4x,
+		   qy = -p4y;
+	double qt2 = qx*qx + qy*qy;
+	
+	// 2->2
+	double t = -(sqrts12 - M2/sqrts12)*(p4 + p4z);
+	double the_M2_Qg2Qg = M2_Qg2Qg(t, params);
+	// 1->2
+	double alpha_rad = alpha_s(kt2);
+	double mD2 = alpha_rad *pf_g*T2;
+	double iD1 = 1./k, iD2 = (kt2+x*x+M2)/k/(kt2 + qt2 + 2*qx*kx  + x*x*M2 + mD2);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
+			( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+
+	// 2->3 = 2->2 * 1->2
+	return the_M2_Qg2Qg*Pg;
+}
+
+double approx_XQgg2Qg(double * arg, double M){
+	double s = arg[0];
+	double Temp = arg[1];
+	double dt = arg[2];
+	(void)M;
+	return dt*dt;
+}
+
 
