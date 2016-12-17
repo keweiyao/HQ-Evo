@@ -18,6 +18,12 @@ cdef extern from "../src/matrix_elements.h":
 	cdef double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_)
 	cdef double approx_XQg2Qgg(double * arg, double M)
 
+	cdef double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_)
+	cdef double approx_XQqg2Qq(double * arg, double M)
+	cdef double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_)
+	cdef double approx_XQgg2Qg(double * arg, double M)
+	
+
 cdef extern from "../src/Xsection.h":
 	cdef cppclass Xsection_2to2:
 		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
@@ -27,6 +33,12 @@ cdef extern from "../src/Xsection.h":
 	
 	cdef cppclass Xsection_2to3:
 		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
+		double calculate(double * arg)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & final_states)
+		double interpX(double * arg)
+
+	cdef cppclass f_3to2:
+		f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
 		double calculate(double * arg)
 		void sample_dXdPS(double * arg, vector[ vector[double] ] & final_states)
 		double interpX(double * arg)
@@ -44,7 +56,7 @@ cdef extern from "../src/rates.h":
 		double interpR(double * arg)
 		void sample_initial(double * arg_in, double * arg_out)
 
-#-------------------Wrap Xsection and rate class---------------------------
+#-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
 	cdef Xsection_2to2 * cX2to2
 	def __cinit__(self, channel, double mass, string filename):
@@ -93,7 +105,33 @@ cdef class pyX2to3:
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cX2to3.interpX(arg)
 
+cdef class pyf3to2:
+	cdef f_3to2 * cf3to2 
+	def __cinit__(self, channel, double mass, string filename):
+		if channel == 'Qqg->Qq':
+			self.cf3to2  = new f_3to2(&Ker_Qqg2Qq, &approx_XQqg2Qq, mass, filename)
+		elif channel == 'Qgg->Qg':
+			self.cf3to2  = new f_3to2(&Ker_Qgg2Qg, &approx_XQgg2Qg, mass, filename)
+		else:
+			raise ValueError("channel %s not implemented"%channel)
+	cpdef double calculate(self, double s, double Temp, double dt):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = s; arg[1] = Temp; arg[2] = dt
+		return self.cf3to2.calculate(arg)
+	cpdef sample_dXdPS(self, double s, double Temp, double dt):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = s; arg[1] = Temp; arg[2] = dt
+		cdef vector[ vector[double] ] final_states
+		self.cf3to2.sample_dXdPS(arg, final_states)
+		return final_states
+	cpdef double interpX(self, double s, double Temp, double dt):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = s; arg[1] = Temp; arg[2] = dt
+		return self.cf3to2.interpX(arg)
 
+
+
+#------------------Wrapper for Rates class-------------------------------
 cdef class pyR2to2:
 	cdef rates_2to2 * cR2to2
 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
@@ -161,6 +199,7 @@ cdef class HqEvo:
 			self.Nchannels += self.Nelastic
 		else:
 			self.Nelastic = 0
+		
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
@@ -172,6 +211,10 @@ cdef class HqEvo:
 			self.Nchannels += self.Ninelastic
 		else:
 			self.Ninelastic = 0
+
+		if self.detailed_balance:
+			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.dat"%table_folder)
+			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.dat"%table_folder)
 
 	cpdef sample_channel(self, double E1, double T, double dt_from_last):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1

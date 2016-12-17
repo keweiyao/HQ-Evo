@@ -1,5 +1,6 @@
 #ifndef CONSTANTS_H
 #define CONSTATNS_H
+
 #include <cmath>
 //=============constants=======================================================
 const double c4d9 = 4./9.;

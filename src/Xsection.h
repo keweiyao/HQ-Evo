@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include <random>
-#include "matrix_elements.h"
 #include "sample_methods.h"
 
 struct integrate_params{
@@ -15,26 +14,26 @@ struct integrate_params{
 
 double gsl_1dfunc_wrapper(double x, void * params_);
 
+struct f32_params{
+	double (*dXdPS)(double * PS, size_t n_dims, void * params);
+	double * num_params;
+};
+
 //=============Xsection base class===================================================
 // This is the base class for 2->2 and 2->3 cross-sections.
 // It takes care of the tabulating details and the tabulating routines, also the interpolation process
 // The actually total Xsection calcuate function and final state sample function are virtual functions, because 2->2 and 2->3 uses quite different techniques to do these jobs.
 class Xsection{
 protected:
-	virtual void tabulate_s_Temp(size_t T_start, size_t dnT) = 0;
+	virtual void tabulate(size_t T_start, size_t dnT) = 0;
 	double (*dXdPS)(double * PS, size_t n_dims, void * params);
 	double (*approx_X)(double * arg, double M);
 	double M1;
-	// For interpolation
-	// Cross-section changes abruptly near the threshhold s>M2,
-	// Use different grid size for M2 < s < 5*M2 amd 5*M2 < s < 400*M2
-	const size_t Ns, NT;
-	const double sL, sM, sH, ds1, ds2;
-	const double TL, TH, dT;
 public:
 	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double get_M1(void) {return M1;};
-	virtual double interpX(double * arg) = 0; // arg = [s, T] fot X22, arg = [s, T, dt] for X23 
+	// arg = [s, T] fot X22, arg = [s, T, dt] for X23, arg = [s, T, s1k, s2k] for f32
+	virtual double interpX(double * arg) = 0; 
 	virtual double calculate(double * arg) = 0;
 	virtual void sample_dXdPS(double * arg, std::vector<std::vector<double> > & fs) = 0;
 };
@@ -47,7 +46,10 @@ private:
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi3;
 	std::vector< std::vector<double> > Xtab;
-	void tabulate_s_Temp(size_t T_start, size_t dnT);
+	void tabulate(size_t T_start, size_t dnT);
+	const size_t Nsqrts, NT;
+	const double sqrtsL, sqrtsM, sqrtsH, dsqrts1, dsqrts2;
+	const double TL, TH, dT;
 public:
     Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
@@ -62,10 +64,12 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	const size_t Ndt;
-	const double dtL, dtH, ddt;
 	std::vector< std::vector< std::vector<double> > > Xtab;
-	void tabulate_s_Temp(size_t T_start, size_t dnT);
+	void tabulate(size_t T_start, size_t dnT);
+	const size_t Nsqrts, NT, Ndt;
+	const double sqrtsL, sqrtsH, dsqrts,
+				 TL, TH, dT,
+				 dtL, dtH, ddt;
 public:
     Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
@@ -79,12 +83,15 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	const size_t Ns1k, Ns2k;
-	const double s1kL, s1kH, ds1k, s2kL, s2kH, ds2k;
+	const size_t Nsqrts, NT, Nkx, Nkz;
+	const double sqrtsL, sqrtsH, dsqrts,
+				 TL, TH, dT,
+				 kxL, kxH, dkx,
+				 kzL, kzH, dkz;
 	std::vector<std::vector< std::vector< std::vector<double> > > > Xtab;
-	void tabulate_s_Temp(size_t T_start, size_t dnT);
+	void tabulate(size_t T_start, size_t dnT);
 public:
-    Xsection_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+    f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states);

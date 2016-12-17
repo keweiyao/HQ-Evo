@@ -23,10 +23,10 @@ double approx_XQg2Qgg(double * arg, double M);
 
 //=============Baisc function for Q+q+g --> Q+q==================================
 double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_);
-double approx_XQq2Qqg(double * arg, double M);
+double approx_XQqg2Qq(double * arg, double M);
 //=============Baisc function for Q+g+g --> Q+g==================================
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_);
-double approx_XQg2Qgg(double * arg, double M);
+double approx_XQgg2Qg(double * arg, double M);
 
 
 #endif
