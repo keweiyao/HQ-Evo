@@ -56,6 +56,12 @@ cdef extern from "../src/rates.h":
 		double interpR(double * arg)
 		void sample_initial(double * arg_in, double * arg_out)
 
+	cdef cppclass rates_3to2:
+		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_)
+		double calculate(double * arg)
+		double interpR(double * arg)
+		void sample_initial(double * arg_in, double * arg_out)
+
 #-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
 	cdef Xsection_2to2 * cX2to2
@@ -169,6 +175,25 @@ cdef class pyR2to3:
 		cdef double * arg_out = <double*>malloc(2*sizeof(double))
 		self.cR2to3.sample_initial(arg_in, arg_out)
 		return arg_out[0], arg_out[1]
+
+cdef class pyR3to2:
+	cdef rates_3to2 * cR3to2
+	def __cinit__(self, pyf3to2 f3to2, int degeneracy, string filename):
+		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, filename)
+	cpdef double calculate(self, double E1, double Temp, double dt):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = E1; arg[1] = Temp; arg[2] = dt
+		return self.cR3to2.calculate(arg)
+	cpdef double interpR(self, double E1, double Temp, double dt):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = E1; arg[1] = Temp; arg[2] = dt
+		return self.cR3to2.interpR(arg)
+	cpdef sample_initial(self, double E1, double Temp, double dt):
+		cdef double * arg_in = <double*>malloc(3*sizeof(double))
+		arg_in[0] = E1; arg_in[1] = Temp; arg_in[2] = dt
+		cdef double * arg_out = <double*>malloc(2*sizeof(double))
+		self.cR3to2.sample_initial(arg_in, arg_out)
+		return arg_out[0], arg_out[1]
 	
 	
 #-------------Heavy quark evolution class------------------------
@@ -215,10 +240,12 @@ cdef class HqEvo:
 		if self.detailed_balance:
 			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.dat"%table_folder)
 			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.dat"%table_folder)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 3*8, "%s/RQqg2Qq.dat"%table_folder)
+			rQgg2Qg = pyR3to2(xQgg2Qg, 8*8, "%s/RQgg2Qg.dat"%table_folder)
 
 	cpdef sample_channel(self, double E1, double T, double dt_from_last):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
-		cdef int i=0, channel_index
+		cdef size_t i=0, channel_index=-1
 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
 		if self.elastic:
 			for Rchannel in self.R22list:
@@ -242,7 +269,7 @@ cdef class HqEvo:
 				break
 		return channel_index, dt
 
-	cpdef sample_initial(self, int channel, double E1, double T, double t_elapse_cell):
+	cpdef sample_initial(self, size_t channel, double E1, double T, double t_elapse_cell):
 		#print "i"
 		cdef double E2=0.0, s=0.0
 		if channel < 0:
@@ -256,7 +283,7 @@ cdef class HqEvo:
 		else:
 			raise ValueError("channel %d not implememented"%channel)
 
-	cpdef sample_final(self, int channel, double s, double T, double t_elapse_com):
+	cpdef sample_final(self, size_t channel, double s, double T, double t_elapse_com):
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
 		elif channel < self.Nelastic:

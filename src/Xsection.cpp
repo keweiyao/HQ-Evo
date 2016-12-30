@@ -4,58 +4,20 @@
 #include <thread>
 #include <vector>
 #include <string>
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
-#include "Xsection.h"
+
+#include "utility.h"
 #include "matrix_elements.h"
-#include "constants.h"
-
-double interpolate2d(std::vector<std::vector<double> > & A, int ni, int nj, double ri, double rj){
-	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj};
-	double result = 0.;
-	for (int i=0; i<2; i++){
-		for (int j=0; j<2; j++){
-			result += A[ni+i][nj+j]*wi[i]*wj[j];
-		}
-	}
-	return result;
-}
-
-double interpolate3d(std::vector<std::vector<std::vector<double> > > & A, int ni, int nj, int nk, double ri, double rj, double rk){
-	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj}, wk[2] = {1.-rk, rk};
-	double result = 0.;
-	for (int i=0; i<2; i++){
-		for (int j=0; j<2; j++){
-			for (int k=0; k<2; k++){
-				result += A[ni+i][nj+j][nk+k]*wi[i]*wj[j]*wk[k];
-			}
-		}
-	}
-	return result;
-}
-
-double interpolate4d(std::vector<std::vector<std::vector<std::vector<double> > > > & A, int ni, int nj, int nk, int nt, double ri, double rj, double rk, double rt){
-	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj}, wk[2] = {1.-rk, rk}, wt[3] = {1.-rt, rt};
-	double result = 0.;
-	for (int i=0; i<2; i++){
-		for (int j=0; j<2; j++){
-			for (int k=0; k<2; k++){
-				for (int t=0; t<2; t++){
-					result += A[ni+i][nj+j][nk+k][nt+t]*wi[i]*wj[j]*wk[k]*wt[t];
-				}
-			}
-		}
-	}
-	return result;
-}
-
+#include "Xsection.h"
 
 
 double gsl_1dfunc_wrapper(double x, void * params_){
-	integrate_params * params = static_cast<integrate_params*>(params_);
-	return params->dXdPS(&x, 1, params->params);
+	Mygsl_integration_params * p = static_cast<Mygsl_integration_params*>(params_);
+	return p->f(&x, 1, p->params);
 }
 
 //=============Xsection base class===================================================
@@ -135,8 +97,8 @@ double Xsection_2to2::calculate(double * arg){
 	double s = arg[0], Temp = arg[1];
 	double result, error, tmin, tmax;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
-	integrate_params * params = new integrate_params;
-	params->dXdPS = dXdPS;
+	Mygsl_integration_params * params = new Mygsl_integration_params;
+	params->f = dXdPS;
 	double * p = new double[3];
 	p[0] = s;
 	p[1] = Temp;
@@ -369,14 +331,10 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(d
 
 	std::ofstream file(name_);
 	double * arg = new double[4];
-	for (size_t i=0; i<Nsqrts; i++) {
-		arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
-		for (size_t j=0; j<NT; j++) {
-			arg[1] = TL + j*dT;
-			for (size_t k=0; k<Nkx; k++) {
-				arg[2] = kxL + k*dkx;
-				for (size_t t=0; t<Nkz; t++) {
-					arg[3] = kzL + t*dkz;
+	for (size_t i=0; i<Nsqrts; i++) { arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
+		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
+			for (size_t k=0; k<Nkx; k++) { arg[2] = kxL + k*dkx;
+				for (size_t t=0; t<Nkz; t++) { arg[3] = kzL + t*dkz;
 					file << Xtab[i][j][k][t] << " ";
 				}
 			}
@@ -387,14 +345,10 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(d
 
 void f_3to2::tabulate(size_t T_start, size_t dnT){
 	double * arg = new double[4];
-	for (size_t i=0; i<Nsqrts; i++) {
-		arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
-		for (size_t j=0; j<NT; j++) {
-			arg[1] = TL + j*dT;
-			for (size_t k=0; k<Nkx; k++) {
-				arg[2] = kxL + k*dkx;
-				for (size_t t=0; t<Nkz; t++) {
-					arg[3] = kzL + t*dkz;
+	for (size_t i=0; i<Nsqrts; i++) { arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
+		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
+			for (size_t k=0; k<Nkx; k++) { arg[2] = kxL + k*dkx;
+				for (size_t t=0; t<Nkz; t++) { arg[3] = kzL + t*dkz;
 					Xtab[i][j][k][t] = calculate(arg);
 				}
 			}
@@ -439,11 +393,11 @@ double f_3to2::interpX(double * arg){
 //------Integration function-------------------
 
 double dfdp4dphi4(double phi4, void * params_){
-	f32_params * params = static_cast<f32_params *>(params_);
+	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
 	double * x = new double[2];
-	x[0] = params->num_params[7];
+	x[0] = params->params[7];
 	x[1] = phi4;
-	double result = params->dXdPS(x, 2, params->num_params);
+	double result = params->f(x, 2, params->params);
 	delete[] x;
 	return result;
 }
@@ -452,8 +406,8 @@ double dfdp4(double p4, void * params_){
 	double result, error;
 	double phi4min = 0.0,
 		   phi4max = M_PI;
-	f32_params * params = static_cast<f32_params *>(params_);
-	params->num_params[7] = p4;
+	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
+	params->params[7] = p4;
 
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
     gsl_function F;
@@ -478,17 +432,17 @@ double f_3to2::calculate(double * arg){
 	double p4min = sqrts/2. - M2/(2.*sqrts + 4.*k),
 		   p4max = k + sqrts/2. - M2/(2.*sqrts);
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
-	f32_params * params_dfdp4 = new f32_params;
-	params_dfdp4->dXdPS = dXdPS;
-	params_dfdp4->num_params = new double[8];
-	params_dfdp4->num_params[0] = s;
-	params_dfdp4->num_params[1] = Temp;
-	params_dfdp4->num_params[2] = M1;
-	params_dfdp4->num_params[3] = k;
-	params_dfdp4->num_params[4] = kx;	
-	params_dfdp4->num_params[5] = kz;
-	params_dfdp4->num_params[6] = mD2;
-	params_dfdp4->num_params[7] = 0.;//place holder for p4
+	Mygsl_integration_params * params_dfdp4 = new Mygsl_integration_params;
+	params_dfdp4->f = dXdPS;
+	params_dfdp4->params = new double[8];
+	params_dfdp4->params[0] = s;
+	params_dfdp4->params[1] = Temp;
+	params_dfdp4->params[2] = M1;
+	params_dfdp4->params[3] = k;
+	params_dfdp4->params[4] = kx;	
+	params_dfdp4->params[5] = kz;
+	params_dfdp4->params[6] = mD2;
+	params_dfdp4->params[7] = 0.;//place holder for p4
 
     gsl_function F;
 	F.function = dfdp4;

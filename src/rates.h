@@ -6,12 +6,14 @@
 #include <functional>
 #include <vector>
 #include <string>
+
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
-#include "constants.h"
+
 #include "Xsection.h"
+
 
 double inline f_0(double x, double xi);
 double fy_wrapper22(double y, void * params_);
@@ -19,8 +21,8 @@ double fx_wrapper22(double x, void * px_);
 double fy_wrapper23(double y, void * params_);
 double fx_wrapper23(double x, void * px_);
 
-struct integrate1d_params{
-	std::function<double(double*)> interp;   // store a call to member funtion (interp) and object
+struct integrate_params_2{
+	std::function<double(double*)> f;   // store a call to member funtion (interp) and object
 	double * params;  // other double type parameters
 };
 
@@ -70,6 +72,23 @@ private:
 	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:
 	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_);
+	double calculate(double * arg);
+	double interpR(double * arg);
+	void sample_initial(double * arg_in, double * arg_out);
+};
+
+class rates_3to2 : public rates{
+private:
+	f_3to2 * Xprocess;
+	const double M;
+	const int degeneracy;
+	const size_t NE1, NT, Ndt;
+	const double E1L, E1H, TL, TH, dtL, dtH;
+	const double dE1, dT, ddt;
+	std::vector< std::vector< std::vector<double> > > Rtab;
+	void tabulate_E1_T(size_t T_start, size_t dnT);
+public:
+	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg_in, double * arg_out);

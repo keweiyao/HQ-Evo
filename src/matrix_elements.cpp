@@ -1,7 +1,9 @@
-#include "matrix_elements.h"
-#include "constants.h"
 #include <cmath>
 #include <iostream>
+
+#include "utility.h"
+#include "matrix_elements.h"
+
 
 //=============running coupling=================================================
 double alpha_s(double Q2){
@@ -142,7 +144,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
-	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
+	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 	// 1->2
 	double alpha_rad = alpha_s(kt2);
 	double mD2 = alpha_rad *pf_g*T2;
@@ -155,10 +157,12 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 }
 
 double approx_XQq2Qqg(double * arg, double M){
-	double s = arg[0];
-	double Temp = arg[1];
-	double dt = arg[2];
+	double s = arg[0], Temp = arg[1], dt = arg[2];
+	(void)M;	
 	(void)M;
+	(void)s;
+	(void)Temp;
+	(void)dt;
 	return dt*dt;
 }
 
@@ -211,10 +215,12 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 }
 
 double approx_XQg2Qgg(double * arg, double M){
-	double s = arg[0];
-	double Temp = arg[1];
-	double dt = arg[2];
+	double s = arg[0], Temp = arg[1], dt = arg[2];
+	(void)M;	
 	(void)M;
+	(void)s;
+	(void)Temp;
+	(void)dt;
 	return dt*dt;
 }
 
@@ -226,7 +232,6 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	// unpack parameters
 	double * params = static_cast<double*>(params_); // s12, T, M, k, kx, kz, mD2 ...
 	double s12 = params[0], sqrts12 = std::sqrt(params[0]);
-	double T2 = params[1]*params[1];
 	double M2 = params[2]*params[2];
 	double k = params[3], kx = params[4], kz = params[5];
 	double mD2 = params[6];
@@ -247,7 +252,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx;
 
 	// kernel
-	double x = (-k-kz)/sqrts12;
+	double x2 = std::pow((-k-kz)/sqrts12, 2);
 
 	// q-perp-vec
 	double qx = -p4x,
@@ -258,7 +263,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	double t = -(sqrts12 - M2/sqrts12)*(p4 + p4z);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
 	// 1->2
-	double iD1 = 1./(kt2+x*x*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x*x*M2 + mD2);
+	double iD1 = 1./(kt2+x2*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x2*M2 + mD2);
 	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -266,11 +271,12 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 }
 
 double approx_XQqg2Qq(double * arg, double M){
-	double s = arg[0];
-	double Temp = arg[1];
-	double dt = arg[2];
+	double s = arg[0], Temp = arg[1], dt = arg[2];
 	(void)M;
-	return dt*dt;
+	(void)s;
+	(void)Temp;
+	(void)dt;
+	return dt*dt;  
 }
 
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
@@ -278,7 +284,6 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	// unpack parameters
 	double * params = static_cast<double*>(params_); // s12, T, M, k, kx, kz, mD2 ...
 	double s12 = params[0], sqrts12 = std::sqrt(params[0]);
-	double T2 = params[1]*params[1];
 	double M2 = params[2]*params[2];
 	double k = params[3], kx = params[4], kz = params[5];
 	double mD2 = params[6];
@@ -298,7 +303,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx;
 
 	// kernel
-	double x = (-k-kz)/sqrts12;
+	double x2 = std::pow((-k-kz)/sqrts12, 2);
 
 	// q-perp-vec
 	double qx = -p4x,
@@ -309,17 +314,18 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	double t = -(sqrts12 - M2/sqrts12)*(p4 + p4z);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
-	double iD1 = 1./(kt2+x*x*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x*x*M2 + mD2);
+	double iD1 = 1./(kt2+x2*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x2*M2 + mD2);
 	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 	// 2->3 = 2->2 * 1->2
 	return the_M2_Qg2Qg*Pg;
 }
 
 double approx_XQgg2Qg(double * arg, double M){
-	double s = arg[0];
-	double Temp = arg[1];
-	double dt = arg[2];
+	double s = arg[0], Temp = arg[1], dt = arg[2];
 	(void)M;
+	(void)s;
+	(void)Temp;
+	(void)dt;
 	return dt*dt;
 }
 

@@ -5,18 +5,21 @@
 #include <vector>
 #include <string>
 #include <random>
+  
 #include "sample_methods.h"
 
-struct integrate_params{
-	double (*dXdPS)(double * PS, size_t n_dims, void * params);
+/* all the differential Xsection function are declared by type "double f(double * arg, size_t n_dims, void * params)"
+	This type is natural for gsl vegas integration, but does not match the type for gsl 1d integration which requires double f(double x, void * params)
+	Therefore, for 1d integration, use the struct below. It stores both the function call and the numerical parameters:
+	
+	double f_1d(double x, void * p_) {
+		Mygsl_integration_params * p = static_cast<Mygsl_integration_params *> p;
+		return p->f(x, 1, p->params)
+	}
+*/
+struct Mygsl_integration_params{
+	double (*f)(double * arg, size_t n_dims, void * params);
 	double * params;
-};
-
-double gsl_1dfunc_wrapper(double x, void * params_);
-
-struct f32_params{
-	double (*dXdPS)(double * PS, size_t n_dims, void * params);
-	double * num_params;
 };
 
 //=============Xsection base class===================================================
