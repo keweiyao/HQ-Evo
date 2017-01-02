@@ -198,9 +198,12 @@ void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
 
 double Xsection_2to3::interpX(double * arg){
 	double sqrts = std::sqrt(arg[0]), Temp = arg[1], dt = arg[2];
-	if (sqrts < sqrtsL) sqrts = sqrtsL; if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
-	if (Temp < TL) Temp = TL; if (Temp >= TH) Temp = TH-dT;
-	if (dt < dtL) dt = dtL; if (dt >= dtH) dt = dtH-ddt;
+	if (sqrts < sqrtsL) sqrts = sqrtsL; 
+	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
+	if (Temp < TL) Temp = TL; 
+	if (Temp >= TH) Temp = TH-dT;
+	if (dt < dtL) dt = dtL; 
+	if (dt >= dtH) dt = dtH-ddt;
 	double xsqrts, rsqrts, 
 		   xT, rT, 
 		   xdt, rdt;
@@ -359,10 +362,14 @@ void f_3to2::tabulate(size_t T_start, size_t dnT){
 double f_3to2::interpX(double * arg){
 
 	double sqrts = std::sqrt(arg[0]), Temp = arg[1], kx = arg[2], kz = arg[3], dt = arg[4];
-	if (sqrts < sqrtsL) sqrts = sqrtsL; if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
-	if (Temp < TL) Temp = TL; if (Temp >= TH) Temp = TH-dT;
-	if (kx < kxL) kx = kxL; if (kx >= kxH) kx = kxH-dkx;
-	if (kz < kzL) kz = kzL; if (kz >= kzH) kz = kzH-dkz;
+	if (sqrts < sqrtsL) sqrts = sqrtsL; 
+	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
+	if (Temp < TL) Temp = TL; 
+	if (Temp >= TH) Temp = TH-dT;
+	if (kx < kxL) kx = kxL; 
+	if (kx >= kxH) kx = kxH-dkx;
+	if (kz < kzL) kz = kzL; 
+	if (kz >= kzH) kz = kzH-dkz;
 
 	double xT, rT, 
 		   xsqrts, rsqrts,
