@@ -247,7 +247,7 @@ void rates_2to2::sample_initial(double * arg_in, double * arg_out){
 //=======================Derived Scattering Rate class 2 to 3================================
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(100), NT(16), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -368,7 +368,7 @@ void rates_2to3::sample_initial(double * arg_in, double * arg_out){
 //=======================Derived Scattering Rate class 3 to 2================================
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(20), NT(16), Ndt(10), E1L(M*1.01), E1H(M*20), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(20), NT(8), Ndt(10), E1L(M*1.01), E1H(M*20), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)

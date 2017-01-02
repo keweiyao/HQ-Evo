@@ -267,7 +267,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qq2Qq*Pg;
+	return the_M2_Qq2Qq*Pg/16.;
 }
 
 double approx_XQqg2Qq(double * arg, double M){
@@ -317,7 +317,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	double iD1 = 1./(kt2+x2*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x2*M2 + mD2);
 	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qg2Qg*Pg;
+	return the_M2_Qg2Qg*Pg/16.;
 }
 
 double approx_XQgg2Qg(double * arg, double M){

@@ -299,9 +299,9 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
 	Nsqrts(10), NT(10), Nkx(10), Nkz(10), 
-	sqrtsL(M1_*1.01), sqrtsH(M1_*10.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
+	sqrtsL(M1_*1.01), sqrtsH(M1_*20.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.1), TH(0.8), dT((TH-TL)/(NT-1.)),
-	kxL(0.01), kxH(2.0), dkx((kxH-kxL)/(Nkx-1.)),
+	kxL(0.01), kxH(10.0), dkx((kxH-kxL)/(Nkx-1.)),
 	kzL(-5.0), kzH(5.0), dkz((kzH-kzL)/(Nkz-1.))
 {
 	Xtab.resize(Nsqrts);
@@ -386,7 +386,7 @@ double f_3to2::interpX(double * arg){
 	double LPM = 1. - std::exp(-u*u);
 	double alpha_rad = alpha_s(kt2);
 
-	return 3./M_PI*alpha_rad/k*std::pow(1.-xbar, 2)*LPM*raw_result;
+	return 3./M_PI*alpha_rad/k*LPM*raw_result;//*std::pow(1.-xbar, 2);
 
 }
 
