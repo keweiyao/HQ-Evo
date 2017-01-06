@@ -35,7 +35,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 	Nsqrts(50), NT(32), 
 	sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*30.), 
 	dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH-sqrtsM)/(Nsqrts-1.)),
-	TL(0.1), TH(0.8), dT((TH-TL)/(NT-1.))
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.))
 {
 	Xtab.resize(Nsqrts*2);
 	for (auto&& dim1 : Xtab) dim1.resize(NT);
@@ -144,7 +144,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), 
 	Nsqrts(50), NT(16), Ndt(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
-	TL(0.1), TH(0.8), dT((TH-TL)/(NT-1.)),
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	dtL(0.1), dtH(5.0), ddt((dtH-dtL)/(Ndt-1.))
 {
 	Xtab.resize(Nsqrts);
@@ -298,22 +298,30 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 
 //============Derived 3->2 Xsection class===================================
+// Go to the center of mass frame of p1 + p2 + k
+// Tabulate variables:
+// 1. the center of mass energy sqrts = sqrt((p1 + p2 + k)*(p1 + p2 + k))
+// 2. T
+// 3. a1 = x2 + xk in (0.5, 1.0)
+// 4. a2 = (x2 - xk)/(1 - x2 - xk) in (-1, 1)
+// where p2 momentum fraction x2 = |p2|/(|p1| + |p2| + |k|)
+// and k momentum fraction xk = |k|/(|p1| + |p2| + |k|)
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(10), NT(10), Nkx(10), Nkz(10), 
-	sqrtsL(M1_*1.01), sqrtsH(M1_*20.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
-	TL(0.1), TH(0.8), dT((TH-TL)/(NT-1.)),
-	kxL(0.01), kxH(10.0), dkx((kxH-kxL)/(Nkx-1.)),
-	kzL(-5.0), kzH(5.0), dkz((kzH-kzL)/(Nkz-1.))
+	Nsqrts(30), NT(5), Na1(10), Na2(10), 
+	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
+	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
+	a2L(-0.999), a2H(0.999), da2((a2H-a2L)/(Na2-1.))
 {
 	Xtab.resize(Nsqrts);
 	for (auto&& dim1 : Xtab) {
 		dim1.resize(NT);
 		for (auto && dim2 : dim1){
-			dim2.resize(Nkx);
+			dim2.resize(Na1);
 			for (auto && dim3 : dim2){
-				dim3.resize(Nkz);
+				dim3.resize(Na2);
 			}
 		}
 	}
@@ -336,8 +344,8 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(d
 	double * arg = new double[4];
 	for (size_t i=0; i<Nsqrts; i++) { arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
 		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
-			for (size_t k=0; k<Nkx; k++) { arg[2] = kxL + k*dkx;
-				for (size_t t=0; t<Nkz; t++) { arg[3] = kzL + t*dkz;
+			for (size_t k=0; k<Na1; k++) { arg[2] = a1L + k*da1;
+				for (size_t t=0; t<Na2; t++) { arg[3] = a2L + t*da2;
 					file << Xtab[i][j][k][t] << " ";
 				}
 			}
@@ -350,9 +358,9 @@ void f_3to2::tabulate(size_t T_start, size_t dnT){
 	double * arg = new double[4];
 	for (size_t i=0; i<Nsqrts; i++) { arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
 		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
-			for (size_t k=0; k<Nkx; k++) { arg[2] = kxL + k*dkx;
-				for (size_t t=0; t<Nkz; t++) { arg[3] = kzL + t*dkz;
-					Xtab[i][j][k][t] = calculate(arg);
+			for (size_t k=0; k<Na1; k++) { arg[2] = a1L + k*da1;
+				for (size_t t=0; t<Na2; t++) { arg[3] = a2L + t*da2;
+					Xtab[i][j][k][t] = calculate(arg)/approx_X(arg, M1);
 				}
 			}
 		}
@@ -360,104 +368,121 @@ void f_3to2::tabulate(size_t T_start, size_t dnT){
 }
 
 double f_3to2::interpX(double * arg){
-
-	double sqrts = std::sqrt(arg[0]), Temp = arg[1], kx = arg[2], kz = arg[3], dt = arg[4];
+	double s = arg[0];
+	double sqrts = std::sqrt(s), Temp = arg[1], a1 = arg[2], a2 = arg[3], dt = arg[4];
 	if (sqrts < sqrtsL) sqrts = sqrtsL; 
 	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
 	if (Temp < TL) Temp = TL; 
 	if (Temp >= TH) Temp = TH-dT;
-	if (kx < kxL) kx = kxL; 
-	if (kx >= kxH) kx = kxH-dkx;
-	if (kz < kzL) kz = kzL; 
-	if (kz >= kzH) kz = kzH-dkz;
+	if (a1 < a1L) a1 = a1L; 
+	if (a1 >= a1H) a1 = a1H-da1;
+	if (a2 < a2L) a2 = a2L; 
+	if (a2 >= a2H) a2 = a2H-da2;
 
 	double xT, rT, 
 		   xsqrts, rsqrts,
-		   xkx, rkx,
-		   xkz, rkz;
-	size_t isqrts, iT, ikx, ikz;
+		   xa1, ra1,
+		   xa2, ra2;
+	size_t isqrts, iT, ia1, ia2;
 	xsqrts = (sqrts-sqrtsL)/dsqrts;	isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
-	xkx = (kx-kxL)/dkx;	ikx = floor(xkx); rkx = xkx - ikx;
-	xkz = (kz-kzL)/dkz;	ikz = floor(xkz); rkz = xkz - ikz;
+	xa1 = (a1-a1L)/da1;	ia1 = floor(xa1); ra1 = xa1 - ia1;
+	xa2 = (a2-a2L)/da2;	ia2 = floor(xa2); ra2 = xa2 - ia2;
 
-	double raw_result = interpolate4d(Xtab, isqrts, iT, ikx, ikz, rsqrts, rT, rkx, rkz);
+	double raw_result = interpolate4d(Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X(arg, M1);
+	
+	double xk = 0.5*(a1*a2 + a1 - a2);
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
 	double M2 = M1*M1;
-	double kt2 = kx*kx;
-	double k = std::sqrt(kt2+kz*kz);
-	// formation fime:
-	double x = (-k-kz)/sqrts;
-	double xbar = (-k+std::abs(kz))/sqrts;
-	double tauk = k/(kt2 + x*x*M2);
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double kz = k*cosk;
+	double kx = std::sqrt(k*k - kz*kz);
+	double x = (k + kz)/(E1 + p1);
+	double xbar = (k + std::abs(kz))/(E1 + p1);
+	double tauk = k/(kx*kx + x*x*M2);
 	double u = dt/tauk;
 	double LPM = 1. - std::exp(-u*u);
-	double alpha_rad = alpha_s(kt2);
-
-	return 3./M_PI*alpha_rad/k*LPM*raw_result;//*std::pow(1.-xbar, 2);
+	double alpha_rad = alpha_s(kx*kx);
+	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM*raw_result*std::pow(1.-xbar, 2);
 
 }
 
 //------Integration function-------------------
 
-double dfdp4dphi4(double phi4, void * params_){
+double df_dcostheta4_dphi4(double phi4, void * params_){
 	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
 	double * x = new double[2];
-	x[0] = params->params[7];
+	x[0] = params->params[10];
 	x[1] = phi4;
 	double result = params->f(x, 2, params->params);
 	delete[] x;
 	return result;
 }
 
-double dfdp4(double p4, void * params_){
+double df_dcostheta4(double p4, void * params_){
 	double result, error;
 	double phi4min = 0.0,
-		   phi4max = M_PI;
+		   phi4max = 2.*M_PI;
 	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
-	params->params[7] = p4;
+	params->params[10] = p4;
 
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
     gsl_function F;
-	F.function =  dfdp4dphi4;
+	F.function = df_dcostheta4_dphi4;
 	F.params = params;
 	gsl_integration_qag(&F, phi4min, phi4max, 0, 1e-3, 500, 3, w, &result, &error);
 	gsl_integration_workspace_free(w);
-	return 2*result;
+	return result;
 }
 
 double f_3to2::calculate(double * arg){
-	double s = arg[0], Temp = arg[1], kx = arg[2], kz = arg[3];
-	
-	double M2 = M1*M1;
+	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
 	double sqrts = std::sqrt(s);
-	double kt2 = kx*kx;
-	double k = std::sqrt(kt2+kz*kz);
+	double xk = 0.5*(a1*a2 + a1 - a2);
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
+	double M2 = M1*M1;
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k, cos2 = (k*k-E2*E2-p1*p1)/2./p1/E2;
+	double kz = k*cosk;
+	double kx = std::sqrt(k*k - kz*kz);
+	double frac2 = std::pow((k + kz)/(E1 + p1), 2);
 	double mD2 = alpha_s(kx*kx)*pf_g*Temp*Temp;
 
 	// Integration for (1)p4 and (2)phi4
 	double result, error;
-	double p4min = sqrts/2. - M2/(2.*sqrts + 4.*k),
-		   p4max = k + sqrts/2. - M2/(2.*sqrts);
+	double costheta4min = -1., costheta4max = 1.;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
-	Mygsl_integration_params * params_dfdp4 = new Mygsl_integration_params;
-	params_dfdp4->f = dXdPS;
-	params_dfdp4->params = new double[8];
-	params_dfdp4->params[0] = s;
-	params_dfdp4->params[1] = Temp;
-	params_dfdp4->params[2] = M1;
-	params_dfdp4->params[3] = k;
-	params_dfdp4->params[4] = kx;	
-	params_dfdp4->params[5] = kz;
-	params_dfdp4->params[6] = mD2;
-	params_dfdp4->params[7] = 0.;//place holder for p4
+	Mygsl_integration_params * params_df = new Mygsl_integration_params;
+	params_df->f = dXdPS;
+	params_df->params = new double[11];
+	params_df->params[0] = s;
+	params_df->params[1] = Temp;
+	params_df->params[2] = M1;
+	params_df->params[3] = E2;
+	params_df->params[4] = E4;	
+	params_df->params[5] = cos2;
+	params_df->params[6] = std::sqrt(1. - cos2*cos2);
+	params_df->params[7] = kx;
+	params_df->params[8] = mD2;
+	params_df->params[9] = frac2;
+	params_df->params[10] = 0.; //place holder for costheta4
 
     gsl_function F;
-	F.function = dfdp4;
-	F.params = params_dfdp4;
-	gsl_integration_qag(&F, p4min, p4max, 0, 1e-3, 500, 3, w, &result, &error);
+	F.function = df_dcostheta4;
+	F.params = params_df;
+	gsl_integration_qag(&F, costheta4min, costheta4max, 0, 1e-3, 500, 3, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
-	delete params_dfdp4;
+	delete params_df;
 	return result;
 }
 

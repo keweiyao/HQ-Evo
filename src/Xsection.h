@@ -86,11 +86,11 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	const size_t Nsqrts, NT, Nkx, Nkz;
+	const size_t Nsqrts, NT, Na1, Na2;
 	const double sqrtsL, sqrtsH, dsqrts,
 				 TL, TH, dT,
-				 kxL, kxH, dkx,
-				 kzL, kzH, dkz;
+				 a1L, a1H, da1,
+				 a2L, a2H, da2;
 	std::vector<std::vector< std::vector< std::vector<double> > > > Xtab;
 	void tabulate(size_t T_start, size_t dnT);
 public:

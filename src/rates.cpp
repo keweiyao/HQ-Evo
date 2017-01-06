@@ -134,7 +134,7 @@ rates::rates(std::string name_)
 //=======================Derived Scattering Rate class 2 to 2================================
 rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.12), TH(0.8),
+	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -247,7 +247,7 @@ void rates_2to2::sample_initial(double * arg_in, double * arg_out){
 //=======================Derived Scattering Rate class 2 to 3================================
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -368,7 +368,7 @@ void rates_2to3::sample_initial(double * arg_in, double * arg_out){
 //=======================Derived Scattering Rate class 3 to 2================================
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(20), NT(8), Ndt(10), E1L(M*1.01), E1H(M*20), TL(0.12), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(50), NT(8), Ndt(10), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -442,37 +442,32 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik);
+	double sinphik = std::sqrt(1. - cosphik*cosphik);
 	double E1 = params->params[0], Temp = params->params[1], dt = params->params[2], M = params->params[3], p1 = params->params[4];
 	double E2 = x2*Temp, k = xk*Temp;
 	
-	double s = M*M + 2.*E2*(E1-p1*costheta2);
-	double kx = k*sinthetak*cosphik, 
-		   //ky = k*sinthetak*sinphik, 
-		   kz = k*costhetak;
+	double kx = k*sinthetak*cosphik, ky = k*sinthetak*sinphik, kz = k*costhetak;
 	double p2x = sintheta2*E2, p2z = costheta2*E2;
-	// given p1 = (E1, 0, 0, p1) and p2 = (E2, sintheta2*E2, 0, costheta2*E2)
-	double vx = p2x/(E1+E2), vz = (p1 + p2z)/(E1+E2);
-	double v2 = vx*vx + vz*vz;
-	double absv = std::sqrt(v2)+1e-32;
-	double nx = vx/absv, nz = vz/absv;
+	// given p1 = (E1, 0, 0, p1),
+	//		 p2 = (E2, p2x, 0, p2z)
+	// and   k  = (k, kx, ky, kz)
+	double P0 = E1 + E2 + k, P1 = p2x + kx, P2 = ky, P3 = p1 + p2z + kz;
+	double s = P0*P0 - P1*P1 - P2*P2 - P3*P3;
+	double vx = P1/P0, vy = P2/P0, vz = P3/P0;
+	double v2 = vx*vx +vy*vy + vz*vz;
 	double gamma = 1./sqrt(1. - v2 + 1e-32);
-	double gb = gamma - 1.;
-	double kp =   gamma*k	 + (-gamma*vx)*kx 		+ (-gamma*vz)*kz,
-		   kxp = -gamma*vx*k + (1. + gb*nx*nx)*kx 	+ gb*nx*nz*kz,
-	       //kyp = ky;
-	       kzp = -gamma*vz*k + gb*nz*nx*kx			+ (1. + gb*nz*nz)*kz;
-
-	double kzpp = (kxp*p2x + kzp*p2z)/E2;
-	double kxpp = std::sqrt(kp*kp - kzpp*kzpp);
-	double dtp = gamma*(1. - vz*p1/E1)*dt;
+	double kp  = gamma*k + (-gamma*vx)*kx + (-gamma*vy)*ky + (-gamma*vz)*kz,
+		   E2p = gamma*E2 + (-gamma*vx)*p2x + (-gamma*vz)*p2z,
+		   E1p = gamma*E1 + (-gamma*vz)*p1;
+	double p1p = std::sqrt(E1p*E1p - M*M);
+	double w2 = E2p/(E2p+p1p+kp), wk = kp/(E2p+p1p+kp);
 
 	// Quantity in CoM frame of p1 and p2
 	double * arg = new double[5];
-	arg[0] = s; arg[1] = Temp; arg[2] = kxpp; arg[3] = kzpp; arg[4] = dtp;
+	arg[0] = s; arg[1] = Temp; arg[2] =  w2 + wk; arg[3] = (w2 - wk)/(1. - w2 - wk); arg[4] = gamma*(1. - vz*p1/E1)*dt;
 
-	double result = f_0(x2, 0.)*f_0(xk, 0.)*x2*xk*params->f(arg);
+	return f_0(x2, 0.)*f_0(xk, 0.)*x2*xk*params->f(arg);
 
-	return result;
 }
 
 double rates_3to2::calculate(double * arg){
@@ -498,11 +493,11 @@ double rates_3to2::calculate(double * arg){
 	
 	// integration limits
 	double xl[5], xu[5];
-	xl[0] = 0.0; xu[0] = 5.0;
+	xl[0] = 0.0; xu[0] = 3.0;
 	xl[1] = -1.; xu[1] = 1.0;
-	xl[2] = 0.0; xu[2] = 5.0;
+	xl[2] = 0.0; xu[2] = 3.0;
 	xl[3] = -1.; xu[3] = 1.0;
-	xl[4] = 0.0; xu[4] = 2.*M_PI;
+	xl[4] = 0.0; xu[4] = M_PI;
 
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(5);
@@ -513,7 +508,7 @@ double rates_3to2::calculate(double * arg){
 	gsl_rng_free(r);
 	delete params;
 
-	return result/256./std::pow(M_PI, 5)/E1*std::pow(Temp, 4);
+	return 2.*result/256./std::pow(M_PI, 5)/E1*std::pow(Temp, 4);
 }
 
 void rates_3to2::sample_initial(double * arg_in, double * arg_out){
