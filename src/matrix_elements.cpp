@@ -70,6 +70,7 @@ double M2_Qg2Qg(double t, void * params) {
 	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / (Q2t - mt2) / (Q2s + ms2);
     // t*u
 	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / (Q2t - mt2) / (-Q2u + mu2);
+	if (result < 0.) return 0.;
 	return result*c16pi2;
 }
 
@@ -216,67 +217,51 @@ double approx_XQg2Qgg(double * arg, double M){
 
 //=============Basic for 3->2===========================================
 double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
-		(void) n_dims_;
+	(void) n_dims_;
 	// unpack parameters
-	double * params = static_cast<double*>(params_); // s, T, M, E2, E4, costheta2, sintheta2, kx, mD2, x2
-	double M2 = params[2]*params[2];
-	double E2 = params[3], E4 = params[4], costheta2 = params[5], sintheta2 = params[6];
-	double kx = params[7];
-	double mD2 = params[8];
-	double x2 = params[9];
+	double * params = static_cast<double*>(params_); // s12k, T, M, E2, E4, costheta2, sintheta2, kx, mD2, x2
+	double E2 = params[3], E4 = params[4], costheta2 = params[5];
 
 	// unpack variables
-	double costheta4 = x_[0], phi4 = x_[1];
-	double sintheta4 = std::sqrt(1. - costheta4*costheta4);
-	double cosphi4 = std::cos(phi4), sinphi4 = std::sin(phi4); 
+	double costheta42 = x_[0]; 
 	// 2->2
-	double t = -2.*E2*E4*(1. + sintheta2*sintheta4*cosphi4 - costheta2*costheta4);
+	double t = -2.*E2*E4*(1. - costheta42);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
 	// 1->2
-	double kt2 = kx*kx, qx = -E2*sintheta2 - E4*sintheta4*cosphi4, qy =  -E4*sintheta4*sinphi4;
-	double qt2 = qx*qx + qy*qy;
-	double iD1 = 1./(kt2+x2*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x2*M2 + mD2);
-	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+ 	double Pg = 1.0;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qq2Qq*Pg/16.;
+	return the_M2_Qq2Qq*Pg/16.*2.*M_PI;
 }
 
 double approx_XQqg2Qq(double * arg, double M){
-	double s = arg[0], Temp = arg[1];
-	return 1.0/(1.0 - M*M/s)/Temp/Temp;  
+	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
+	return (s-M*M)/Temp/Temp/x2; 
 }
 
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
-		(void) n_dims_;
+	(void) n_dims_;
 	// unpack parameters
-	double * params = static_cast<double*>(params_); // s, T, M, E2, E4, costheta2, sintheta2, kx, mD2, x2
-	double M2 = params[2]*params[2];
+	double * params = static_cast<double*>(params_); // s12k, T, M, E2, E4, costheta2, sintheta2, kx, mD2, x2
 	double E2 = params[3], E4 = params[4], costheta2 = params[5], sintheta2 = params[6];
-	double kx = params[7];
-	double mD2 = params[8];
-	double x2 = params[9];
 
 	// unpack variables
-	double costheta4 = x_[0], phi4 = x_[1];
-	double sintheta4 = std::sqrt(1. - costheta4*costheta4);
-	double cosphi4 = std::cos(phi4), sinphi4 = std::sin(phi4);  
+	double costheta42 = x_[0]; 
 	// 2->2
-	double t = -2.*E2*E4*(1. + sintheta2*sintheta4*cosphi4 - costheta2*costheta4);
+	double t = -2.*E2*E4*(1. - costheta42);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
-	double kt2 = kx*kx, qx = -E2*sintheta2 - E4*sintheta4*cosphi4, qy =  -E4*sintheta4*sinphi4;
-	double qt2 = qx*qx + qy*qy;
-	double iD1 = 1./(kt2+x2*M2), iD2 = 1./(kt2 + qt2 + 2.*qx*kx  + x2*M2 + mD2);
-	double Pg = ( kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2) - 2.*kx*qx*(iD1-iD2)*iD2 );
+ 	double Pg = 1.0;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qg2Qg*Pg/16.;
+	return the_M2_Qg2Qg*Pg/16.*2.*M_PI;
 }
 
 double approx_XQgg2Qg(double * arg, double M){
-	double s = arg[0], Temp = arg[1];
-	return 1.0/(1.0 - M*M/s)/Temp/Temp;  
+	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
+	return (s-M*M)/Temp/Temp/x2;  
 }
 
 
