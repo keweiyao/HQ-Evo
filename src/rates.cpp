@@ -28,7 +28,7 @@ double fy_wrapper22(double y, void * params_){
 	double * arg = new double[2];
 	arg[0] = s; arg[1] = Temp;
 	double Xsection = params->f(arg);
-	//delete[] params;
+	delete [] arg;
 	return (1.-v1*y)*Xsection;
 } 
 
@@ -58,7 +58,6 @@ double fx_wrapper22(double x, void * px_){
 	gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
 
 	delete py;
-	//delete px;
 	gsl_integration_workspace_free(w);
 	return x*x*f_0(x, zeta)*result;
 }
@@ -84,7 +83,7 @@ double fy_wrapper23(double y, void * params_){
 	double * arg = new double[3];
 	arg[0] = s; arg[1] = Temp; arg[2] = dtp; // dt in the CoM Frame
 	double Xsection = params->f(arg);
-	//delete[] params;
+	delete [] arg;
 	return (1.-v1*y)*Xsection;
 } 
 
@@ -118,7 +117,6 @@ double fx_wrapper23(double x, void * px_){
 	gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
 
 	delete py;
-	//delete px;
 	gsl_integration_workspace_free(w);
 	return x*x*f_0(x, zeta)*result;
 }
@@ -174,6 +172,7 @@ void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
 			Rtab[i][j] = calculate(arg);
 		}
 	}
+	delete [] arg;
 }
 
 double rates_2to2::interpR(double * arg){
@@ -239,6 +238,7 @@ void rates_2to2::sample_initial(double * arg_in, double * arg_out){
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
 	arg_out[0] = x*Temp;
 	arg_out[1] = intersection + coeff1*x + coeff2*x*y;
+	delete [] Xarg;
 }
 
 
@@ -294,6 +294,7 @@ void rates_2to3::tabulate_E1_T(size_t T_start, size_t dnT){
 			}
 		}
 	}
+	delete [] arg;
 }
 
 double rates_2to3::interpR(double * arg){
@@ -363,12 +364,13 @@ void rates_2to3::sample_initial(double * arg_in, double * arg_out){
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
 	arg_out[0] = x*Temp;
 	arg_out[1] = intersection + coeff1*x + coeff2*x*y;
+	delete [] Xarg;
 }
 
 //=======================Derived Scattering Rate class 3 to 2================================
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(20), NT(8), Ndt(10), E1L(M*1.01), E1H(M*20), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(50.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -415,6 +417,7 @@ void rates_3to2::tabulate_E1_T(size_t T_start, size_t dnT){
 			}
 		}
 	}
+	delete [] arg;
 }
 
 double rates_3to2::interpR(double * arg){
@@ -454,20 +457,20 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	double P0 = E1 + E2 + k, P1 = p2x + kx, P2 = ky, P3 = p1 + p2z + kz;
 	double s = P0*P0 - P1*P1 - P2*P2 - P3*P3;
 	double vx = P1/P0, vy = P2/P0, vz = P3/P0;
-	double gamma = 1./sqrt(1. - vx*vx - vy*vy - vz*vz + 1e-32);
-	double kp  = gamma*k + (-gamma*vx)*kx + (-gamma*vy)*ky + (-gamma*vz)*kz,
-		   E2p = gamma*E2 + (-gamma*vx)*p2x + (-gamma*vz)*p2z,
-		   E1p = gamma*E1 + (-gamma*vz)*p1;
+	double gamma = P0/std::sqrt(s);
+	double kp  = gamma*(k - vx*kx -vy*ky -vz*kz),
+		   E2p = gamma*(E2 - vx*p2x - vz*p2z),
+		   E1p = gamma*(E1 - vz*p1);
 	double p1p = std::sqrt(E1p*E1p - M*M);
-	double p_tot = (E2p+p1p+kp);
+	double p_tot = E2p+p1p+kp;
 	double w2 = E2p/p_tot, wk = kp/p_tot;
 
 	// Quantity in CoM frame of p1 and p2
 	double * arg = new double[5];
 	arg[0] = s; arg[1] = Temp; arg[2] =  w2 + wk; arg[3] = (w2 - wk)/(1. - w2 - wk); arg[4] = gamma*(1. - vz*p1/E1)*dt;
-
-	return f_0(x2, 0.)*f_0(xk, 0.)*x2*xk*params->f(arg);
-
+	double result = x2*f_0(x2, 0.)*params->f(arg)*xk*f_0(xk, 0.);
+	delete [] arg;
+	return result;
 }
 
 double rates_3to2::calculate(double * arg){
@@ -493,9 +496,9 @@ double rates_3to2::calculate(double * arg){
 	
 	// integration limits
 	double xl[5], xu[5];
-	xl[0] = 0.0; xu[0] = 5.0;
+	xl[0] = 0.0; xu[0] = 15.;
 	xl[1] = -1.; xu[1] = 1.0;
-	xl[2] = 0.0; xu[2] = 5.0;
+	xl[2] = 0.0; xu[2] = 15.;
 	xl[3] = -1.; xu[3] = 1.0;
 	xl[4] = 0.0; xu[4] = 2.0*M_PI;
 

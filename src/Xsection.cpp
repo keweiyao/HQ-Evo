@@ -63,6 +63,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 			file << Xtab[i][j] * approx_X(arg, M1) << " ";
 		}
 	}
+	delete [] arg;
 }
 
 void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
@@ -75,6 +76,7 @@ void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
 			Xtab[i][j] = calculate(arg)/approx_X(arg, M1);
 		}
 	}
+	delete [] arg;
 }
 
 double Xsection_2to2::interpX(double * arg){
@@ -112,7 +114,7 @@ double Xsection_2to2::calculate(double * arg){
 	tmin = -pow(s-M1*M1, 2)/s;
 	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
 
-	delete[] p;
+	delete [] p;
 	delete params;
 	gsl_integration_workspace_free(w);
 
@@ -136,7 +138,7 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	final_states[0][1] = pQ*sintheta3*cosphi3;
 	final_states[0][2] = pQ*sintheta3*sinphi3;
 	final_states[0][3] = pQ*costheta3;
-	delete[] p;
+	delete [] p;
 }
 
 //============Derived 2->3 Xsection class===================================
@@ -180,6 +182,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 			}
 		}
 	}
+	delete [] arg;
 }
 
 void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
@@ -194,6 +197,7 @@ void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
 			}
 		}
 	}
+	delete [] arg;
 }
 
 double Xsection_2to3::interpX(double * arg){
@@ -244,7 +248,7 @@ double Xsection_2to3::calculate(double * arg){
 	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5); 
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
-	delete params;
+	delete [] params;
 	return result/c256pi4/(s-M2);
 }
 
@@ -293,7 +297,10 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 	final_states[1][0] = k; final_states[1][1] = kx; 
 	final_states[1][2] = ky; final_states[1][3] = kz;
-	delete[] p;
+	delete [] p;
+	delete [] guessl;
+	delete [] guessh;
+	delete [] vec4;
 }
 
 
@@ -309,7 +316,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(60), NT(8), Na1(20), Na2(10), 
+	Nsqrts(60), NT(8), Na1(30), Na2(30), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
@@ -351,7 +358,7 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(d
 			}
 		}
 	}
-
+	delete [] arg;
 }
 
 void f_3to2::tabulate(size_t T_start, size_t dnT){
@@ -365,6 +372,7 @@ void f_3to2::tabulate(size_t T_start, size_t dnT){
 			}
 		}
 	}
+	delete [] arg;
 }
 
 double f_3to2::interpX(double * arg){
@@ -401,24 +409,21 @@ double f_3to2::interpX(double * arg){
 	double E1 = std::sqrt(p1*p1 + M2);
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
-	double kx = std::sqrt(k*k - kz*kz);
+	double kt2 = k*k - kz*kz;
 	double frac = (k + kz)/(E1 + p1);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
-	double tauk = k/(kx*kx + frac*frac*M2);
+	double tauk = k/(kt2 + frac*frac*M2);
 	double u = dt/tauk;
 	double LPM = 1. - std::exp(-u*u);
-	double alpha_rad = alpha_s(kx*kx);
-	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM*kx*kx/std::pow(kx*kx + frac*frac*M2, 2) * std::pow(1.0 - fracbar, 2) * raw_result;
-
+	double alpha_rad = alpha_s(kt2);
+	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM*kt2/std::pow(kt2 + frac*frac*M2, 2) * std::pow(1.0 - fracbar, 2) * raw_result;
 }
 
 //------Integration function-------------------
 
 double df_dcostheta42(double costheta4, void * params_){
 	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
-	double * x = new double[1];
-	x[0] = costheta4;
-	return params->f(x, 1, params->params);
+	return params->f(&costheta4, 1, params->params);
 }
 
 double f_3to2::calculate(double * arg){
