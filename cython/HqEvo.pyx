@@ -48,19 +48,19 @@ cdef extern from "../src/rates.h":
 		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		void sample_initial(double * arg_in, double * arg_out)
+		vector[ vector[double] ] sample_initial(double * arg_in)
 
 	cdef cppclass rates_2to3:
 		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		void sample_initial(double * arg_in, double * arg_out)
+		vector[ vector[double] ] sample_initial(double * arg_in)
 
 	cdef cppclass rates_3to2:
 		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		void sample_initial(double * arg_in, double * arg_out)
+		vector[ vector[double] ] sample_initial(double * arg_in)
 
 #-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
@@ -72,17 +72,17 @@ cdef class pyX2to2:
 			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
-	cpdef double calculate(self, double s, double Temp):
+	cpdef double calculate(self, double & s, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = s; arg[1] = Temp
 		return self.cX2to2.calculate(arg)
-	cpdef sample_dXdPS(self, double s, double Temp):
+	cpdef sample_dXdPS(self, double & s, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = s; arg[1] = Temp
 		cdef vector[ vector[double] ] final_states
 		self.cX2to2.sample_dXdPS(arg, final_states)
 		return final_states
-	cpdef double interpX(self, double s, double Temp):
+	cpdef double interpX(self, double & s, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = s; arg[1] = Temp
 		return self.cX2to2.interpX(arg)
@@ -96,17 +96,17 @@ cdef class pyX2to3:
 			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
-	cpdef double calculate(self, double s, double Temp, double dt):
+	cpdef double calculate(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cX2to3.calculate(arg)
-	cpdef sample_dXdPS(self, double s, double Temp, double dt):
+	cpdef sample_dXdPS(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		cdef vector[ vector[double] ] final_states
 		self.cX2to3.sample_dXdPS(arg, final_states)
 		return final_states
-	cpdef double interpX(self, double s, double Temp, double dt):
+	cpdef double interpX(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cX2to3.interpX(arg)
@@ -120,17 +120,17 @@ cdef class pyf3to2:
 			self.cf3to2  = new f_3to2(&Ker_Qgg2Qg, &approx_XQgg2Qg, mass, filename)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
-	cpdef double calculate(self, double s, double Temp, double dt):
+	cpdef double calculate(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cf3to2.calculate(arg)
-	cpdef sample_dXdPS(self, double s, double Temp, double dt):
+	cpdef sample_dXdPS(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		cdef vector[ vector[double] ] final_states
 		self.cf3to2.sample_dXdPS(arg, final_states)
 		return final_states
-	cpdef double interpX(self, double s, double Temp, double dt):
+	cpdef double interpX(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
 		return self.cf3to2.interpX(arg)
@@ -142,58 +142,53 @@ cdef class pyR2to2:
 	cdef rates_2to2 * cR2to2
 	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
 		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, filename)
-	cpdef double calculate(self, double E1, double Temp):
+	cpdef double calculate(self, double & E1, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
 		return self.cR2to2.calculate(arg)
-	cpdef double interpR(self, double E1, double Temp):
+	cpdef double interpR(self, double & E1, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
 		return self.cR2to2.interpR(arg)
-	cpdef sample_initial(self, double E1, double Temp):
+	cpdef sample_initial(self, double & E1, double & Temp):
 		cdef double * arg_in = <double*>malloc(2*sizeof(double))
 		arg_in[0] = E1; arg_in[1] = Temp
-		cdef double * arg_out = <double*>malloc(2*sizeof(double))
-		self.cR2to2.sample_initial(arg_in, arg_out)
-		return arg_out[0], arg_out[1]
+		return self.cR2to2.sample_initial(arg_in)
+
 
 cdef class pyR2to3:
 	cdef rates_2to3 * cR2to3
 	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):
 		self.cR2to3 = new rates_2to3(x2to3.cX2to3, degeneracy, filename)
-	cpdef double calculate(self, double E1, double Temp, double dt):
+	cpdef double calculate(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
 		return self.cR2to3.calculate(arg)
-	cpdef double interpR(self, double E1, double Temp, double dt):
+	cpdef double interpR(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
 		return self.cR2to3.interpR(arg)
-	cpdef sample_initial(self, double E1, double Temp, double dt):
+	cpdef sample_initial(self, double & E1, double & Temp, double & dt):
 		cdef double * arg_in = <double*>malloc(3*sizeof(double))
 		arg_in[0] = E1; arg_in[1] = Temp; arg_in[2] = dt
-		cdef double * arg_out = <double*>malloc(2*sizeof(double))
-		self.cR2to3.sample_initial(arg_in, arg_out)
-		return arg_out[0], arg_out[1]
+		return self.cR2to3.sample_initial(arg_in)
 
 cdef class pyR3to2:
 	cdef rates_3to2 * cR3to2
 	def __cinit__(self, pyf3to2 f3to2, int degeneracy, string filename):
 		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, filename)
-	cpdef double calculate(self, double E1, double Temp, double dt):
+	cpdef double calculate(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
 		return self.cR3to2.calculate(arg)
-	cpdef double interpR(self, double E1, double Temp, double dt):
+	cpdef double interpR(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
 		return self.cR3to2.interpR(arg)
-	cpdef sample_initial(self, double E1, double Temp, double dt):
+	cpdef sample_initial(self, double & E1, double & Temp, double & dt):
 		cdef double * arg_in = <double*>malloc(3*sizeof(double))
 		arg_in[0] = E1; arg_in[1] = Temp; arg_in[2] = dt
-		cdef double * arg_out = <double*>malloc(2*sizeof(double))
-		self.cR3to2.sample_initial(arg_in, arg_out)
-		return arg_out[0], arg_out[1]
+		return self.cR3to2.sample_initial(arg_in)
 	
 	
 #-------------Heavy quark evolution class------------------------
@@ -243,7 +238,7 @@ cdef class HqEvo:
 			rQqg2Qq = pyR3to2(xQqg2Qq, 12*16, "%s/RQqg2Qq.dat"%table_folder)
 			rQgg2Qg = pyR3to2(xQgg2Qg, 16*16/2., "%s/RQgg2Qg.dat"%table_folder)
 
-	cpdef sample_channel(self, double E1, double T, double dt_from_last):
+	cpdef sample_channel(self, double & E1, double & T, double & dt_from_last):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
 		cdef size_t i=0, channel_index=-1
 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
@@ -269,9 +264,7 @@ cdef class HqEvo:
 				break
 		return channel_index, dt
 
-	cpdef sample_initial(self, size_t channel, double E1, double T, double t_elapse_cell):
-		#print "i"
-		cdef double E2=0.0, s=0.0
+	cpdef sample_initial(self, int channel, double & E1, double & T, double & t_elapse_cell):
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
 		elif channel < self.Nelastic:
@@ -283,7 +276,7 @@ cdef class HqEvo:
 		else:
 			raise ValueError("channel %d not implememented"%channel)
 
-	cpdef sample_final(self, size_t channel, double s, double T, double t_elapse_com):
+	cpdef sample_final(self, int channel, double & s, double & T, double & t_elapse_com):
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
 		elif channel < self.Nelastic:

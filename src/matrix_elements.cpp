@@ -219,13 +219,12 @@ double approx_XQg2Qgg(double * arg, double M){
 double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack parameters
-	double * params = static_cast<double*>(params_); // s12k, T, M, E2, E4, costheta2
-	double E2 = params[3], E4 = params[4], costheta2 = params[5];
+	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
+	double TwoE2E4 = params[3];
 
-	// unpack variables
-	double costheta42 = x_[0]; 
+	// unpack variables costheta42 = x_[0]
 	// 2->2
-	double t = -2.*E2*E4*(1. - costheta42);
+	double t = TwoE2E4 * (x_[0] - 1);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
 	// 1->2
  	double Pg = 1.0;
@@ -243,13 +242,12 @@ double approx_XQqg2Qq(double * arg, double M){
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack parameters
-	double * params = static_cast<double*>(params_); // s12k, T, M, E2, E4, costheta2
-	double E2 = params[3], E4 = params[4], costheta2 = params[5];
+	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
+	double TwoE2E4 = params[3];
 
-	// unpack variables
-	double costheta42 = x_[0]; 
+	// unpack variables costheta42 = x_[0]
 	// 2->2
-	double t = -2.*E2*E4*(1. - costheta42);
+	double t = TwoE2E4 * (x_[0] - 1);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
  	double Pg = 1.0;

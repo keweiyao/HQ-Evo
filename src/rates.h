@@ -40,7 +40,7 @@ public:
 	rates(std::string name_);
 	virtual double calculate(double * arg) = 0;
 	virtual double interpR(double * arg) = 0;
-	virtual void sample_initial(double * arg_in, double * arg_out) = 0;
+	virtual std::vector< std::vector<double> > sample_initial(double * arg_in) = 0;
 };
 
 class rates_2to2 : public rates{
@@ -57,7 +57,7 @@ public:
 	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double * arg);
 	double interpR(double * arg);
-	void sample_initial(double * arg_in, double * arg_out);
+	std::vector< std::vector<double> > sample_initial(double * arg_in);
 };
 
 class rates_2to3 : public rates{
@@ -74,7 +74,7 @@ public:
 	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double * arg);
 	double interpR(double * arg);
-	void sample_initial(double * arg_in, double * arg_out);
+	std::vector< std::vector<double> > sample_initial(double * arg_in);
 };
 
 class rates_3to2 : public rates{
@@ -91,7 +91,7 @@ public:
 	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_);
 	double calculate(double * arg);
 	double interpR(double * arg);
-	void sample_initial(double * arg_in, double * arg_out);
+	std::vector< std::vector<double> > sample_initial(double * arg_in);
 };
 
 

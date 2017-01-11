@@ -215,12 +215,13 @@ double rates_2to2::calculate(double * arg)
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
 
-void rates_2to2::sample_initial(double * arg_in, double * arg_out){
+std::vector< std::vector<double> > rates_2to2::sample_initial(double * arg_in){
 	// this function samples x = E2/T and y = cos(theta2) from the distribution:
 	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
 	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
 	// and uniform sample y within (-1., 1.)
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
+	// this function returns all initial state particles' four-vector in the order (p1, p2)
 	double E1 = arg_in[0], Temp = arg_in[1];
 	double * Xarg = new double[2]; Xarg[1] = Temp;
 	double M2 = M*M, x, y, max, smax, stemp;
@@ -236,9 +237,17 @@ void rates_2to2::sample_initial(double * arg_in, double * arg_out){
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp;
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
-	arg_out[0] = x*Temp;
-	arg_out[1] = intersection + coeff1*x + coeff2*x*y;
 	delete [] Xarg;
+	double E2 = x*Temp;
+	double costheta2 = y, sintheta2 = std::sqrt(1. - y*y);
+	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
+	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
+	// Constructing initial states
+	std::vector< std::vector<double> > IS;
+	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
+	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
+	return IS;
 }
 
 
@@ -341,7 +350,7 @@ double rates_2to3::calculate(double * arg)
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
 
-void rates_2to3::sample_initial(double * arg_in, double * arg_out){
+std::vector< std::vector<double> > rates_2to3::sample_initial(double * arg_in){
 	// this function samples x = E2/T and y = cos(theta2) from the distribution:
 	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
 	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
@@ -362,15 +371,23 @@ void rates_2to3::sample_initial(double * arg_in, double * arg_out){
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp; 
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
-	arg_out[0] = x*Temp;
-	arg_out[1] = intersection + coeff1*x + coeff2*x*y;
 	delete [] Xarg;
+	double E2 = x*Temp;
+	double costheta2 = y, sintheta2 = std::sqrt(1. - y*y);
+	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
+	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
+	// Constructing initial states
+	std::vector< std::vector<double> > IS;
+	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
+	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
+	return IS;
 }
 
 //=======================Derived Scattering Rate class 3 to 2================================
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(50.0),
+	NE1(50), NT(8), Ndt(10), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75), dtL(0.1), dtH(50.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -514,7 +531,8 @@ double rates_3to2::calculate(double * arg){
 	return result/256./std::pow(M_PI, 5)/E1*std::pow(Temp, 4);
 }
 
-void rates_3to2::sample_initial(double * arg_in, double * arg_out){
-
+std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg_in){
+	std::vector< std::vector<double> > IS;
+	return IS;
 }
 

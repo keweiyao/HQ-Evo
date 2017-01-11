@@ -421,9 +421,9 @@ double f_3to2::interpX(double * arg){
 
 //------Integration function-------------------
 
-double df_dcostheta42(double costheta4, void * params_){
+double df_dcostheta42(double costheta42, void * params_){
 	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
-	return params->f(&costheta4, 1, params->params);
+	return params->f(&costheta42, 1, params->params);
 }
 
 double f_3to2::calculate(double * arg){
@@ -434,9 +434,9 @@ double f_3to2::calculate(double * arg){
 	double M2 = M1*M1;
 	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
 	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
-	double k = xk/x2*E2;
-	double p1 = (1. - x2 - xk)/x2*E2;
-	double cos2 = (k*k-E2*E2-p1*p1)/2./p1/E2;
+	//double k = xk/x2*E2;
+	//double p1 = (1. - x2 - xk)/x2*E2;
+	//double cos2 = (k*k-E2*E2-p1*p1)/2./p1/E2;
 
 	// Integration for (1)p4 and (2)phi4
 	double result, error;
@@ -448,9 +448,7 @@ double f_3to2::calculate(double * arg){
 	params_df->params[0] = s;
 	params_df->params[1] = Temp;
 	params_df->params[2] = M1;
-	params_df->params[3] = E2;
-	params_df->params[4] = E4;	
-	params_df->params[5] = cos2;
+	params_df->params[3] = 2.*E2*E4;
 
     gsl_function F;
 	F.function = df_dcostheta42;
