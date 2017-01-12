@@ -134,20 +134,23 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double tauk = k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM = 1. - std::exp(-u*u);
+	double LPM = u*u/(1.+u*u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
+	double alpha_rad = alpha_s(kt2);
+	double mD2 = alpha_rad *pf_g*T2;
+
+	double x2M2 = x*x*M2;
+	double qx2Mm = qx*qx + x2M2 + mD2;
 	
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 	// 1->2
-	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*T2;
-	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) + 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
+	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
+			*( qx2Mm*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qq2Qq*Pg;
@@ -188,20 +191,23 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double tauk = k/(kt2+x*x*M2);
 
 	double u = dt/tauk;
-	double LPM = 1. - std::exp(-u*u);
+	double LPM = u*u/(1.+u*u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
+	double alpha_rad = alpha_s(kt2);
+	double mD2 = alpha_rad *pf_g*T2;
+
+	double x2M2 = x*x*M2;
+	double qx2Mm = qx*qx + x2M2 + mD2;
 
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
-	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*T2;
-	double iD1 = 1./(kt2 + x*x*M2), iD2 = 1./(kt2 + qx*qx - 2*qx*kx  + x*x*M2 + mD2);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*
-			( kt2*std::pow(iD1-iD2, 2) + std::pow(qx*iD2, 2) + 2.*kx*qx*(iD1-iD2)*iD2 )*LPM;
+	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
+			*( qx2Mm*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qg2Qg*Pg;

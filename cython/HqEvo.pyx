@@ -238,7 +238,7 @@ cdef class HqEvo:
 			rQqg2Qq = pyR3to2(xQqg2Qq, 12*16, "%s/RQqg2Qq.dat"%table_folder)
 			rQgg2Qg = pyR3to2(xQgg2Qg, 16*16/2., "%s/RQgg2Qg.dat"%table_folder)
 
-	cpdef sample_channel(self, double & E1, double & T, double & dt_from_last):
+	cpdef sample_channel(self, double & E1, double & T, double & dt_from_last, double & Nc):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
 		cdef size_t i=0, channel_index=-1
 		cdef double * p = <double*>malloc(self.Nchannels*sizeof(double))
@@ -250,7 +250,7 @@ cdef class HqEvo:
 		
 		if self.inelastic:
 			for Rchannel in self.R23list:
-				psum += Rchannel.interpR(E1, T, dt_from_last) # only use dt_from_last is not fully consistent
+				psum += Nc*Rchannel.interpR(E1, T, dt_from_last) # only use dt_from_last is not fully consistent
 				p[i] = psum
 				i += 1
 

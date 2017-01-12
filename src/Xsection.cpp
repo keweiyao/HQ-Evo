@@ -273,7 +273,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; guessh[1] = -scale1*0.9; guessh[2] = 2.0*M_PI; guessh[3] = -0.5;
 	double * vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
 	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
-	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
+	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) + 1.;
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
 	// k-vec	
@@ -414,7 +414,7 @@ double f_3to2::interpX(double * arg){
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double tauk = k/(kt2 + frac*frac*M2);
 	double u = dt/tauk;
-	double LPM = 1. - std::exp(-u*u);
+	double LPM = u*u/(1. + u*u);
 	double alpha_rad = alpha_s(kt2);
 	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM*kt2/std::pow(kt2 + frac*frac*M2, 2) * std::pow(1.0 - fracbar, 2) * raw_result;
 }
