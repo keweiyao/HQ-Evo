@@ -91,7 +91,7 @@ double Xsection_2to2::interpX(double * arg){
 	if (sqrts < sqrtsM) {dsqrts = dsqrts1; sqrtsmin=sqrtsL; Noffsets=0;}
 	else {dsqrts = dsqrts2; sqrtsmin=sqrtsM; Noffsets=Nsqrts;}
 	xsqrts = (sqrts - sqrtsmin)/dsqrts; isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts; isqrts += Noffsets;
-	return approx_X(arg, M1)*interpolate2d(Xtab, isqrts, iT, rsqrts, rT);
+	return approx_X(arg, M1)*interpolate2d(&Xtab, isqrts, iT, rsqrts, rT);
 }
 
 
@@ -121,7 +121,7 @@ double Xsection_2to2::calculate(double * arg){
     return result;
 }
 
-void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states){
+std::vector< std::vector<double> > Xsection_2to2::sample_dXdPS(double * arg){
 	double s = arg[0], Temp = arg[1];
 	double * p = new double[3]; //s, T, M
 	p[0] = s; p[1] = Temp;  p[2] = M1;
@@ -132,6 +132,7 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
 	double phi3 = dist_phi3(gen);
 	double cosphi3 = std::cos(phi3), sinphi3 = std::sin(phi3);
+	std::vector< std::vector<double> > final_states;
 	final_states.resize(1);
 	final_states[0].resize(4);
 	final_states[0][0] = std::sqrt(psq + M1*M1);
@@ -139,6 +140,7 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	final_states[0][2] = pQ*sintheta3*sinphi3;
 	final_states[0][3] = pQ*costheta3;
 	delete [] p;
+	return final_states;
 }
 
 //============Derived 2->3 Xsection class===================================
@@ -215,7 +217,7 @@ double Xsection_2to3::interpX(double * arg){
 	xsqrts = (sqrts-sqrtsL)/dsqrts;	isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
-	return approx_X(arg, M1)*interpolate3d(Xtab, isqrts, iT, idt, rsqrts, rT, rdt);
+	return approx_X(arg, M1)*interpolate3d(&Xtab, isqrts, iT, idt, rsqrts, rT, rdt);
 }
 
 double Xsection_2to3::calculate(double * arg){
@@ -252,7 +254,7 @@ double Xsection_2to3::calculate(double * arg){
 	return result/c256pi4/(s-M2);
 }
 
-void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states){
+std::vector< std::vector<double> >  Xsection_2to3::sample_dXdPS(double * arg){
 	// for 2->3, dXdPS is a 5-dimensional distribution,
 	// In center of mass frame:
 	// there is an overall azimuthal symmetry which allows a flat sampling 
@@ -271,7 +273,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double scale2 = sqrts-M1;
 	guessl[0] = scale1; guessl[1] = -scale1; guessl[2] = M_PI; guessl[3] = -1.0;
 	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; guessh[1] = -scale1*0.9; guessh[2] = 2.0*M_PI; guessh[3] = -0.5;
-	double * vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
+	std::vector<double> vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
 	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) + 1.;
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
@@ -288,19 +290,20 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	// --- randomize the azimuthal angle phi4----
 	double phi4 = dist_phi4(gen);
 	double cos_phi4 = std::cos(phi4), sin_phi4 = std::sin(phi4);
-	double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
+	//double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
 	double HQx = HQxp*cos_phi4 + HQyp*sin_phi4, HQy = -HQxp*sin_phi4 + HQyp*cos_phi4;
-	final_states.resize(2);
-	final_states[0].resize(4); final_states[1].resize(4);
+	std::vector< std::vector<double> > final_states;
+	final_states.resize(1);
+	final_states[0].resize(4); //final_states[1].resize(4);
 	final_states[0][0] = EQ; final_states[0][1] = HQx; 
 	final_states[0][2] = HQy; final_states[0][3] = HQz;
 
-	final_states[1][0] = k; final_states[1][1] = kx; 
-	final_states[1][2] = ky; final_states[1][3] = kz;
+	//final_states[1][0] = k; final_states[1][1] = kx; 
+	//final_states[1][2] = ky; final_states[1][3] = kz;
 	delete [] p;
 	delete [] guessl;
 	delete [] guessh;
-	delete [] vec4;
+	return final_states;
 }
 
 
@@ -316,7 +319,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
 :	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(60), NT(8), Na1(30), Na2(30), 
+	Nsqrts(60), NT(8), Na1(20), Na2(20), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
@@ -397,7 +400,7 @@ double f_3to2::interpX(double * arg){
 	xa1 = (a1-a1L)/da1;	ia1 = floor(xa1); ra1 = xa1 - ia1;
 	xa2 = (a2-a2L)/da2;	ia2 = floor(xa2); ra2 = xa2 - ia2;
 
-	double raw_result = interpolate4d(Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X(arg, M1);
+	double raw_result = interpolate4d(&Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X(arg, M1);
 	
 	double xk = 0.5*(a1*a2 + a1 - a2);
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
@@ -434,9 +437,6 @@ double f_3to2::calculate(double * arg){
 	double M2 = M1*M1;
 	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
 	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
-	//double k = xk/x2*E2;
-	//double p1 = (1. - x2 - xk)/x2*E2;
-	//double cos2 = (k*k-E2*E2-p1*p1)/2./p1/E2;
 
 	// Integration for (1)p4 and (2)phi4
 	double result, error;
@@ -444,7 +444,7 @@ double f_3to2::calculate(double * arg){
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
 	Mygsl_integration_params * params_df = new Mygsl_integration_params;
 	params_df->f = dXdPS;
-	params_df->params = new double[6];
+	params_df->params = new double[4];
 	params_df->params[0] = s;
 	params_df->params[1] = Temp;
 	params_df->params[2] = M1;
@@ -456,11 +456,41 @@ double f_3to2::calculate(double * arg){
 	gsl_integration_qag(&F, costheta42min, costheta42max, 0, 1e-3, 500, 3, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
+	delete [] params_df->params;
 	delete params_df;
 	return result;
 }
 
-void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & final_states){
-	return;
+std::vector< std::vector<double> > f_3to2::sample_dXdPS(double * arg){
+	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double sqrts = std::sqrt(s);
+	double xk = 0.5*(a1*a2 + a1 - a2);
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
+	double M2 = M1*M1;
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
+	double k = xk/x2*E2, p1 = (1. - x2 - xk)/x2*E2;
+	double cos21 = (k*k-E2*E2-p1*p1)/2./p1/E2;
+	double sin21 = std::sqrt(1. - cos21*cos21);
+	double * params = new double[4];
+	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = 2.*E2*E4;
+	// sample costheta_24, phi_24
+	//std::cout << "x1";
+	double costheta_24 = sampler1d.sample(dXdPS, -1., 1., params);
+	//std::cout << "x2" << std::endl;
+	double sintheta_24 = std::sqrt(1. - costheta_24*costheta_24);
+	double phi_24 = dist_phi4(gen);
+	double cosphi_24 = std::cos(phi_24), sinphi_24 = std::sin(phi_24);
+	
+	// transform to final states E3(Q), E4(q, g)
+	std::vector< std::vector<double> > final_states;
+	final_states.resize(1);
+	final_states[0].resize(4);
+
+	final_states[0][0] = sqrts - E4; final_states[0][1] = -E4*(cos21*sintheta_24*cosphi_24 + sin21*costheta_24);
+	final_states[0][2] = -E4*sintheta_24*sinphi_24; final_states[0][3] = -E4*(-sin21*sintheta_24*cosphi_24 + cos21*costheta_24);
+
+	delete [] params;
+	return final_states;
 }
 

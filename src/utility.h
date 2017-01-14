@@ -20,8 +20,8 @@ const double Lambda2 = 0.2*0.2; // [GeV^2] Lambda QCD squared
 const double Q2cut_l = -Lambda2*exp(alpha0), Q2cut_h = 0.; // [GeV^2] ranges within which alphas > 1 and will be cut
 
 
-double interpolate2d(std::vector<std::vector<double> > & A, int ni, int nj, double ri, double rj);
-double interpolate3d(std::vector<std::vector<std::vector<double> > > & A, int ni, int nj, int nk, double ri, double rj, double rk);
-double interpolate4d(std::vector<std::vector<std::vector<std::vector<double> > > > & A, int ni, int nj, int nk, int nt, double ri, double rj, double rk, double rt);
+double interpolate2d(std::vector<std::vector<double> > * A, int ni, int nj, double ri, double rj);
+double interpolate3d(std::vector<std::vector<std::vector<double> > > * A, int ni, int nj, int nk, double ri, double rj, double rk);
+double interpolate4d(std::vector<std::vector<std::vector<std::vector<double> > > > * A, int ni, int nj, int nk, int nt, double ri, double rj, double rk, double rt);
 
 #endif

@@ -112,7 +112,8 @@ void AiMS::update(void){
 	}
 	delete[] xtry;
 }
-double * AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
+
+std::vector<double> AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
 	walkers.clear();
 	f = f_; n_dims = n_dims_; params = params_; guessl = guessl_; guessh = guessh_;
 	Nwalker = n_dims*2;
@@ -122,9 +123,10 @@ double * AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, voi
 	for (auto&& w : buff_walkers) w.posi = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*70; i++) update();
+	for (size_t i = 0; i<Nwalker*50; i++) update();
 
-	double * result = new double[n_dims];
+	std::vector<double> result;
+	result.resize(n_dims);
 	for (size_t i = 0; i<n_dims; i++) result[i] = walkers[0].posi[i];
 
 	for (auto&& w : walkers) delete[] w.posi;

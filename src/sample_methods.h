@@ -50,7 +50,7 @@ private:
 	double * guessl, * guessh;
 public:
 	AiMS(void);
-	double * sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_);
+	std::vector<double> sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_);
 };
 
 #endif

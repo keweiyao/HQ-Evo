@@ -3,7 +3,6 @@
 #include <thread> 
 #include <fstream>
 #include <string>
-
 #include "utility.h"
 #include "rates.h"
 
@@ -56,7 +55,7 @@ double fx_wrapper22(double x, void * px_){
 	ymax = 1.;
 	ymin = -1.;
 	gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
-
+	delete [] py->params;
 	delete py;
 	gsl_integration_workspace_free(w);
 	return x*x*f_0(x, zeta)*result;
@@ -116,6 +115,7 @@ double fx_wrapper23(double x, void * px_){
 	ymin = -1.;
 	gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
 
+	delete [] py->params;
 	delete py;
 	gsl_integration_workspace_free(w);
 	return x*x*f_0(x, zeta)*result;
@@ -185,7 +185,7 @@ double rates_2to2::interpR(double * arg){
 	size_t iT, iE1;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate2d(Rtab, iE1, iT, rE1, rT);
+	return interpolate2d(&Rtab, iE1, iT, rE1, rT);
 }
 
 double rates_2to2::calculate(double * arg)
@@ -211,6 +211,7 @@ double rates_2to2::calculate(double * arg)
 	gsl_integration_qag(&F, xmin, xmax, 0, 1e-2, 2000, 6, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
+	delete [] px->params;
 	delete px;
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
@@ -319,7 +320,7 @@ double rates_2to3::interpR(double * arg){
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate3d(Rtab, iE1, iT, idt, rE1, rT, rdt);
+	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt);
 }
 
 double rates_2to3::calculate(double * arg)
@@ -346,6 +347,7 @@ double rates_2to3::calculate(double * arg)
 	gsl_integration_qag(&F, xmin, xmax, 0, 1e-2, 2000, 6, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
+	delete [] px->params;
 	delete px;
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
@@ -387,7 +389,7 @@ std::vector< std::vector<double> > rates_2to3::sample_initial(double * arg_in){
 //=======================Derived Scattering Rate class 3 to 2================================
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(50), NT(8), Ndt(10), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75), dtL(0.1), dtH(50.0),
+	NE1(20), NT(8), Ndt(10), E1L(M*1.01), E1H(M*20), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
@@ -450,15 +452,15 @@ double rates_3to2::interpR(double * arg){
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate3d(Rtab, iE1, iT, idt, rE1, rT, rdt);
+	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt);
 }
 
 
 //-------------3->2 wrapper function--------------------------
 double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
-
 	integrate_params_2 * params = static_cast<integrate_params_2 *>(params_);
 	double x2 = x_[0], costheta2 = x_[1], xk = x_[2], costhetak = x_[3], phik = x_[4];
+	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 15. || xk >= 15.) return 0.;
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
@@ -526,13 +528,48 @@ double rates_3to2::calculate(double * arg){
 	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5); 
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
+	delete [] params->params;
 	delete params;
 
 	return result/256./std::pow(M_PI, 5)/E1*std::pow(Temp, 4);
 }
 
-std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg_in){
+std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg){
+	double E1 = arg[0], Temp = arg[1], dt = arg[2];
+	double p1 = std::sqrt(E1*E1-M*M);
+	integrate_params_2 * params = new integrate_params_2;
+	params->f = std::bind(&f_3to2::interpX, Xprocess, _1);
+	params->params = new double[5];
+	params->params[0] = E1; 
+	params->params[1] = Temp; 
+	params->params[2] = dt; 
+	params->params[3] = M;
+	params->params[4] = p1;
+	size_t n_dims = 5;
+	double * guessl = new double[n_dims];
+	double * guessh = new double[n_dims];
+	guessl[0] = 0.6; guessl[1] = -0.1; guessl[2] = 0.6; guessl[3] = -0.1; guessl[4] = 0.9*M_PI;
+	guessh[0] = 0.8; guessh[1] = 0.1; guessh[2] = 0.8; guessh[3] = 0.1;; guessl[4] = 1.1*M_PI;
+	//std::cout << "r1";
+	std::vector<double> vec5 = sampler.sample(dRdPS_wrapper, n_dims, params, guessl, guessh);
+	//std::cout << "r2" << std::endl;
+	double x2 = vec5[0], 
+		   costheta2 = vec5[1], 
+		   xk = vec5[2], 
+	       costhetak = vec5[3], 
+		   phik = vec5[4];	
+	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
+	double E2 = x2*Temp, k = xk*Temp, 
+		   sintheta2 = std::sqrt(1. - costheta2*costheta2), sinthetak = std::sqrt(1. - costhetak*costhetak);
 	std::vector< std::vector<double> > IS;
+	IS.resize(3); IS[0].resize(4); IS[1].resize(4); IS[2].resize(4); // HQ, light q or g, absorbed g
+	IS[0][0] = E1; IS[0][1] = 0.; IS[0][2] = 0.; IS[0][3] = p1; 
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*std::cos(phi2); IS[1][2] = E2*sintheta2*std::sin(phi2); IS[1][3] = E2*costheta2; 
+	IS[2][0] = k; IS[2][1] = k*sinthetak*std::cos(phi2+phik); IS[2][2] = k*sinthetak*std::sin(phi2+phik); IS[2][3] = k*costhetak; 
+	delete [] params->params;
+	delete params;
+	delete [] guessl;
+	delete [] guessh;
 	return IS;
 }
 

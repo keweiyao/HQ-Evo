@@ -86,6 +86,7 @@ private:
 	const double E1L, E1H, TL, TH, dtL, dtH;
 	const double dE1, dT, ddt;
 	std::vector< std::vector< std::vector<double> > > Rtab;
+	AiMS sampler;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:
 	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_);
