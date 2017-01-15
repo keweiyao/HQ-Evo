@@ -28,19 +28,19 @@ cdef extern from "../src/Xsection.h":
 	cdef cppclass Xsection_2to2:
 		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
 		double calculate(double * arg)
-		vector[ vector[double] ] sample_dXdPS(double * arg)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
 		double interpX(double * arg)
 	
 	cdef cppclass Xsection_2to3:
 		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
 		double calculate(double * arg)
-		vector[ vector[double] ] sample_dXdPS(double * arg)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
 		double interpX(double * arg)
 
 	cdef cppclass f_3to2:
 		f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_)
 		double calculate(double * arg)
-		vector[ vector[double] ] sample_dXdPS(double * arg)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
 		double interpX(double * arg)
 
 cdef extern from "../src/rates.h":
@@ -48,19 +48,19 @@ cdef extern from "../src/rates.h":
 		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		vector[ vector[double] ] sample_initial(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_2to3:
 		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		vector[ vector[double] ] sample_initial(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_3to2:
 		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_)
 		double calculate(double * arg)
 		double interpR(double * arg)
-		vector[ vector[double] ] sample_initial(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 #-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
@@ -79,11 +79,12 @@ cdef class pyX2to2:
 		free(arg)
 		return result
 	cpdef sample_dXdPS(self, double s, double Temp):
+		cdef vector[ vector[double] ] FS
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = s; arg[1] = Temp
-		cdef vector[ vector[double] ] fs = self.cX2to2.sample_dXdPS(arg)
+		self.cX2to2.sample_dXdPS(arg, FS)
 		free(arg)
-		return fs
+		return FS
 	cpdef double interpX(self, double s, double Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = s; arg[1] = Temp
@@ -107,11 +108,12 @@ cdef class pyX2to3:
 		free(arg)
 		return result
 	cpdef sample_dXdPS(self, double & s, double & Temp, double & dt):
+		cdef vector[ vector[double] ] FS
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
-		cdef vector[ vector[double] ] fs = self.cX2to3.sample_dXdPS(arg)
+		self.cX2to3.sample_dXdPS(arg, FS)
 		free(arg)
-		return fs
+		return FS
 	cpdef double interpX(self, double & s, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = dt
@@ -135,11 +137,12 @@ cdef class pyf3to2:
 		free(arg)
 		return result
 	cpdef sample_dXdPS(self, double & s, double & Temp, double & a1, double & a2):
+		cdef vector[ vector[double] ] FS
 		cdef double * arg = <double*>malloc(4*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = a1; arg[3] = a2;
-		cdef vector[ vector[double] ] fs = self.cf3to2.sample_dXdPS(arg)
+		self.cf3to2.sample_dXdPS(arg, FS)
 		free(arg)
-		return fs
+		return FS
 	cpdef double interpX(self, double & s, double & Temp, double & a1, double & a2, double & dt):
 		cdef double * arg = <double*>malloc(5*sizeof(double))
 		arg[0] = s; arg[1] = Temp; arg[2] = a1; arg[3] = a2; arg[4] = dt
@@ -167,13 +170,12 @@ cdef class pyR2to2:
 		free(arg)
 		return result
 	cpdef sample_initial(self, double & E1, double & Temp):
+		cdef vector[ vector[double] ] IS
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
-		cdef vector[ vector[double] ] FS = self.cR2to2.sample_initial(arg)
+		self.cR2to2.sample_initial(arg, IS)
 		free(arg)
-		return FS
-
-
+		return IS
 
 cdef class pyR2to3:
 	cdef rates_2to3 * cR2to3
@@ -192,11 +194,12 @@ cdef class pyR2to3:
 		free(arg)
 		return result
 	cpdef sample_initial(self, double & E1, double & Temp, double & dt):
+		cdef vector[ vector[double] ] IS
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
-		cdef vector[ vector[double] ] FS = self.cR2to3.sample_initial(arg)
+		self.cR2to3.sample_initial(arg, IS)
 		free(arg)
-		return FS
+		return IS
 
 cdef class pyR3to2:
 	cdef rates_3to2 * cR3to2
@@ -215,11 +218,12 @@ cdef class pyR3to2:
 		free(arg)
 		return result
 	cpdef sample_initial(self, double & E1, double & Temp, double & dt):
+		cdef vector[ vector[double] ] IS
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
-		cdef vector[ vector[double] ] FS = self.cR3to2.sample_initial(arg)
+		self.cR3to2.sample_initial(arg, IS)
 		free(arg)
-		return FS
+		return IS
 	
 	
 #-------------Heavy quark evolution class------------------------
@@ -276,7 +280,7 @@ cdef class HqEvo:
 			self.Nchannels += self.N32
 		print "Number of Channels", self.Nchannels
 
-	cpdef sample_channel(self, double & E1, double & T, double & dt23, double & dt32, double & Ncoll23, double & Ncoll32):
+	cpdef sample_channel(self, double & E1, double & T, double & dt23, double & dt32):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
 		cdef size_t i=0
 		cdef int channel_index = -1
@@ -288,13 +292,13 @@ cdef class HqEvo:
 				i += 1
 		if self.inelastic:
 			for Rchannel in self.R23list:
-				psum += Ncoll23*Rchannel.interpR(E1, T, dt23) 
+				psum += Rchannel.interpR(E1, T, dt23) 
 				# only use dt_from_last is not fully consistent
 				p[i] = psum
 				i += 1
 		if self.detailed_balance:
 			for Rchannel in self.R32list:
-				psum += Ncoll32*Rchannel.interpR(E1, T, dt32) 
+				psum += Rchannel.interpR(E1, T, dt32) 
 				# only use dt_from_last is not fully consistent
 				p[i] = psum
 				i += 1

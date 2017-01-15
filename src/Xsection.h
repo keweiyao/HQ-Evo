@@ -38,7 +38,7 @@ public:
 	// arg = [s, T] fot X22, arg = [s, T, dt] for X23, arg = [s, T, s1k, s2k] for f32
 	virtual double interpX(double * arg) = 0; 
 	virtual double calculate(double * arg) = 0;
-	virtual std::vector< std::vector<double> > sample_dXdPS(double * arg) = 0;
+	virtual void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS) = 0;
 };
 
 //============Derived 2->2 Xsection class============================================
@@ -57,7 +57,7 @@ public:
     Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
     double calculate(double * arg);
-	std::vector< std::vector<double> > sample_dXdPS(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
 };
 
 //============Derived 2->3 Xsection class============================================
@@ -77,7 +77,7 @@ public:
     Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
     double calculate(double * arg);
-	std::vector< std::vector<double> > sample_dXdPS(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
 };
 
 //============Derived 3->2 Xsection class============================================
@@ -98,7 +98,7 @@ public:
     f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
 	double interpX(double * arg);
     double calculate(double * arg);
-	std::vector< std::vector<double> > sample_dXdPS(double * arg);
+	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
 };
 
 

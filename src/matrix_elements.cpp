@@ -108,7 +108,8 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack parameters
 	double * params = static_cast<double*>(params_);
-	double s = params[0], sqrts = std::sqrt(params[0]);
+	double s = params[0];
+	double sqrts = std::sqrt(s);
 	double T2 = params[1]*params[1];
 	double M = params[2];
 	double M2 = M*M;
@@ -149,8 +150,8 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
-			*( qx2Mm*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM * kt2*iD1*iD1;
+			//*( (qx2Mm)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qq2Qq*Pg;
@@ -166,7 +167,8 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack parameters
 	double * params = static_cast<double*>(params_);
-	double s = params[0], sqrts = std::sqrt(params[0]);
+	double s = params[0];
+	double sqrts = std::sqrt(s);
 	double T2 = params[1]*params[1];
 	double M = params[2];
 	double M2 = M*M;
@@ -206,8 +208,8 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
-			*( qx2Mm*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM * kt2*iD1*iD1;
+			//*( (qx2Mm)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
 	return c48pi*the_M2_Qg2Qg*Pg;

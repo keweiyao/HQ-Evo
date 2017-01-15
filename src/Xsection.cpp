@@ -121,7 +121,7 @@ double Xsection_2to2::calculate(double * arg){
     return result;
 }
 
-std::vector< std::vector<double> > Xsection_2to2::sample_dXdPS(double * arg){
+void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS){
 	double s = arg[0], Temp = arg[1];
 	double * p = new double[3]; //s, T, M
 	p[0] = s; p[1] = Temp;  p[2] = M1;
@@ -132,15 +132,13 @@ std::vector< std::vector<double> > Xsection_2to2::sample_dXdPS(double * arg){
 	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
 	double phi3 = dist_phi3(gen);
 	double cosphi3 = std::cos(phi3), sinphi3 = std::sin(phi3);
-	std::vector< std::vector<double> > final_states;
-	final_states.resize(1);
-	final_states[0].resize(4);
-	final_states[0][0] = std::sqrt(psq + M1*M1);
-	final_states[0][1] = pQ*sintheta3*cosphi3;
-	final_states[0][2] = pQ*sintheta3*sinphi3;
-	final_states[0][3] = pQ*costheta3;
+	FS.resize(1);
+	FS[0].resize(4);
+	FS[0][0] = std::sqrt(psq + M1*M1);
+	FS[0][1] = pQ*sintheta3*cosphi3;
+	FS[0][2] = pQ*sintheta3*sinphi3;
+	FS[0][3] = pQ*costheta3;
 	delete [] p;
-	return final_states;
 }
 
 //============Derived 2->3 Xsection class===================================
@@ -254,7 +252,7 @@ double Xsection_2to3::calculate(double * arg){
 	return result/c256pi4/(s-M2);
 }
 
-std::vector< std::vector<double> >  Xsection_2to3::sample_dXdPS(double * arg){
+void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS){
 	// for 2->3, dXdPS is a 5-dimensional distribution,
 	// In center of mass frame:
 	// there is an overall azimuthal symmetry which allows a flat sampling 
@@ -292,18 +290,16 @@ std::vector< std::vector<double> >  Xsection_2to3::sample_dXdPS(double * arg){
 	double cos_phi4 = std::cos(phi4), sin_phi4 = std::sin(phi4);
 	//double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
 	double HQx = HQxp*cos_phi4 + HQyp*sin_phi4, HQy = -HQxp*sin_phi4 + HQyp*cos_phi4;
-	std::vector< std::vector<double> > final_states;
-	final_states.resize(1);
-	final_states[0].resize(4); //final_states[1].resize(4);
-	final_states[0][0] = EQ; final_states[0][1] = HQx; 
-	final_states[0][2] = HQy; final_states[0][3] = HQz;
+	FS.resize(1);
+	FS[0].resize(4); //final_states[1].resize(4);
+	FS[0][0] = EQ; FS[0][1] = HQx; 
+	FS[0][2] = HQy; FS[0][3] = HQz;
 
 	//final_states[1][0] = k; final_states[1][1] = kx; 
 	//final_states[1][2] = ky; final_states[1][3] = kz;
 	delete [] p;
 	delete [] guessl;
 	delete [] guessh;
-	return final_states;
 }
 
 
@@ -461,7 +457,7 @@ double f_3to2::calculate(double * arg){
 	return result;
 }
 
-std::vector< std::vector<double> > f_3to2::sample_dXdPS(double * arg){
+void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS){
 	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
 	double sqrts = std::sqrt(s);
 	double xk = 0.5*(a1*a2 + a1 - a2);
@@ -475,22 +471,19 @@ std::vector< std::vector<double> > f_3to2::sample_dXdPS(double * arg){
 	double * params = new double[4];
 	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = 2.*E2*E4;
 	// sample costheta_24, phi_24
-	//std::cout << "x1";
 	double costheta_24 = sampler1d.sample(dXdPS, -1., 1., params);
-	//std::cout << "x2" << std::endl;
 	double sintheta_24 = std::sqrt(1. - costheta_24*costheta_24);
 	double phi_24 = dist_phi4(gen);
 	double cosphi_24 = std::cos(phi_24), sinphi_24 = std::sin(phi_24);
 	
 	// transform to final states E3(Q), E4(q, g)
-	std::vector< std::vector<double> > final_states;
-	final_states.resize(1);
-	final_states[0].resize(4);
+	FS.resize(1); FS[0].resize(4);
 
-	final_states[0][0] = sqrts - E4; final_states[0][1] = -E4*(cos21*sintheta_24*cosphi_24 + sin21*costheta_24);
-	final_states[0][2] = -E4*sintheta_24*sinphi_24; final_states[0][3] = -E4*(-sin21*sintheta_24*cosphi_24 + cos21*costheta_24);
+	FS[0][0] = sqrts - E4; 
+	FS[0][1] = -E4*(cos21*sintheta_24*cosphi_24 + sin21*costheta_24);
+	FS[0][2] = -E4*sintheta_24*sinphi_24;
+	FS[0][3] = -E4*(-sin21*sintheta_24*cosphi_24 + cos21*costheta_24);
 
 	delete [] params;
-	return final_states;
 }
 

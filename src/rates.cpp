@@ -216,14 +216,14 @@ double rates_2to2::calculate(double * arg)
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
 
-std::vector< std::vector<double> > rates_2to2::sample_initial(double * arg_in){
+void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> > & IS){
 	// this function samples x = E2/T and y = cos(theta2) from the distribution:
 	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
 	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
 	// and uniform sample y within (-1., 1.)
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
 	// this function returns all initial state particles' four-vector in the order (p1, p2)
-	double E1 = arg_in[0], Temp = arg_in[1];
+	double E1 = arg[0], Temp = arg[1];
 	double * Xarg = new double[2]; Xarg[1] = Temp;
 	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
@@ -244,11 +244,9 @@ std::vector< std::vector<double> > rates_2to2::sample_initial(double * arg_in){
 	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
 	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
-	std::vector< std::vector<double> > IS;
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
 	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
 	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
-	return IS;
 }
 
 
@@ -352,13 +350,13 @@ double rates_2to3::calculate(double * arg)
 	return result*std::pow(Temp, 3)*4./c16pi2*degeneracy;
 }
 
-std::vector< std::vector<double> > rates_2to3::sample_initial(double * arg_in){
+void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> > & IS){
 	// this function samples x = E2/T and y = cos(theta2) from the distribution:
 	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
 	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
 	// and uniform sample y within (-1., 1.)
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
-	double E1 = arg_in[0], Temp = arg_in[1], dt = arg_in[2];
+	double E1 = arg[0], Temp = arg[1], dt = arg[2];
 	double * Xarg = new double[3]; Xarg[1] = Temp; Xarg[2] = dt; // dt in Cell Frame
 	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
@@ -379,11 +377,9 @@ std::vector< std::vector<double> > rates_2to3::sample_initial(double * arg_in){
 	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
 	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
-	std::vector< std::vector<double> > IS;
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
 	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
 	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
-	return IS;
 }
 
 //=======================Derived Scattering Rate class 3 to 2================================
@@ -534,7 +530,7 @@ double rates_3to2::calculate(double * arg){
 	return result/256./std::pow(M_PI, 5)/E1*std::pow(Temp, 4);
 }
 
-std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg){
+void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> > & IS){
 	double E1 = arg[0], Temp = arg[1], dt = arg[2];
 	double p1 = std::sqrt(E1*E1-M*M);
 	integrate_params_2 * params = new integrate_params_2;
@@ -561,7 +557,6 @@ std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg){
 	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
 	double E2 = x2*Temp, k = xk*Temp, 
 		   sintheta2 = std::sqrt(1. - costheta2*costheta2), sinthetak = std::sqrt(1. - costhetak*costhetak);
-	std::vector< std::vector<double> > IS;
 	IS.resize(3); IS[0].resize(4); IS[1].resize(4); IS[2].resize(4); // HQ, light q or g, absorbed g
 	IS[0][0] = E1; IS[0][1] = 0.; IS[0][2] = 0.; IS[0][3] = p1; 
 	IS[1][0] = E2; IS[1][1] = E2*sintheta2*std::cos(phi2); IS[1][2] = E2*sintheta2*std::sin(phi2); IS[1][3] = E2*costheta2; 
@@ -570,6 +565,5 @@ std::vector< std::vector<double> > rates_3to2::sample_initial(double * arg){
 	delete params;
 	delete [] guessl;
 	delete [] guessh;
-	return IS;
 }
 
