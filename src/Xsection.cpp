@@ -415,7 +415,12 @@ double f_3to2::interpX(double * arg){
 	double u = dt/tauk;
 	double LPM = u*u/(1. + u*u);
 	double alpha_rad = alpha_s(kt2);
-	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM*kt2/std::pow(kt2 + frac*frac*M2, 2) * std::pow(1.0 - fracbar, 2) * raw_result;
+	double mD2 = alpha_rad *pf_g*Temp*Temp;
+	double x2M2 = frac*frac*M2;
+	double qx2Mm = 2.*mD2 + x2M2;
+	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(mD2  + qx2Mm);
+	double propagation2 = ( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
+	return 1.5/M_PI*(1. - M2/s)*alpha_rad*LPM* propagation2* std::pow(1.0 - fracbar, 2) * raw_result;
 }
 
 //------Integration function-------------------
