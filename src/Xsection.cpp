@@ -419,7 +419,7 @@ double f_3to2::interpX(double * arg){
 	double mD2 = alpha_rad *pf_g*Temp*Temp;
 	double x2M2 = frac*frac*M2;
 	double D1 = kt2 + x2M2;
-	double D2 = 2.*kt2 + x2M2 + mD2;
+	double D2 = kt2 + x2M2 + mD2;
 	double prop2 = kt2*std::pow(mD2/D1/D2, 2);
 	return 1.5/M_PI*(1. - M2/s)*alpha_rad *  LPM * prop2 *std::pow(1.0 - fracbar, 2) * raw_result;
 }
