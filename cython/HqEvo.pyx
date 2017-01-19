@@ -250,8 +250,8 @@ cdef class HqEvo:
 		if self.elastic:
 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.dat"%table_folder)
 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.dat"%table_folder)
-			rQq2Qq = pyR2to2(xQq2Qq, 12, "%s/RQq2Qq.dat"%table_folder)
-			rQg2Qg = pyR2to2(xQg2Qg, 16, "%s/RQg2Qg.dat"%table_folder)
+			rQq2Qq = pyR2to2(xQq2Qq, 12., "%s/RQq2Qq.dat"%table_folder)
+			rQg2Qg = pyR2to2(xQg2Qg, 16., "%s/RQg2Qg.dat"%table_folder)
 			self.X22list = [xQq2Qq, xQg2Qg]
 			self.R22list = [rQq2Qq, rQg2Qg]
 			self.N22 += len(self.X22list)
@@ -261,8 +261,8 @@ cdef class HqEvo:
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.dat"%table_folder)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.dat"%table_folder)
-			rQq2Qqg = pyR2to3(xQq2Qqg, 12, "%s/RQq2Qqg.dat"%table_folder)
-			rQg2Qgg = pyR2to3(xQg2Qgg, 16/2., "%s/RQg2Qgg.dat"%table_folder)
+			rQq2Qqg = pyR2to3(xQq2Qqg, 12., "%s/RQq2Qqg.dat"%table_folder)
+			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., "%s/RQg2Qgg.dat"%table_folder)
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
 			self.N23 += len(self.X23list)
@@ -272,8 +272,8 @@ cdef class HqEvo:
 		if self.detailed_balance:
 			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.dat"%table_folder)
 			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.dat"%table_folder)
-			rQqg2Qq = pyR3to2(xQqg2Qq, 12*16, "%s/RQqg2Qq.dat"%table_folder)
-			rQgg2Qg = pyR3to2(xQgg2Qg, 16*16/2., "%s/RQgg2Qg.dat"%table_folder)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., "%s/RQqg2Qq.dat"%table_folder)
+			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., "%s/RQgg2Qg.dat"%table_folder)
 			self.X32list = [xQqg2Qq, xQgg2Qg]
 			self.R32list = [rQqg2Qq, rQgg2Qg]
 			self.N32 += len(self.X32list)
@@ -302,6 +302,8 @@ cdef class HqEvo:
 				# only use dt_from_last is not fully consistent
 				p[i] = psum
 				i += 1
+		#print E1, T, dt23, dt32
+		#print p[0], p[1]-p[0], p[2]-p[1], p[3]-p[2], p[4]-p[3], p[5]-p[4]
 		dt = Pmax/psum
 		r = (<double>rand())/dt/RAND_MAX
 		if r >= p[self.Nchannels-1]:

@@ -150,7 +150,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM 
+	double Pg = alpha_rad*std::pow(1.-xbar, 2) * LPM
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -160,7 +160,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 double approx_XQq2Qqg(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return dt*dt*Temp*Temp;
+	return dt*dt/Temp*Temp;
 }
 
 double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
@@ -208,7 +208,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM 
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -218,7 +218,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 double approx_XQg2Qgg(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return dt*dt*Temp*Temp;
+	return dt*dt/Temp*Temp;
 }
 
 
@@ -233,18 +233,18 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	// unpack variables costheta42 = x_[0]
 	// 2->2
 	double t = TwoE2E4 * (x_[0] - 1);
-	double the_M2_Qq2Qq = M2_Qq2Qq(t, params);
+	double the_M2 = M2_Qq2Qq(t, params);
 	// 1->2
- 	double Pg = 1.0;
+	double Pg = 1.0;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qq2Qq*Pg/16.*2.*M_PI;
+	return the_M2*Pg/16.*2.*M_PI;
 }
 
 double approx_XQqg2Qq(double * arg, double M){
 	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	return (s-M*M)/Temp/Temp/x2; 
+	return (s - M*M)/Temp/Temp/x2; 
 }
 
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
@@ -256,17 +256,19 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	// unpack variables costheta42 = x_[0]
 	// 2->2
 	double t = TwoE2E4 * (x_[0] - 1);
-	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
+	double the_M2 = M2_Qg2Qg_only_t(t, params);
+
 	// 1->2
- 	double Pg = 1.0;
+	double Pg = 1.0;
+
 	// 2->3 = 2->2 * 1->2
-	return the_M2_Qg2Qg*Pg/16.*2.*M_PI;
+	return the_M2*Pg/16.*2.*M_PI;
 }
 
 double approx_XQgg2Qg(double * arg, double M){
 	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	return (s-M*M)/Temp/Temp/x2;  
+	return (s - M*M)/Temp/Temp/x2; 
 }
 
 
