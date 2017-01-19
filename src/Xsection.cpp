@@ -407,7 +407,6 @@ double f_3to2::interpX(double * arg){
 	double p1 = (1. - x2 - xk)/x2*E2;
 	double E1 = std::sqrt(p1*p1 + M2);
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
-	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
 	double frac = (k + kz)/(E1 + p1);
@@ -419,7 +418,7 @@ double f_3to2::interpX(double * arg){
 	double mD2 = alpha_rad *pf_g*Temp*Temp;
 	double x2M2 = frac*frac*M2;
 	double D1 = kt2 + x2M2;
-	double D2 = kt2 + x2M2 + mD2;
+	double D2 = 1.5*mD2 + x2M2;
 	double prop2 = kt2*std::pow(mD2/D1/D2, 2);
 	return 1.5/M_PI*(1. - M2/s)*alpha_rad *  LPM * prop2 *std::pow(1.0 - fracbar, 2) * raw_result;
 }
@@ -440,19 +439,6 @@ double f_3to2::calculate(double * arg){
 	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
 	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
 	
-
-	double k = xk/x2*E2;
-	double p1 = (1. - x2 - xk)/x2*E2;
-	double E1 = std::sqrt(p1*p1 + M2);
-	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
-	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
-	double kz = k*cosk;
-	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
-	double fracbar = (k + std::abs(kz))/(E1 + p1);
-	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*Temp*Temp;
-	double x2M2 = frac*frac*M2;
 	// Integration for (1)p4 and (2)phi4
 	double result, error;
 	double costheta42min = -1., costheta42max = 1.;
