@@ -10,10 +10,32 @@
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
 
+#include <boost/filesystem.hpp>
+#include <H5Cpp.h>
+
 #include "utility.h"
 #include "matrix_elements.h"
 #include "Xsection.h"
 
+template <typename T> inline const H5::PredType& type();
+template <> inline const H5::PredType& type<size_t>() { return H5::PredType::NATIVE_HSIZE; }
+template <> inline const H5::PredType& type<double>() { return H5::PredType::NATIVE_DOUBLE; }
+
+template <typename T>
+void hdf5_add_scalar_attr(
+  const H5::DataSet& dataset, const std::string& name, const T& value) {
+  const auto& datatype = type<T>();
+  auto attr = dataset.createAttribute(name, datatype, H5::DataSpace{});
+  attr.write(datatype, &value);
+}
+
+template <typename T>
+void hdf5_read_scalar_attr(
+  const H5::DataSet& dataset, const std::string& name, T& value) {
+  const auto& datatype = type<T>();
+  auto attr = dataset.openAttribute(name);
+  attr.read(datatype, &value);
+}
 
 double gsl_1dfunc_wrapper(double x, void * params_){
 	Mygsl_integration_params * p = static_cast<Mygsl_integration_params*>(params_);
@@ -22,48 +44,94 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
-Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
+Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
 : dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_)
 {
 	std::cout << __func__<< " " << name_  << std::endl;
+	
 }
 
 
 //============Derived 2->2 Xsection class===================================
-Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI), 
+Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI), 
 	Nsqrts(50), NT(32), 
 	sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*30.), 
 	dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH-sqrtsM)/(Nsqrts-1.)),
-	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.))
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)), Xtab(boost::extents[Nsqrts*2][NT])
 {
-	Xtab.resize(Nsqrts*2);
-	for (auto&& dim1 : Xtab) dim1.resize(NT);
-
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
-	}
-	for (std::thread& t : threads)	t.join();
-
-	std::ofstream file(name_);
-	double * arg = new double[2];
-	for (size_t i=0; i<2*Nsqrts; i++) {
-		if (i<Nsqrts) arg[0] = std::pow(sqrtsL + i*dsqrts1, 2);
-		else arg[0] = std::pow(sqrtsM + (i-Nsqrts)*dsqrts2, 2);
-		for (size_t j=0; j<NT; j++) {
-			arg[1] = TL + j*dT;
-			file << Xtab[i][j] * approx_X(arg, M1) << " ";
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
 		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Xsection-tab");
 	}
-	delete [] arg;
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Xsection-tab");
+	}
+	
+}
+
+void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 2;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {Nsqrts*2, NT};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
+	
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Xtab.data(), datatype);
+
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_add_scalar_attr(dataset, "sqrts_mid", sqrtsM);
+	hdf5_add_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_add_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+}
+
+void Xsection_2to2::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 2;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_read_scalar_attr(dataset, "sqrts_mid", sqrtsM);
+	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_read_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	dsqrts1 = (sqrtsM-sqrtsL)/(Nsqrts-1.);
+	dsqrts2 = (sqrtsH-sqrtsM)/(Nsqrts-1.);
+	
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+	
+	Xtab.resize(boost::extents[Nsqrts*2][NT]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = Nsqrts*2;
+  	dims_mem[1] = NT;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
@@ -142,47 +210,93 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 }
 
 //============Derived 2->3 Xsection class===================================
-Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), 
+Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), 
 	Nsqrts(50), NT(16), Ndt(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
-	dtL(0.1), dtH(5.0), ddt((dtH-dtL)/(Ndt-1.))
+	dtL(0.1), dtH(5.0), ddt((dtH-dtL)/(Ndt-1.)), Xtab(boost::extents[Nsqrts][NT][Ndt])
 {
-	Xtab.resize(Nsqrts);
-	for (auto&& dim1 : Xtab) {
-		dim1.resize(NT);
-		for (auto && dim2 : dim1) 
-			dim2.resize(Ndt);
-	}
 
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
-	}
-	
-	for (std::thread& t : threads)	t.join();
-
-	std::ofstream file(name_);
-	double * arg = new double[3];
-	for (size_t i=0; i<Nsqrts; i++) {
-		arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
-		for (size_t j=0; j<NT; j++) {
-			arg[1] = TL + j*dT;
-			for (size_t k=0; k<Ndt; k++) {
-				arg[2] = dtL + k*ddt;
-				file << Xtab[i][j][k] * approx_X(arg, M1) << " ";
-			}
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
 		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Xsection-tab");
 	}
-	delete [] arg;
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Xsection-tab");
+	}
+}
+
+void Xsection_2to3::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {Nsqrts, NT, Ndt};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
+	
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Xtab.data(), datatype);
+
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_add_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_add_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+
+	hdf5_add_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_add_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
+}
+
+void Xsection_2to3::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+
+	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_read_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	dsqrts = (sqrtsH-sqrtsL)/(Nsqrts-1.);
+
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+
+	hdf5_read_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_read_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_read_scalar_attr(dataset, "N_dt", Ndt);
+	ddt = (dtH-dtL)/(Ndt-1.);
+
+	Xtab.resize(boost::extents[Nsqrts][NT][Ndt]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = Nsqrts;
+  	dims_mem[1] = NT;
+	dims_mem[2] = Ndt;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
@@ -313,51 +427,105 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 // where p2 momentum fraction x2 = |p2|/(|p1| + |p2| + |k|)
 // and k momentum fraction xk = |k|/(|p1| + |p2| + |k|)
 
-f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_)
-:	Xsection(dXdPS_, approx_X_, M1_, name_), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
+f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
 	Nsqrts(60), NT(8), Na1(20), Na2(20), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
-	a2L(-0.999), a2H(0.999), da2((a2H-a2L)/(Na2-1.))
+	a2L(-0.999), a2H(0.999), da2((a2H-a2L)/(Na2-1.)),
+	Xtab(boost::extents[Nsqrts][NT][Na1][Na2])
 {
-	Xtab.resize(Nsqrts);
-	for (auto&& dim1 : Xtab) {
-		dim1.resize(NT);
-		for (auto && dim2 : dim1){
-			dim2.resize(Na1);
-			for (auto && dim3 : dim2){
-				dim3.resize(Na2);
-			}
-		}
-	}
 
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
+		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Xsection-tab");
 	}
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Xsection-tab");
+	}
+}
+
+void f_3to2::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 4;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {Nsqrts, NT, Na1, Na2};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
 	
-	for (std::thread& t : threads)	t.join();
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Xtab.data(), datatype);
 
-	std::ofstream file(name_);
-	double * arg = new double[4];
-	for (size_t i=0; i<Nsqrts; i++) { arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
-		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
-			for (size_t k=0; k<Na1; k++) { arg[2] = a1L + k*da1;
-				for (size_t t=0; t<Na2; t++) { arg[3] = a2L + t*da2;
-					file << Xtab[i][j][k][t]*approx_X(arg, M1) << " ";
-				}
-			}
-		}
-	}
-	delete [] arg;
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_add_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_add_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+
+	hdf5_add_scalar_attr(dataset, "a1_low", a1L);
+	hdf5_add_scalar_attr(dataset, "a1_high", a1H);
+	hdf5_add_scalar_attr(dataset, "N_a1", Na1);
+
+	hdf5_add_scalar_attr(dataset, "a2_low", a2L);
+	hdf5_add_scalar_attr(dataset, "a2_high", a2H);
+	hdf5_add_scalar_attr(dataset, "N_a2", Na2);
+}
+
+void f_3to2::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 4;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+
+	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
+	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
+	hdf5_read_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	dsqrts = (sqrtsH-sqrtsL)/(Nsqrts-1.);
+
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+
+	hdf5_read_scalar_attr(dataset, "a1_low", a1L);
+	hdf5_read_scalar_attr(dataset, "a1_high", a1H);
+	hdf5_read_scalar_attr(dataset, "N_a1", Na1);
+	da1 = (a1H-a1L)/(Na1-1.);
+
+	hdf5_read_scalar_attr(dataset, "a2_low", a2L);
+	hdf5_read_scalar_attr(dataset, "a2_high", a2H);
+	hdf5_read_scalar_attr(dataset, "N_a2", Na2);
+	da1 = (a1H-a1L)/(Na1-1.);	
+
+	Xtab.resize(boost::extents[Nsqrts][NT][Na1][Na2]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = Nsqrts;
+  	dims_mem[1] = NT;
+	dims_mem[2] = Na1;
+	dims_mem[3] = Na2;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void f_3to2::tabulate(size_t T_start, size_t dnT){

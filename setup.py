@@ -17,7 +17,7 @@ extensions = [
 		filelist1,
 		 language="c++",
         extra_compile_args=["-std=c++11"],
-		libraries=["m", "gsl", "gslcblas"])
+		libraries=["m", "gsl", "gslcblas", "boost_filesystem", "hdf5", "hdf5_cpp"])
 ]
 
 setup(

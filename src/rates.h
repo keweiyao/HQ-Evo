@@ -11,6 +11,7 @@
 #include <gsl/gsl_integration.h>
 #include <gsl/gsl_monte.h>
 #include <gsl/gsl_monte_vegas.h>
+#include <boost/multi_array.hpp>
 
 #include "Xsection.h"
 
@@ -51,7 +52,7 @@ private:
 	const size_t NE1, NT;
 	const double E1L, E1H, TL, TH;
 	const double dE1, dT;
-	std::vector< std::vector<double> > Rtab;
+	boost::multi_array<double, 2> Rtab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:
 	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_);
@@ -68,7 +69,7 @@ private:
 	const size_t NE1, NT, Ndt;
 	const double E1L, E1H, TL, TH, dtL, dtH;
 	const double dE1, dT, ddt;
-	std::vector< std::vector< std::vector<double> > > Rtab;
+	boost::multi_array<double, 3> Rtab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:
 	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_);
@@ -85,7 +86,7 @@ private:
 	const size_t NE1, NT, Ndt;
 	const double E1L, E1H, TL, TH, dtL, dtH;
 	const double dE1, dT, ddt;
-	std::vector< std::vector< std::vector<double> > > Rtab;
+	boost::multi_array<double, 3> Rtab;
 	AiMS sampler;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
 public:

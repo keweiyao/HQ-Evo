@@ -5,7 +5,7 @@
 #include <vector>
 #include <string>
 #include <random>
-  
+#include <boost/multi_array.hpp>
 #include "sample_methods.h"
 
 /* all the differential Xsection function are declared by type "double f(double * arg, size_t n_dims, void * params)"
@@ -29,11 +29,13 @@ struct Mygsl_integration_params{
 class Xsection{
 protected:
 	virtual void tabulate(size_t T_start, size_t dnT) = 0;
+	virtual void save_to_file(std::string filename, std::string datasetname) = 0;
+	virtual void read_from_file(std::string filename, std::string datasetname) = 0;
 	double (*dXdPS)(double * PS, size_t n_dims, void * params);
 	double (*approx_X)(double * arg, double M);
 	double M1;
 public:
-	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
 	double get_M1(void) {return M1;};
 	// arg = [s, T] fot X22, arg = [s, T, dt] for X23, arg = [s, T, s1k, s2k] for f32
 	virtual double interpX(double * arg) = 0; 
@@ -48,13 +50,15 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi3;
-	std::vector< std::vector<double> > Xtab;
 	void tabulate(size_t T_start, size_t dnT);
-	const size_t Nsqrts, NT;
-	const double sqrtsL, sqrtsM, sqrtsH, dsqrts1, dsqrts2;
-	const double TL, TH, dT;
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
+	size_t Nsqrts, NT;
+	double sqrtsL, sqrtsM, sqrtsH, dsqrts1, dsqrts2,
+		   TL, TH, dT;
+	boost::multi_array<double, 2> Xtab;
 public:
-    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
@@ -67,14 +71,16 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	std::vector< std::vector< std::vector<double> > > Xtab;
 	void tabulate(size_t T_start, size_t dnT);
-	const size_t Nsqrts, NT, Ndt;
-	const double sqrtsL, sqrtsH, dsqrts,
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
+	size_t Nsqrts, NT, Ndt;
+	double sqrtsL, sqrtsH, dsqrts,
 				 TL, TH, dT,
 				 dtL, dtH, ddt;
+	boost::multi_array<double, 3> Xtab;
 public:
-    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
@@ -87,15 +93,18 @@ private:
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
-	const size_t Nsqrts, NT, Na1, Na2;
-	const double sqrtsL, sqrtsH, dsqrts,
+	void tabulate(size_t T_start, size_t dnT);
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
+	size_t Nsqrts, NT, Na1, Na2;
+	double sqrtsL, sqrtsH, dsqrts,
 				 TL, TH, dT,
 				 a1L, a1H, da1,
 				 a2L, a2H, da2;
-	std::vector<std::vector< std::vector< std::vector<double> > > > Xtab;
-	void tabulate(size_t T_start, size_t dnT);
+	boost::multi_array<double, 4> Xtab;
+
 public:
-    f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_);
+    f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);

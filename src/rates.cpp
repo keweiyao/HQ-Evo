@@ -133,15 +133,13 @@ rates::rates(std::string name_)
 rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
-	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.))
+	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
+	Rtab(boost::extents[NE1][NT])
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
 	// the last core could take less jobs
-	Rtab.resize(NE1);
-	for (auto&& dim1 : Rtab){
-		dim1.resize(NT);
-	}
+
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
 	size_t call_per_core = std::ceil(NT*1./Ncores);
@@ -256,18 +254,13 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
-	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
+	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
+	Rtab(boost::extents[NE1][NT][Ndt])
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
 	// the last core could take less jobs
-	Rtab.resize(NE1);
-	for (auto&& dim1 : Rtab){
-		dim1.resize(NT);
-		for (auto&& dim2 : dim1){
-			dim2.resize(Ndt);
-		}
-	}
+
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
 	size_t call_per_core = std::ceil(NT*1./Ncores);
@@ -386,18 +379,13 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
-	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.))
+	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
+	Rtab(boost::extents[NE1][NT][Ndt])
 {
 	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
 	// for the first n-1 cores, each takes care of m Temps.
 	// the last core could take less jobs
-	Rtab.resize(NE1);
-	for (auto&& dim1 : Rtab){
-		dim1.resize(NT);
-		for (auto&& dim2 : dim1){
-			dim2.resize(Ndt);
-		}
-	}
+
 	std::vector<std::thread> threads;
 	size_t Ncores = std::thread::hardware_concurrency();
 	size_t call_per_core = std::ceil(NT*1./Ncores);

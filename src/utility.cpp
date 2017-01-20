@@ -1,6 +1,9 @@
 #include "utility.h"
 
-double interpolate2d(std::vector<std::vector<double> > * A, int ni, int nj, double ri, double rj){
+double interpolate2d(	boost::multi_array<double, 2> * A, 
+					 	const int& ni, const int& nj, 
+					 	const double& ri, const double& rj)
+{
 	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj};
 	double result = 0.;
 	for (int i=0; i<2; i++){
@@ -11,7 +14,10 @@ double interpolate2d(std::vector<std::vector<double> > * A, int ni, int nj, doub
 	return result;
 }
 
-double interpolate3d(std::vector<std::vector<std::vector<double> > > * A, int ni, int nj, int nk, double ri, double rj, double rk){
+double interpolate3d(	boost::multi_array<double, 3> * A, 
+						const int& ni, const int& nj, const int& nk,
+						const double& ri, const double& rj, const double& rk)
+{
 	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj}, wk[2] = {1.-rk, rk};
 	double result = 0.;
 	for (int i=0; i<2; i++){
@@ -24,7 +30,10 @@ double interpolate3d(std::vector<std::vector<std::vector<double> > > * A, int ni
 	return result;
 }
 
-double interpolate4d(std::vector<std::vector<std::vector<std::vector<double> > > > * A, int ni, int nj, int nk, int nt, double ri, double rj, double rk, double rt){
+double interpolate4d(	boost::multi_array<double, 4> * A, 
+						const int& ni, const int& nj, const int& nk, const int& nt, 
+						const double& ri, const double& rj, const double& rk, const double& rt)
+{
 	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj}, wk[2] = {1.-rk, rk}, wt[3] = {1.-rt, rt};
 	double result = 0.;
 	for (int i=0; i<2; i++){
@@ -38,3 +47,4 @@ double interpolate4d(std::vector<std::vector<std::vector<std::vector<double> > >
 	}
 	return result;
 }
+
