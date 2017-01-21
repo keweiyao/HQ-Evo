@@ -37,6 +37,8 @@ protected:
 	std::uniform_real_distribution<double> dist_norm_y;
 	std::uniform_real_distribution<double> dist_reject;
 	virtual void tabulate_E1_T(size_t T_start, size_t dnT) = 0;
+	virtual void save_to_file(std::string filename, std::string datasetname) = 0;
+	virtual void read_from_file(std::string filename, std::string datasetname) = 0;
 public:
 	rates(std::string name_);
 	virtual double calculate(double * arg) = 0;
@@ -49,13 +51,15 @@ private:
 	Xsection_2to2 * Xprocess;
 	const double M;
 	const int degeneracy;
-	const size_t NE1, NT;
-	const double E1L, E1H, TL, TH;
-	const double dE1, dT;
+	size_t NE1, NT;
+	double E1L, E1H, TL, TH,
+		   dE1, dT;
 	boost::multi_array<double, 2> Rtab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_);
+	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);
@@ -66,13 +70,15 @@ private:
 	Xsection_2to3 * Xprocess;
 	const double M;
 	const int degeneracy;
-	const size_t NE1, NT, Ndt;
-	const double E1L, E1H, TL, TH, dtL, dtH;
-	const double dE1, dT, ddt;
+	size_t NE1, NT, Ndt;
+	double E1L, E1H, TL, TH, dtL, dtH,
+		   dE1, dT, ddt;
 	boost::multi_array<double, 3> Rtab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_);
+	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);
@@ -83,14 +89,16 @@ private:
 	f_3to2 * Xprocess;
 	const double M;
 	const int degeneracy;
-	const size_t NE1, NT, Ndt;
-	const double E1L, E1H, TL, TH, dtL, dtH;
-	const double dE1, dT, ddt;
+	size_t NE1, NT, Ndt;
+	double E1L, E1H, TL, TH, dtL, dtH,
+		   dE1, dT, ddt;
 	boost::multi_array<double, 3> Rtab;
 	AiMS sampler;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
+	void save_to_file(std::string filename, std::string datasetname);
+	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_);
+	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);

@@ -45,19 +45,19 @@ cdef extern from "../src/Xsection.h":
 
 cdef extern from "../src/rates.h":
 	cdef cppclass rates_2to2:
-		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, string name_)
+		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_2to3:
-		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_)
+		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_3to2:
-		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_)
+		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
@@ -65,11 +65,11 @@ cdef extern from "../src/rates.h":
 #-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
 	cdef Xsection_2to2 * cX2to2
-	def __cinit__(self, channel, double mass, string filename):
+	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qq->Qq':
-			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename, False)
+			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename, refresh)
 		elif channel == 'Qg->Qg':
-			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename, False)
+			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
 	cpdef double calculate(self, double s, double Temp):
@@ -94,11 +94,11 @@ cdef class pyX2to2:
 
 cdef class pyX2to3:
 	cdef Xsection_2to3 * cX2to3 
-	def __cinit__(self, channel, double mass, string filename):
+	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qq->Qqg':
-			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename, False)
+			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename, refresh)
 		elif channel == 'Qg->Qgg':
-			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename, False)
+			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
 	cpdef double calculate(self, double & s, double & Temp, double & dt):
@@ -123,11 +123,11 @@ cdef class pyX2to3:
 
 cdef class pyf3to2:
 	cdef f_3to2 * cf3to2 
-	def __cinit__(self, channel, double mass, string filename):
+	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qqg->Qq':
-			self.cf3to2  = new f_3to2(&Ker_Qqg2Qq, &approx_XQqg2Qq, mass, filename, False)
+			self.cf3to2  = new f_3to2(&Ker_Qqg2Qq, &approx_XQqg2Qq, mass, filename, refresh)
 		elif channel == 'Qgg->Qg':
-			self.cf3to2  = new f_3to2(&Ker_Qgg2Qg, &approx_XQgg2Qg, mass, filename, False)
+			self.cf3to2  = new f_3to2(&Ker_Qgg2Qg, &approx_XQgg2Qg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
 	cpdef double calculate(self, double & s, double & Temp, double & dt):
@@ -155,8 +155,8 @@ cdef class pyf3to2:
 #------------------Wrapper for Rates class-------------------------------
 cdef class pyR2to2:
 	cdef rates_2to2 * cR2to2
-	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename):
-		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, filename)
+	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename, bool refresh):
+		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, filename, refresh)
 	cpdef double calculate(self, double & E1, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
@@ -179,8 +179,8 @@ cdef class pyR2to2:
 
 cdef class pyR2to3:
 	cdef rates_2to3 * cR2to3
-	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename):
-		self.cR2to3 = new rates_2to3(x2to3.cX2to3, degeneracy, filename)
+	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename, bool refresh):
+		self.cR2to3 = new rates_2to3(x2to3.cX2to3, degeneracy, filename, refresh)
 	cpdef double calculate(self, double E1, double Temp, double dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
@@ -203,8 +203,8 @@ cdef class pyR2to3:
 
 cdef class pyR3to2:
 	cdef rates_3to2 * cR3to2
-	def __cinit__(self, pyf3to2 f3to2, int degeneracy, string filename):
-		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, filename)
+	def __cinit__(self, pyf3to2 f3to2, int degeneracy, string filename, bool refresh):
+		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, filename, refresh)
 	cpdef double calculate(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
@@ -232,7 +232,7 @@ cdef class HqEvo:
 	cdef bool elastic, inelastic, detailed_balance
 	cdef object X22list, X23list, X32list, R22list, R23list, R32list
 	cdef size_t Nchannels, N22, N23, N32
-	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, detailed_balance=False, table_folder='./tables'):
+	def __cinit__(self, mass=1.3, elastic=True, inelastic=False, detailed_balance=False, table_folder='./tables', refresh_table=False):
 		self.elastic=elastic
 		self.inelastic=inelastic
 		self.detailed_balance=detailed_balance
@@ -248,10 +248,10 @@ cdef class HqEvo:
 
 		self.N22 = 0
 		if self.elastic:
-			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.hdf5"%table_folder)
-			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.hdf5"%table_folder)
-			rQq2Qq = pyR2to2(xQq2Qq, 12., "%s/RQq2Qq.dat"%table_folder)
-			rQg2Qg = pyR2to2(xQg2Qg, 16., "%s/RQg2Qg.dat"%table_folder)
+			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
+			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
+			rQq2Qq = pyR2to2(xQq2Qq, 12., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
+			rQg2Qg = pyR2to2(xQg2Qg, 16., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.X22list = [xQq2Qq, xQg2Qg]
 			self.R22list = [rQq2Qq, rQg2Qg]
 			self.N22 += len(self.X22list)
@@ -259,10 +259,10 @@ cdef class HqEvo:
 			
 		self.N23 = 0
 		if self.inelastic:
-			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.hdf5"%table_folder)
-			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.hdf5"%table_folder)
-			rQq2Qqg = pyR2to3(xQq2Qqg, 12., "%s/RQq2Qqg.dat"%table_folder)
-			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., "%s/RQg2Qgg.dat"%table_folder)
+			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
+			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
+			rQq2Qqg = pyR2to3(xQq2Qqg, 12., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
+			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
 			self.N23 += len(self.X23list)
@@ -270,10 +270,10 @@ cdef class HqEvo:
 
 		self.N32 = 0
 		if self.detailed_balance:
-			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.hdf5"%table_folder)
-			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.hdf5"%table_folder)
-			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., "%s/RQqg2Qq.dat"%table_folder)
-			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., "%s/RQgg2Qg.dat"%table_folder)
+			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
+			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
+			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.X32list = [xQqg2Qq, xQgg2Qg]
 			self.R32list = [rQqg2Qq, rQgg2Qg]
 			self.N32 += len(self.X32list)

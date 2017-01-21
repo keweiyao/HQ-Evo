@@ -3,6 +3,9 @@
 #include <thread> 
 #include <fstream>
 #include <string>
+
+#include <boost/filesystem.hpp>
+
 #include "utility.h"
 #include "rates.h"
 
@@ -126,39 +129,85 @@ rates::rates(std::string name_)
 :	rd(), gen(rd()),
 	dist_x(3.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
 {
-	std::cout << __func__ << " " << name_ << std::endl;
+	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
 
 //=======================Derived Scattering Rate class 2 to 2================================
-rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_)
+rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	Rtab(boost::extents[NE1][NT])
 {
-	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
-	// for the first n-1 cores, each takes care of m Temps.
-	// the last core could take less jobs
-
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
+		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Rates-tab");
 	}
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Rates-tab");
+	}
+	std::cout << std::endl;
+}
+
+void rates_2to2::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 2;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {NE1, NT};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
 	
-	for (std::thread& t : threads)	t.join();
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Rtab.data(), datatype);
+
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
 	
-	std::ofstream file(name_);
-	for (auto dim1 : Rtab)
-		for (auto dim2 : dim1)
-			file << dim2 << " ";
-	file.close();
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+}
+
+void rates_2to2::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 2;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
+	dE1 = (E1H-E1L)/(NE1-1.);
+	
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+	
+	Rtab.resize(boost::extents[NE1][NT]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = NE1;
+  	dims_mem[1] = NT;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Rtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
@@ -251,36 +300,91 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 
 
 //=======================Derived Scattering Rate class 2 to 3================================
-rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_)
+rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
-	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
-	// for the first n-1 cores, each takes care of m Temps.
-	// the last core could take less jobs
-
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
+		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Rates-tab");
 	}
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Rates-tab");
+	}
+	std::cout << std::endl;
+}
+
+void rates_2to3::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {NE1, NT, Ndt};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
 	
-	for (std::thread& t : threads)	t.join();
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Rtab.data(), datatype);
+
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
 	
-	std::ofstream file(name_);
-	for (auto dim1 : Rtab)
-		for (auto dim2 : dim1)
-			for (auto dim3 : dim2) 
-				file << dim3 << " ";
-	file.close();
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+
+	hdf5_add_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_add_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
+}
+
+void rates_2to3::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
+	dE1 = (E1H-E1L)/(NE1-1.);
+	
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+	
+	hdf5_read_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_read_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_read_scalar_attr(dataset, "N_dt", Ndt);
+	ddt = (dtH-dtL)/(Ndt-1.);
+	
+	Rtab.resize(boost::extents[NE1][NT][Ndt]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = NE1;
+  	dims_mem[1] = NT;
+	dims_mem[2] = Ndt;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Rtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void rates_2to3::tabulate_E1_T(size_t T_start, size_t dnT){
@@ -376,36 +480,91 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 }
 
 //=======================Derived Scattering Rate class 3 to 2================================
-rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_)
+rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
-	//Parallel tabulating scattering rate (each core is resonpible for several temperatures)
-	// for the first n-1 cores, each takes care of m Temps.
-	// the last core could take less jobs
-
-	std::vector<std::thread> threads;
-	size_t Ncores = std::thread::hardware_concurrency();
-	size_t call_per_core = std::ceil(NT*1./Ncores);
-	size_t call_for_last_core = NT - call_per_core*(Ncores-1);
-	for (size_t i=0; i< Ncores ; i++)
-	{	
-		size_t Nstart = i*call_per_core;
-		size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		threads.push_back( std::thread(code, Nstart, dN) );
+	bool fileexist = boost::filesystem::exists(name_);
+	if ( (!fileexist) || ( fileexist && refresh) ){
+		std::cout << "Populating table with new calculation" << std::endl;
+		std::vector<std::thread> threads;
+		size_t Ncores = std::thread::hardware_concurrency();
+		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		for (size_t i=0; i< Ncores ; i++){	
+			size_t Nstart = i*call_per_core;
+			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
+			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
+			threads.push_back( std::thread(code, Nstart, dN) );
+		}
+		for (std::thread& t : threads)	t.join();
+		save_to_file(name_, "Rates-tab");
 	}
+	else{
+		std::cout << "loading existing table" << std::endl;
+		read_from_file(name_, "Rates-tab");
+	}
+	std::cout << std::endl;
+}
+
+void rates_3to2::save_to_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_TRUNC);
+	hsize_t dims[rank] = {NE1, NT, Ndt};
+	H5::DSetCreatPropList proplist{};
+	proplist.setChunk(rank, dims);
 	
-	for (std::thread& t : threads)	t.join();
+	H5::DataSpace dataspace(rank, dims);
+	auto datatype(H5::PredType::NATIVE_DOUBLE);
+	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	dataset.write(Rtab.data(), datatype);
+
+	// Attributes
+	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
 	
-	std::ofstream file(name_);
-	for (auto dim1 : Rtab)
-		for (auto dim2 : dim1)
-			for (auto dim3 : dim2) 
-				file << dim3 << " ";
-	file.close();
+	hdf5_add_scalar_attr(dataset, "T_low", TL);
+	hdf5_add_scalar_attr(dataset, "T_high", TH);
+	hdf5_add_scalar_attr(dataset, "N_T", NT);
+
+	hdf5_add_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_add_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
+}
+
+void rates_3to2::read_from_file(std::string filename, std::string datasetname){
+	const size_t rank = 3;
+
+	H5::H5File file(filename, H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname);
+	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
+	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
+	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
+	dE1 = (E1H-E1L)/(NE1-1.);
+	
+	hdf5_read_scalar_attr(dataset, "T_low", TL);
+	hdf5_read_scalar_attr(dataset, "T_high", TH);
+	hdf5_read_scalar_attr(dataset, "N_T", NT);
+	dT = (TH-TL)/(NT-1.);
+	
+	hdf5_read_scalar_attr(dataset, "dt_low", dtL);
+	hdf5_read_scalar_attr(dataset, "dt_high", dtH);
+	hdf5_read_scalar_attr(dataset, "N_dt", Ndt);
+	ddt = (dtH-dtL)/(Ndt-1.);
+	
+	Rtab.resize(boost::extents[NE1][NT][Ndt]);
+	hsize_t dims_mem[rank];
+  	dims_mem[0] = NE1;
+  	dims_mem[1] = NT;
+	dims_mem[2] = Ndt;
+	H5::DataSpace mem_space(rank, dims_mem);
+
+	H5::DataSpace data_space = dataset.getSpace();
+	dataset.read(Rtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void rates_3to2::tabulate_E1_T(size_t T_start, size_t dnT){

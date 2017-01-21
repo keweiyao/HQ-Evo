@@ -160,7 +160,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 double approx_XQq2Qqg(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return dt*dt/Temp*Temp;
+	return std::pow(dt/Temp, 2);
 }
 
 double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
@@ -218,7 +218,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 double approx_XQg2Qgg(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return dt*dt/Temp*Temp;
+	return std::pow(dt/Temp, 2);
 }
 
 

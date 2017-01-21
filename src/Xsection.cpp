@@ -11,31 +11,11 @@
 #include <gsl/gsl_monte_vegas.h>
 
 #include <boost/filesystem.hpp>
-#include <H5Cpp.h>
+
 
 #include "utility.h"
 #include "matrix_elements.h"
 #include "Xsection.h"
-
-template <typename T> inline const H5::PredType& type();
-template <> inline const H5::PredType& type<size_t>() { return H5::PredType::NATIVE_HSIZE; }
-template <> inline const H5::PredType& type<double>() { return H5::PredType::NATIVE_DOUBLE; }
-
-template <typename T>
-void hdf5_add_scalar_attr(
-  const H5::DataSet& dataset, const std::string& name, const T& value) {
-  const auto& datatype = type<T>();
-  auto attr = dataset.createAttribute(name, datatype, H5::DataSpace{});
-  attr.write(datatype, &value);
-}
-
-template <typename T>
-void hdf5_read_scalar_attr(
-  const H5::DataSet& dataset, const std::string& name, T& value) {
-  const auto& datatype = type<T>();
-  auto attr = dataset.openAttribute(name);
-  attr.read(datatype, &value);
-}
 
 double gsl_1dfunc_wrapper(double x, void * params_){
 	Mygsl_integration_params * p = static_cast<Mygsl_integration_params*>(params_);
@@ -47,8 +27,7 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
 : dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_)
 {
-	std::cout << __func__<< " " << name_  << std::endl;
-	
+	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
 
 
@@ -80,7 +59,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 		std::cout << "loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
-	
+	std::cout << std::endl;	
 }
 
 void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
@@ -238,6 +217,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 		std::cout << "loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
+	std::cout << std::endl;	
 }
 
 void Xsection_2to3::save_to_file(std::string filename, std::string datasetname){
@@ -457,6 +437,7 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(d
 		std::cout << "loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
+	std::cout << std::endl;	
 }
 
 void f_3to2::save_to_file(std::string filename, std::string datasetname){

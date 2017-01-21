@@ -4,6 +4,8 @@
 #include <cmath>
 #include <vector>
 #include <boost/multi_array.hpp>
+#include <H5Cpp.h>
+
 //=============constants=======================================================
 const double c4d9 = 4./9.;
 const double c1d9 = 1./9.;
@@ -30,4 +32,24 @@ double interpolate4d(	boost::multi_array<double, 4> * A,
 						const int& ni, const int& nj, const int& nk, const int& nt, 
 						const double& ri, const double& rj, const double& rk, const double& rt);
 
+
+template <typename T> inline const H5::PredType& type();
+template <> inline const H5::PredType& type<size_t>() { return H5::PredType::NATIVE_HSIZE; }
+template <> inline const H5::PredType& type<double>() { return H5::PredType::NATIVE_DOUBLE; }
+
+template <typename T>
+void hdf5_add_scalar_attr(
+  const H5::DataSet& dataset, const std::string& name, const T& value) {
+  const auto& datatype = type<T>();
+  auto attr = dataset.createAttribute(name, datatype, H5::DataSpace{});
+  attr.write(datatype, &value);
+}
+
+template <typename T>
+void hdf5_read_scalar_attr(
+  const H5::DataSet& dataset, const std::string& name, T& value) {
+  const auto& datatype = type<T>();
+  auto attr = dataset.openAttribute(name);
+  attr.read(datatype, &value);
+}
 #endif
