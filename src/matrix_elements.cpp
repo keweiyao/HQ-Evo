@@ -226,49 +226,116 @@ double approx_XQg2Qgg(double * arg, double M){
 //=============Basic for 3->2===========================================
 double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
+	// unpack variables costheta42 = x_[0]
+	double costheta24 = x_[0], phi24 = x_[1];
+	if (costheta24<=-1. || costheta24>=1. || phi24 <=0. || phi24 >=2.*M_PI) return 0.;
+	double sintheta24 = std::sqrt(1. - costheta24*costheta24), sinphi24 = std::sin(phi24), cosphi24 = std::cos(phi24);
 	// unpack parameters
 	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
-	double TwoE2E4 = params[3];
+	double E2 = params[3];
+	double E4 = params[4];
+	double TwoE2E4 = 2.*E2*E4;
+	double kt2 = params[5];
+	double costheta2 = params[6];
+	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
+	double x2M2 = params[7];
+	double mD2 = params[8];
 
-	// unpack variables costheta42 = x_[0]
 	// 2->2
-	double t = TwoE2E4 * (x_[0] - 1);
+	double t = TwoE2E4 * (costheta24 - 1);
 	double the_M2 = M2_Qq2Qq(t, params);
+
 	// 1->2
-	double Pg = 1.0;
+	double qx = E2*sintheta2 - E4*(costheta2*sintheta24*cosphi24 + sintheta2*costheta24),
+		   qy = -E4*sintheta24*sinphi24;
+	double qxkx = -std::sqrt(kt2)*qx;
+	double qt2 = qx*qx + qy*qy;
+	double D1 = kt2 + x2M2;
+	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
+	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2*Pg/16.*2.*M_PI;
+	return the_M2*Pg/16.;
 }
 
 double approx_XQqg2Qq(double * arg, double M){
 	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double sqrts = std::sqrt(s);
+	double xk = 0.5*(a1*a2 + a1 - a2);
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	return (s - M*M)/Temp/Temp/x2; 
+	double M2 = M*M;
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double kz = k*cosk;
+	double kt2 = k*k - kz*kz;
+	double frac = (k + kz)/(E1 + p1);
+	double x2M2 = frac*frac*M2;
+	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
+	double D1 = kt2 + x2M2;
+	double D2 = kt2 + x2M2 + mD2t;
+	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
+	return (s - M*M)/Temp/Temp/x2*prop2;
 }
 
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
-	(void) n_dims_;
+(void) n_dims_;
+	// unpack variables costheta42 = x_[0]
+	double costheta24 = x_[0], phi24 = x_[1];
+	if (costheta24<=-1. || costheta24>=1. || phi24 <=0. || phi24 >=2.*M_PI) return 0.;
+	double sintheta24 = std::sqrt(1. - costheta24*costheta24), sinphi24 = std::sin(phi24), cosphi24 = std::cos(phi24);
 	// unpack parameters
 	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
-	double TwoE2E4 = params[3];
+	double E2 = params[3];
+	double E4 = params[4];
+	double TwoE2E4 = 2.*E2*E4;
+	double kt2 = params[5];
+	double costheta2 = params[6];
+	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
+	double x2M2 = params[7];
+	double mD2 = params[8];
 
-	// unpack variables costheta42 = x_[0]
 	// 2->2
-	double t = TwoE2E4 * (x_[0] - 1);
+	double t = TwoE2E4 * (costheta24 - 1);
 	double the_M2 = M2_Qg2Qg_only_t(t, params);
 
 	// 1->2
-	double Pg = 1.0;
+	double qx = E2*sintheta2 - E4*(costheta2*sintheta24*cosphi24 + sintheta2*costheta24),
+		   qy = -E4*sintheta24*sinphi24;
+	double qxkx = -std::sqrt(kt2)*qx;
+	double qt2 = qx*qx + qy*qy;
+	double D1 = kt2 + x2M2;
+	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
+	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2*Pg/16.*2.*M_PI;
+	return the_M2*Pg/16.;
 }
 
 double approx_XQgg2Qg(double * arg, double M){
 	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double sqrts = std::sqrt(s);
+	double xk = 0.5*(a1*a2 + a1 - a2);
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	return (s - M*M)/Temp/Temp/x2; 
+	double M2 = M*M;
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double kz = k*cosk;
+	double kt2 = k*k - kz*kz;
+	double frac = (k + kz)/(E1 + p1);
+	double x2M2 = frac*frac*M2;
+	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
+	double D1 = kt2 + x2M2;
+	double D2 = kt2 + x2M2 + mD2t;
+	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
+	return (s - M*M)/Temp/Temp/x2*prop2;
 }
 
 

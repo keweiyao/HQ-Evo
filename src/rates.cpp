@@ -603,7 +603,7 @@ double rates_3to2::interpR(double * arg){
 double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	integrate_params_2 * params = static_cast<integrate_params_2 *>(params_);
 	double x2 = x_[0], costheta2 = x_[1], xk = x_[2], costhetak = x_[3], phik = x_[4];
-	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 15. || xk >= 15.) return 0.;
+	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 5. || xk >= 5.) return 0.;
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
@@ -658,10 +658,10 @@ double rates_3to2::calculate(double * arg){
 	
 	// integration limits
 	double xl[5], xu[5];
-	xl[0] = 0.0; xu[0] = 15.;
-	xl[1] = -1.; xu[1] = 1.0;
-	xl[2] = 0.0; xu[2] = 15.;
-	xl[3] = -1.; xu[3] = 1.0;
+	xl[0] = 0.0; xu[0] = 5.;
+	xl[1] = -1.; xu[1] = 1.;
+	xl[2] = 0.0; xu[2] = 5.;
+	xl[3] = -1.; xu[3] = 1.;
 	xl[4] = 0.0; xu[4] = 2.0*M_PI;
 
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
@@ -693,9 +693,7 @@ void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double * guessh = new double[n_dims];
 	guessl[0] = 0.6; guessl[1] = -0.1; guessl[2] = 0.6; guessl[3] = -0.1; guessl[4] = 0.9*M_PI;
 	guessh[0] = 0.8; guessh[1] = 0.1; guessh[2] = 0.8; guessh[3] = 0.1;; guessl[4] = 1.1*M_PI;
-	//std::cout << "r1";
 	std::vector<double> vec5 = sampler.sample(dRdPS_wrapper, n_dims, params, guessl, guessh);
-	//std::cout << "r2" << std::endl;
 	double x2 = vec5[0], 
 		   costheta2 = vec5[1], 
 		   xk = vec5[2], 

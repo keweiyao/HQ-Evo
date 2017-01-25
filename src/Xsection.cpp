@@ -409,7 +409,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
 :	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(60), NT(8), Na1(20), Na2(20), 
+	Nsqrts(20), NT(8), Na1(10), Na2(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
@@ -546,7 +546,7 @@ double f_3to2::interpX(double * arg){
 	xa2 = (a2-a2L)/da2;	ia2 = floor(xa2); ra2 = xa2 - ia2;
 
 	double raw_result = interpolate4d(&Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X(arg, M1);
-	
+
 	double xk = 0.5*(a1*a2 + a1 - a2);
 	double x2 = 0.5*(-a1*a2 + a1 + a2);
 	double M2 = M1*M1;
@@ -560,23 +560,37 @@ double f_3to2::interpX(double * arg){
 	double kt2 = k*k - kz*kz;
 	double frac = (k + kz)/(E1 + p1);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
-	double tauk = k/(kt2 + frac*frac*M2);
+	double x2M2 = frac*frac*M2;
+	double tauk = k/(kt2 + x2M2);
 	double u = dt/tauk;
 	double LPM = u*u/(1. + u*u);
 	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*Temp*Temp;
-	double x2M2 = frac*frac*M2;
-	double D1 = kt2 + x2M2;
-	double D2 = 1.5*mD2 + x2M2;
-	double prop2 = kt2*std::pow(mD2/D1/D2, 2);
-	return 1.5/M_PI*(1. - M2/s)*alpha_rad *  LPM * prop2 *std::pow(1.0 - fracbar, 2) * raw_result;
+	
+	return 1.5/M_PI*(1. - M1*M1/s) * alpha_rad * LPM * std::pow(1. - fracbar, 2) * raw_result;
 }
 
 //------Integration function-------------------
 
+double df_dcostheta42_dphi42(double phi42, void * params_){
+	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
+	double arg[2] = {params->params[9], phi42};
+	return params->f(arg, 2, params->params);
+}
+
 double df_dcostheta42(double costheta42, void * params_){
 	Mygsl_integration_params * params = static_cast<Mygsl_integration_params *>(params_);
-	return params->f(&costheta42, 1, params->params);
+	params->params[9] = costheta42;
+
+	double result, error;
+	double phi42min = 0., phi42max = M_PI;
+	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
+
+    gsl_function F;
+	F.function = df_dcostheta42_dphi42;
+	F.params = params;
+	gsl_integration_qag(&F, phi42min, phi42max, 0, 1e-3, 500, 3, w, &result, &error);
+	gsl_integration_workspace_free(w);
+	return 2.*result;
 }
 
 double f_3to2::calculate(double * arg){
@@ -588,23 +602,40 @@ double f_3to2::calculate(double * arg){
 	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
 	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
 	
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
+	double kz = k*cosk;
+	double kt2 = k*k - kz*kz;
+	double frac = (k + kz)/(E1 + p1);
+	double x2M2 = frac*frac*M2;
+	double mD2 = alpha_s(kt2) *pf_g*Temp*Temp;
+	
+
 	// Integration for (1)p4 and (2)phi4
 	double result, error;
 	double costheta42min = -1., costheta42max = 1.;
-	gsl_integration_workspace *w = gsl_integration_workspace_alloc(500);
+	gsl_integration_workspace *w = gsl_integration_workspace_alloc(200);
 	Mygsl_integration_params * params_df = new Mygsl_integration_params;
 	params_df->f = dXdPS;
-	params_df->params = new double[4];
+	params_df->params = new double[10];
 	params_df->params[0] = s;
 	params_df->params[1] = Temp;
 	params_df->params[2] = M1;
-	params_df->params[3] = 2.*E2*E4;
-
+	params_df->params[3] = E2;
+	params_df->params[4] = E4;
+	params_df->params[5] = kt2;
+	params_df->params[6] = cos2;
+	params_df->params[7] = x2M2;
+	params_df->params[8] = mD2;
+	params_df->params[9] = 0.;
 
     gsl_function F;
 	F.function = df_dcostheta42;
 	F.params = params_df;
-	gsl_integration_qag(&F, costheta42min, costheta42max, 0, 1e-3, 500, 3, w, &result, &error);
+	gsl_integration_qag(&F, costheta42min, costheta42max, 0, 1e-2, 200, 3, w, &result, &error);
 
 	gsl_integration_workspace_free(w);
 	delete [] params_df->params;
@@ -621,14 +652,26 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
 	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A, E4 = (s-M2)/2./sqrts;
 	double k = xk/x2*E2, p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
 	double cos21 = (k*k-E2*E2-p1*p1)/2./p1/E2;
 	double sin21 = std::sqrt(1. - cos21*cos21);
-	double * params = new double[4];
-	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = 2.*E2*E4;
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double kz = k*cosk;
+	double kt2 = k*k - kz*kz;
+	double frac = (k + kz)/(E1 + p1);
+	double x2M2 = frac*frac*M2;
+	double mD2 = alpha_s(kt2) *pf_g*Temp*Temp;
+	double * params = new double[9];
+	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = E2; params[4] = E4;
+	params[5] = kt2; params[6] = cos21; params[7] = x2M2; params[8] = mD2;
 	// sample costheta_24, phi_24
-	double costheta_24 = sampler1d.sample(dXdPS, -1., 1., params);
+	double * guessl = new double[2];
+	double * guessh = new double[2];
+	guessl[0] = -0.1; guessl[1] = M_PI*0.5;
+	guessh[0] = 0.1; guessh[1] = M_PI*1.5;
+	std::vector<double> result = sampler.sample(dXdPS, 2, params, guessl, guessh);
+	double costheta_24 = result[0], phi_24 = result[1];
 	double sintheta_24 = std::sqrt(1. - costheta_24*costheta_24);
-	double phi_24 = dist_phi4(gen);
 	double cosphi_24 = std::cos(phi_24), sinphi_24 = std::sin(phi_24);
 	
 	// transform to final states E3(Q), E4(q, g)
@@ -639,6 +682,8 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	FS[0][2] = -E4*sintheta_24*sinphi_24;
 	FS[0][3] = -E4*(-sin21*sintheta_24*cosphi_24 + cos21*costheta_24);
 
-	delete [] params;
+	delete[] params;
+	delete[] guessl;
+	delete[] guessh;
 }
 

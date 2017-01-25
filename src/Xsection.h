@@ -89,7 +89,8 @@ public:
 //============Derived 3->2 Xsection class============================================
 class f_3to2 : public Xsection{
 private:
-	rejection_1d sampler1d;
+	//rejection_1d sampler1d;
+	AiMS sampler;
 	std::random_device rd;
     std::mt19937 gen;
     std::uniform_real_distribution<double> dist_phi4;
