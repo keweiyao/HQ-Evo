@@ -409,7 +409,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
 :	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(20), NT(8), Na1(10), Na2(10), 
+	Nsqrts(40), NT(8), Na1(20), Na2(20), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),

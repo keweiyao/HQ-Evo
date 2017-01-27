@@ -15,6 +15,13 @@ double alpha_s(double Q2){
         return alpha0 * ( .5 - std::atan( std::log(Q2/Lambda2)/M_PI ) / M_PI );
 }
 
+
+//=============Soft regulator==================================================
+double f_IR(double x){
+	double a = std::sqrt(1. + 4.*x);
+	return (1. + 2.*x)/a*std::log((a+1.)/(a-1.)) - 1.;
+}
+
 //=============Baisc function for Q+q --> Q+q==================================
 double M2_Qq2Qq(double t, void * params){
 	// unpacking parameters
@@ -148,9 +155,13 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
+
+	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2) * LPM
+	double iD1 = 1./(kt2 + x2M2 + Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
+				*LPM
+				//*sudakov	
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -206,9 +217,13 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
+
+	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)*LPM
+	double iD1 = 1./(kt2 + x2M2 + Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double Pg = alpha_rad*std::pow(1.-xbar, 2)
+				*LPM
+				//*sudakov
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -250,7 +265,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + Lambda2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
@@ -275,7 +290,7 @@ double approx_XQqg2Qq(double * arg, double M){
 	double frac = (k + kz)/(E1 + p1);
 	double x2M2 = frac*frac*M2;
 	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + Lambda2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/Temp/Temp/x2*prop2;
@@ -307,7 +322,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + Lambda2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
@@ -332,7 +347,7 @@ double approx_XQgg2Qg(double * arg, double M){
 	double frac = (k + kz)/(E1 + p1);
 	double x2M2 = frac*frac*M2;
 	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + Lambda2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/Temp/Temp/x2*prop2;
