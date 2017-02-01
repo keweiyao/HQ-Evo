@@ -14,7 +14,7 @@ using std::placeholders::_1;
 //=============Thernalized Distribution funtion=================================
 // xi = 1: Fermi Dirac; xi = -1 Bose Einsterin; xi = 0, Maxwell-Boltzmann
 double inline f_0(double x, double xi){
-    if (x<1e-9) x=1e-9;
+    if (x<1e-6) x=1e-6;
     return 1./(std::exp(x)+xi);
 }
 
@@ -133,9 +133,10 @@ rates::rates(std::string name_)
 }
 
 //=======================Derived Scattering Rate class 2 to 2================================
-rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
+rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
-	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
+	eta_2(eta_2_),
+	NE1(400), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	Rtab(boost::extents[NE1][NT])
 {
@@ -248,7 +249,7 @@ double rates_2to2::calculate(double * arg)
 	px->params[1] = p1/E1;
 	px->params[2] = Temp;
 	px->params[3] = M*M;
-	px->params[4] = 0.0;
+	px->params[4] = eta_2;
 
     gsl_function F;
 	F.function = fx_wrapper22;
@@ -300,8 +301,9 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 
 
 //=======================Derived Scattering Rate class 2 to 3================================
-rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
+rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
+	eta_2(eta_2_),
 	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
@@ -431,7 +433,7 @@ double rates_2to3::calculate(double * arg)
 	px->params[1] = p1/E1;
 	px->params[2] = Temp;
 	px->params[3] = M*M;
-	px->params[4] = 0.0;
+	px->params[4] = eta_2;
 	px->params[5] = dt; // dt in the Cell Frame
 
     gsl_function F;
@@ -480,8 +482,9 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 }
 
 //=======================Derived Scattering Rate class 3 to 2================================
-rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh)
+rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
+	eta_2(eta_2_), eta_k(eta_k_),
 	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
@@ -608,7 +611,9 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
 
-	double E1 = params->params[0], Temp = params->params[1], dt = params->params[2], M = params->params[3], p1 = params->params[4];
+	double E1 = params->params[0], Temp = params->params[1], dt = params->params[2], 
+		   M = params->params[3], p1 = params->params[4],
+		   eta_2 = params->params[5], eta_k = params->params[6];
 	double E2 = x2*Temp, k = xk*Temp;
 	
 	double kx = k*sinthetak*cosphik, ky = k*sinthetak*sinphik, kz = k*costhetak;
@@ -630,7 +635,7 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	// Quantity in CoM frame of p1 and p2
 	double * arg = new double[5];
 	arg[0] = s; arg[1] = Temp; arg[2] =  w2 + wk; arg[3] = (w2 - wk)/(1. - w2 - wk); arg[4] = gamma*(1. - vz*p1/E1)*dt;
-	double result = x2*f_0(x2, 0.)*params->f(arg)*xk*f_0(xk, 0.);
+	double result = x2*f_0(x2, eta_2)*params->f(arg)*xk*f_0(xk, eta_k);
 	delete [] arg;
 	return result;
 }
@@ -644,12 +649,14 @@ double rates_3to2::calculate(double * arg){
 	const gsl_rng_type * Tr = gsl_rng_default;
 	gsl_rng * r = gsl_rng_alloc(Tr);
 	
-	params->params = new double[5];
+	params->params = new double[7];
 	params->params[0] = E1; 
 	params->params[1] = Temp; 
 	params->params[2] = dt; 
 	params->params[3] = M;
 	params->params[4] = std::sqrt(E1*E1-M*M);
+	params->params[5] = eta_2;
+	params->params[6] = eta_k;
 	
 	gsl_monte_function G;
 	G.f = dRdPS_wrapper; 

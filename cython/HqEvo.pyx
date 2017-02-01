@@ -45,19 +45,19 @@ cdef extern from "../src/Xsection.h":
 
 cdef extern from "../src/rates.h":
 	cdef cppclass rates_2to2:
-		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, string name_, bool refresh)
+		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_2to3:
-		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, string name_, bool refresh)
+		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_3to2:
-		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, string name_, bool refresh)
+		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, string name_, bool refresh)
 		double calculate(double * arg)
 		double interpR(double * arg)
 		void sample_initial(double * arg, vector[ vector[double] ] & IS)
@@ -155,8 +155,8 @@ cdef class pyf3to2:
 #------------------Wrapper for Rates class-------------------------------
 cdef class pyR2to2:
 	cdef rates_2to2 * cR2to2
-	def __cinit__(self, pyX2to2 x2to2, int degeneracy, string filename, bool refresh):
-		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, filename, refresh)
+	def __cinit__(self, pyX2to2 x2to2, int degeneracy, double eta2, string filename, bool refresh):
+		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, eta2, filename, refresh)
 	cpdef double calculate(self, double & E1, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
@@ -179,8 +179,8 @@ cdef class pyR2to2:
 
 cdef class pyR2to3:
 	cdef rates_2to3 * cR2to3
-	def __cinit__(self, pyX2to3 x2to3, int degeneracy, string filename, bool refresh):
-		self.cR2to3 = new rates_2to3(x2to3.cX2to3, degeneracy, filename, refresh)
+	def __cinit__(self, pyX2to3 x2to3, int degeneracy, double eta2, string filename, bool refresh):
+		self.cR2to3 = new rates_2to3(x2to3.cX2to3, degeneracy, eta2, filename, refresh)
 	cpdef double calculate(self, double E1, double Temp, double dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
@@ -203,8 +203,8 @@ cdef class pyR2to3:
 
 cdef class pyR3to2:
 	cdef rates_3to2 * cR3to2
-	def __cinit__(self, pyf3to2 f3to2, int degeneracy, string filename, bool refresh):
-		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, filename, refresh)
+	def __cinit__(self, pyf3to2 f3to2, int degeneracy, double eta2, double etak, string filename, bool refresh):
+		self.cR3to2 = new rates_3to2(f3to2.cf3to2, degeneracy, eta2, etak, filename, refresh)
 	cpdef double calculate(self, double & E1, double & Temp, double & dt):
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = Temp; arg[2] = dt
@@ -250,8 +250,8 @@ cdef class HqEvo:
 		if self.elastic:
 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
-			rQq2Qq = pyR2to2(xQq2Qq, 12., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
-			rQg2Qg = pyR2to2(xQg2Qg, 16., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
+			rQq2Qq = pyR2to2(xQq2Qq, 12., 1., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
+			rQg2Qg = pyR2to2(xQg2Qg, 16., -1., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.X22list = [xQq2Qq, xQg2Qg]
 			self.R22list = [rQq2Qq, rQg2Qg]
 			self.N22 += len(self.X22list)
@@ -261,8 +261,8 @@ cdef class HqEvo:
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
-			rQq2Qqg = pyR2to3(xQq2Qqg, 12., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
-			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
+			rQq2Qqg = pyR2to3(xQq2Qqg, 12., 1., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
+			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., -1., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
 			self.N23 += len(self.X23list)
@@ -272,8 +272,8 @@ cdef class HqEvo:
 		if self.detailed_balance:
 			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
 			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
-			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
-			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., 1., -1., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
+			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., -1., -1., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.X32list = [xQqg2Qq, xQgg2Qg]
 			self.R32list = [rQqg2Qq, rQgg2Qg]
 			self.N32 += len(self.X32list)

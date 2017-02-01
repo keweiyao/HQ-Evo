@@ -51,6 +51,7 @@ private:
 	Xsection_2to2 * Xprocess;
 	const double M;
 	const int degeneracy;
+	const double eta_2;
 	size_t NE1, NT;
 	double E1L, E1H, TL, TH,
 		   dE1, dT;
@@ -59,7 +60,7 @@ private:
 	void save_to_file(std::string filename, std::string datasetname);
 	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
+	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);
@@ -70,6 +71,7 @@ private:
 	Xsection_2to3 * Xprocess;
 	const double M;
 	const int degeneracy;
+	const double eta_2;
 	size_t NE1, NT, Ndt;
 	double E1L, E1H, TL, TH, dtL, dtH,
 		   dE1, dT, ddt;
@@ -78,7 +80,7 @@ private:
 	void save_to_file(std::string filename, std::string datasetname);
 	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
+	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);
@@ -89,6 +91,7 @@ private:
 	f_3to2 * Xprocess;
 	const double M;
 	const int degeneracy;
+	const double eta_2, eta_k;
 	size_t NE1, NT, Ndt;
 	double E1L, E1H, TL, TH, dtL, dtH,
 		   dE1, dT, ddt;
@@ -98,7 +101,7 @@ private:
 	void save_to_file(std::string filename, std::string datasetname);
 	void read_from_file(std::string filename, std::string datasetname);
 public:
-	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, std::string name_, bool refresh);
+	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh);
 	double calculate(double * arg);
 	double interpR(double * arg);
 	void sample_initial(double * arg, std::vector< std::vector<double> > & IS);
