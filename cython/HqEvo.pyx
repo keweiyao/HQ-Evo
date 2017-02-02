@@ -265,7 +265,7 @@ cdef class HqEvo:
 		if self.elastic:
 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
-			rQq2Qq = pyR2to2(xQq2Qq, 12., 0., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
+			rQq2Qq = pyR2to2(xQq2Qq, 36., 0., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
 			rQg2Qg = pyR2to2(xQg2Qg, 16., 0., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.X22list = [xQq2Qq, xQg2Qg]
 			self.R22list = [rQq2Qq, rQg2Qg]
@@ -276,7 +276,7 @@ cdef class HqEvo:
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
-			rQq2Qqg = pyR2to3(xQq2Qqg, 12., 0., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
+			rQq2Qqg = pyR2to3(xQq2Qqg, 36., 0., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
 			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., 0., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
@@ -287,7 +287,7 @@ cdef class HqEvo:
 		if self.detailed_balance:
 			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
 			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
-			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., 0., 0., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 36.*16., 0., 0., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
 			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., 0., 0., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.X32list = [xQqg2Qq, xQgg2Qg]
 			self.R32list = [rQqg2Qq, rQgg2Qg]
