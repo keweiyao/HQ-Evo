@@ -65,10 +65,13 @@ cdef extern from "../src/rates.h":
 #-------------------Wrap Xsection class---------------------------
 cdef class pyX2to2:
 	cdef Xsection_2to2 * cX2to2
+	cdef double stat
 	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qq->Qq':
+			self.stat = 1.
 			self.cX2to2 = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename, refresh)
 		elif channel == 'Qg->Qg':
+			self.stat = -1.
 			self.cX2to2 = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
@@ -91,13 +94,18 @@ cdef class pyX2to2:
 		cdef double result = self.cX2to2.interpX(arg)
 		free(arg)
 		return result
+	cpdef double get_stat(self):
+		return self.stat
 
 cdef class pyX2to3:
 	cdef Xsection_2to3 * cX2to3 
+	cdef double stat
 	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qq->Qqg':
+			stat = 1.
 			self.cX2to3 = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, mass, filename, refresh)
 		elif channel == 'Qg->Qgg':
+			stat = -1.
 			self.cX2to3 = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
@@ -120,13 +128,18 @@ cdef class pyX2to3:
 		cdef double result = self.cX2to3.interpX(arg)
 		free(arg)
 		return result
+	cpdef double get_stat(self):
+		return self.stat, -1.
 
 cdef class pyf3to2:
 	cdef f_3to2 * cf3to2 
+	cdef double stat
 	def __cinit__(self, channel, double mass, string filename, bool refresh):
 		if channel == 'Qqg->Qq':
+			stat = 1.
 			self.cf3to2  = new f_3to2(&Ker_Qqg2Qq, &approx_XQqg2Qq, mass, filename, refresh)
 		elif channel == 'Qgg->Qg':
+			stat = -1.
 			self.cf3to2  = new f_3to2(&Ker_Qgg2Qg, &approx_XQgg2Qg, mass, filename, refresh)
 		else:
 			raise ValueError("channel %s not implemented"%channel)
@@ -149,6 +162,8 @@ cdef class pyf3to2:
 		cdef double result = self.cf3to2.interpX(arg)
 		free(arg)
 		return result
+	cpdef double get_stat(self):
+		return self.stat
 
 
 
@@ -250,8 +265,8 @@ cdef class HqEvo:
 		if self.elastic:
 			xQq2Qq = pyX2to2('Qq->Qq', mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
 			xQg2Qg = pyX2to2('Qg->Qg', mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
-			rQq2Qq = pyR2to2(xQq2Qq, 12., 1., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
-			rQg2Qg = pyR2to2(xQg2Qg, 16., -1., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
+			rQq2Qq = pyR2to2(xQq2Qq, 12., 0., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
+			rQg2Qg = pyR2to2(xQg2Qg, 16., 0., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.X22list = [xQq2Qq, xQg2Qg]
 			self.R22list = [rQq2Qq, rQg2Qg]
 			self.N22 += len(self.X22list)
@@ -261,8 +276,8 @@ cdef class HqEvo:
 		if self.inelastic:
 			xQq2Qqg = pyX2to3('Qq->Qqg', mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
 			xQg2Qgg = pyX2to3('Qg->Qgg', mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
-			rQq2Qqg = pyR2to3(xQq2Qqg, 12., 1., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
-			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., -1., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
+			rQq2Qqg = pyR2to3(xQq2Qqg, 12., 0., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
+			rQg2Qgg = pyR2to3(xQg2Qgg, 16./2., 0., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.X23list = [xQq2Qqg, xQg2Qgg]
 			self.R23list = [rQq2Qqg, rQg2Qgg]
 			self.N23 += len(self.X23list)
@@ -272,8 +287,8 @@ cdef class HqEvo:
 		if self.detailed_balance:
 			xQqg2Qq = pyf3to2('Qqg->Qq', mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
 			xQgg2Qg = pyf3to2('Qgg->Qg', mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
-			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., 1., -1., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
-			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., -1., -1., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
+			rQqg2Qq = pyR3to2(xQqg2Qq, 12.*16., 0., 0., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
+			rQgg2Qg = pyR3to2(xQgg2Qg, 16.*16./2., 0., 0., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.X32list = [xQqg2Qq, xQgg2Qg]
 			self.R32list = [rQqg2Qq, rQgg2Qg]
 			self.N32 += len(self.X32list)
@@ -335,6 +350,18 @@ cdef class HqEvo:
 			return self.X23list[channel-self.N22].sample_dXdPS(s, T, mean_dt23)
 		elif channel-self.N22-self.N23 < self.N32:
 			return self.X32list[channel-self.N22-self.N23].sample_dXdPS(s, T, a1, a2)
+		else:
+			raise ValueError("channel %d not implememented"%channel)
+
+	cpdef get_stat(self, int channel):
+		if channel < 0:
+			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
+		elif channel < self.N22:
+			return self.X22list[channel].get_stat();
+		elif channel-self.N22 < self.N23:
+			return self.X23list[channel-self.N22].get_stat()
+		elif channel-self.N22-self.N23 < self.N32:
+			return self.X32list[channel-self.N22-self.N23].get_stat()
 		else:
 			raise ValueError("channel %d not implememented"%channel)
 		

@@ -14,8 +14,9 @@ using std::placeholders::_1;
 //=============Thernalized Distribution funtion=================================
 // xi = 1: Fermi Dirac; xi = -1 Bose Einsterin; xi = 0, Maxwell-Boltzmann
 double inline f_0(double x, double xi){
-    if (x<1e-6) x=1e-6;
-    return 1./(std::exp(x)+xi);
+    if (x<1e-9) x=1e-9;
+    double result = 1./(std::exp(x)+xi);
+    return result;
 }
 
 //=============function wrapper for GSL integration R22======================

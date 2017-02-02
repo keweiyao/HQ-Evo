@@ -172,19 +172,22 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double s = arg[0], Temp = arg[1];
 	double * p = new double[3]; //s, T, M
 	p[0] = s; p[1] = Temp;  p[2] = M1;
-	double psq = std::pow(s-M1*M1, 2)/4./s;
-	double pQ = std::sqrt(psq);
+	double M2 = M1*M1;
+	double sqrts = std::sqrt(s);
+	double pQ = (s-M2)/2./sqrts;
+	double EQ = sqrts - pQ;
 	double t = sampler1d.sample(dXdPS, -std::pow(s-M1*M1, 2)/s, 0.0, p);
-	double costheta3 = 1. + t/psq/2.;
+	double costheta3 = 1. + t/pQ/pQ/2.;
 	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
 	double phi3 = dist_phi3(gen);
 	double cosphi3 = std::cos(phi3), sinphi3 = std::sin(phi3);
-	FS.resize(1);
+	FS.resize(2);
 	FS[0].resize(4);
-	FS[0][0] = std::sqrt(psq + M1*M1);
-	FS[0][1] = pQ*sintheta3*cosphi3;
-	FS[0][2] = pQ*sintheta3*sinphi3;
-	FS[0][3] = pQ*costheta3;
+	FS[0][0] = EQ; FS[0][1] = pQ*sintheta3*cosphi3;
+	FS[0][2] = pQ*sintheta3*sinphi3; FS[0][3] = pQ*costheta3;
+	FS[1].resize(4);
+	FS[1][0] = pQ; FS[1][1] = -FS[0][1];
+	FS[1][2] = -FS[0][2]; FS[1][3] = -FS[0][3];
 	delete [] p;
 }
 
@@ -382,15 +385,20 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	// --- randomize the azimuthal angle phi4----
 	double phi4 = dist_phi4(gen);
 	double cos_phi4 = std::cos(phi4), sin_phi4 = std::sin(phi4);
-	//double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
+	double kx = kxp*cos_phi4 + kyp*sin_phi4, ky = -kxp*sin_phi4 + kyp*cos_phi4;
 	double HQx = HQxp*cos_phi4 + HQyp*sin_phi4, HQy = -HQxp*sin_phi4 + HQyp*cos_phi4;
-	FS.resize(1);
-	FS[0].resize(4); //final_states[1].resize(4);
+	FS.resize(3);
+	FS[0].resize(4); 
 	FS[0][0] = EQ; FS[0][1] = HQx; 
 	FS[0][2] = HQy; FS[0][3] = HQz;
 
-	//final_states[1][0] = k; final_states[1][1] = kx; 
-	//final_states[1][2] = ky; final_states[1][3] = kz;
+	FS[1].resize(4); 
+	FS[1][0] = sqrts - EQ - k; FS[1][1] = -HQx-kx; 
+	FS[1][2] = -HQy-ky; FS[1][3] = -HQz-kz;
+
+	FS[2].resize(4); 
+	FS[2][0] = k; FS[2][1] = kx; 
+	FS[2][2] = ky; FS[2][3] = kz;
 	delete [] p;
 	delete [] guessl;
 	delete [] guessh;
@@ -675,12 +683,18 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double cosphi_24 = std::cos(phi_24), sinphi_24 = std::sin(phi_24);
 	
 	// transform to final states E3(Q), E4(q, g)
-	FS.resize(1); FS[0].resize(4);
-
+	FS.resize(2); 
+	FS[0].resize(4);
 	FS[0][0] = sqrts - E4; 
 	FS[0][1] = -E4*(cos21*sintheta_24*cosphi_24 + sin21*costheta_24);
 	FS[0][2] = -E4*sintheta_24*sinphi_24;
 	FS[0][3] = -E4*(-sin21*sintheta_24*cosphi_24 + cos21*costheta_24);
+	
+	FS[1].resize(4);
+	FS[1][0] = E4;
+	FS[1][1] = -FS[0][1];
+	FS[1][2] = -FS[0][2];
+	FS[1][3] = -FS[0][3];
 
 	delete[] params;
 	delete[] guessl;

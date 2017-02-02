@@ -16,6 +16,8 @@ const double c64d9pi2 = 64./9.*M_PI*M_PI;
 const double c256pi4 = 256.*std::pow(M_PI, 4);
 const int Nc = 3, nf = 3;
 const double pf_g = 4.*M_PI/3.*(Nc + nf/2.); // prefractor for gluon self energy^2 
+//const double pf_g = 8./M_PI*(Nc + nf);
+
 const double pf_q = M_PI/2.*(Nc*Nc - 1)/2./Nc; // prefractor for quark self energy^2 
 const double alpha0 = 4.*M_PI/(11. - 2./3.*nf); // alpha_s(Q2 = e*Lambda2)
 const double Lambda2 = 0.2*0.2; // [GeV^2] Lambda QCD squared

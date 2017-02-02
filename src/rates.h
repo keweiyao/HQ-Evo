@@ -16,7 +16,7 @@
 #include "Xsection.h"
 
 
-double inline f_0(double x, double xi);
+double f_0(double x, double xi);
 double fy_wrapper22(double y, void * params_);
 double fx_wrapper22(double x, void * px_);
 double fy_wrapper23(double y, void * params_);
