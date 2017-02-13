@@ -14,7 +14,7 @@
 #include <boost/multi_array.hpp>
 
 #include "Xsection.h"
-
+#include <H5Cpp.h>
 
 double f_0(double x, double xi);
 double fy_wrapper22(double y, void * params_);
@@ -37,8 +37,8 @@ protected:
 	std::uniform_real_distribution<double> dist_norm_y;
 	std::uniform_real_distribution<double> dist_reject;
 	virtual void tabulate_E1_T(size_t T_start, size_t dnT) = 0;
-	virtual void save_to_file(std::string filename, std::string datasetname) = 0;
-	virtual void read_from_file(std::string filename, std::string datasetname) = 0;
+	virtual void save_to_file(H5::H5File * file, std::string datasetname, int index) = 0;
+	virtual void read_from_file(H5::H5File * file, std::string datasetname, int index) = 0;
 public:
 	rates(std::string name_);
 	virtual double calculate(double * arg) = 0;
@@ -55,10 +55,10 @@ private:
 	size_t NE1, NT;
 	double E1L, E1H, TL, TH,
 		   dE1, dT;
-	boost::multi_array<double, 2> Rtab;
+	boost::multi_array<double, 2> Rtab, R1tab, R2tab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
-	void save_to_file(std::string filename, std::string datasetname);
-	void read_from_file(std::string filename, std::string datasetname);
+	void save_to_file(H5::H5File * file, std::string datasetname, int index);
+	void read_from_file(H5::H5File * file, std::string datasetname, int index);
 public:
 	rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh);
 	double calculate(double * arg);
@@ -77,8 +77,8 @@ private:
 		   dE1, dT, ddt;
 	boost::multi_array<double, 3> Rtab;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
-	void save_to_file(std::string filename, std::string datasetname);
-	void read_from_file(std::string filename, std::string datasetname);
+	void save_to_file(H5::H5File * file, std::string datasetname, int index);
+	void read_from_file(H5::H5File * file, std::string datasetname, int index);
 public:
 	rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh);
 	double calculate(double * arg);
@@ -98,8 +98,8 @@ private:
 	boost::multi_array<double, 3> Rtab;
 	AiMS sampler;
 	void tabulate_E1_T(size_t T_start, size_t dnT);
-	void save_to_file(std::string filename, std::string datasetname);
-	void read_from_file(std::string filename, std::string datasetname);
+	void save_to_file(H5::H5File * file, std::string datasetname, int index);
+	void read_from_file(H5::H5File * file, std::string datasetname, int index);
 public:
 	rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh);
 	double calculate(double * arg);

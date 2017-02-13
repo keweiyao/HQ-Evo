@@ -174,13 +174,13 @@ cdef class pyR2to2:
 		self.cR2to2 = new rates_2to2(x2to2.cX2to2, degeneracy, eta2, filename, refresh)
 	cpdef double calculate(self, double & E1, double & Temp):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
-		arg[0] = E1; arg[1] = Temp
+		arg[0] = E1; arg[1] = Temp;
 		cdef double result = self.cR2to2.calculate(arg)
 		free(arg)
 		return result
-	cpdef double interpR(self, double & E1, double & Temp):
-		cdef double * arg = <double*>malloc(2*sizeof(double))
-		arg[0] = E1; arg[1] = Temp
+	cpdef double interpR(self, double & E1, double & Temp, int & index):
+		cdef double * arg = <double*>malloc(3*sizeof(double))
+		arg[0] = E1; arg[1] = Temp; arg[2] = index
 		cdef double result =self.cR2to2.interpR(arg)
 		free(arg)
 		return result
@@ -302,7 +302,7 @@ cdef class HqEvo:
 		cdef double p[6]
 		if self.elastic:
 			for Rchannel in self.R22list:
-				psum += Rchannel.interpR(E1, T)
+				psum += Rchannel.interpR(E1, T, 0)
 				p[i] = psum
 				i += 1
 		if self.inelastic:
