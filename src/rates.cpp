@@ -143,7 +143,7 @@ double fx_wrapper23(double x, void * px_){
 //=======================Rates abstract class==================================
 rates::rates(std::string name_)
 :	rd(), gen(rd()),
-	dist_x(3.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
+	dist_x(3.0, 1.0), dist_xcorr(5.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
 {
 	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
@@ -249,6 +249,7 @@ void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
 			arg[1] = TL + j*dT;	
 			arg[2] = 0.; Rtab[i][j] = calculate(arg);
 			arg[2] = 1.; R1tab[i][j] = calculate(arg);
+			arg[2] = 2.; R2tab[i][j] = calculate(arg);
 		}
 	}
 	delete [] arg;
@@ -256,7 +257,7 @@ void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
 
 double rates_2to2::interpR(double * arg){
 	double E1 = arg[0], Temp = arg[1];
-	int index = static_cast<int>(arg[2]);
+	double norm_pi33 = arg[2];
 	if (Temp < TL) Temp = TL;
 	if (Temp >= TH) Temp = TH-dT;
 	if (E1 < E1L) E1 = E1L;
@@ -265,8 +266,7 @@ double rates_2to2::interpR(double * arg){
 	size_t iT, iE1;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	if (index == 0) return interpolate2d(&Rtab, iE1, iT, rE1, rT);
-	if (index == 1) return interpolate2d(&R1tab, iE1, iT, rE1, rT);
+	return interpolate2d(&Rtab, iE1, iT, rE1, rT) +  norm_pi33*(interpolate2d(&R1tab, iE1, iT, rE1, rT) + interpolate2d(&R2tab, iE1, iT, rE1, rT));
 }
 
 double rates_2to2::calculate(double * arg)
@@ -309,28 +309,34 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 		   pi11 = arg[2], pi12 = arg[3], pi13 = arg[4],
 		   pi22 = arg[5], pi23 = arg[6];
 	double pi33 = - pi11 - pi22;
+	double Amax = std::sqrt(pi11*pi11 + pi22*pi22 + pi33*pi33 + pi12*pi12*2. + pi13*pi13*2. + pi23*pi23*2.);
 	double * Xarg = new double[2]; Xarg[1] = Temp;
 	double M2 = M*M, x, y, max, smax, stemp, phi2, pi_part, 
 			cosphi2, sinphi2, costheta2, sintheta2;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*10. + coeff2*10.;
+	smax = M2 + coeff1*5. + coeff2*5.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{ x = dist_x(gen); }while(x>10.);
+		do{
+			if ( (rand()*1.)/RAND_MAX <= 1./(1. + 6.*Amax)) x = dist_x(gen);
+			else  x = dist_xcorr(gen);
+		  }while(x>5.);
 		y = dist_norm_y(gen);
 		phi2 = (rand()*2.*M_PI)/RAND_MAX;
+
 		cosphi2 = std::cos(phi2); sinphi2 = std::sin(phi2);
-		costheta2 = y, sintheta2 = std::sqrt(1. - y*y); 
+		costheta2 = y; sintheta2 = std::sqrt(1. - y*y); 
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp;
-		pi_part = 1. + x*x*( sintheta2*sintheta2*(pi11*cosphi2*cosphi2 + 2.*pi12*cosphi2*sinphi2
+		pi_part = ( 1. + x*x*( sintheta2*sintheta2*(pi11*cosphi2*cosphi2 + 2.*pi12*cosphi2*sinphi2
 													+ pi22*sinphi2*sinphi2)
 								+ costheta2*costheta2*pi33
-							+ 2.*sintheta2*cosehteta2*(pi13*cosphi2 + pi23*sinphi2)
-							);
+							+ 2.*sintheta2*costheta2*(pi13*cosphi2 + pi23*sinphi2) )
+					)/(1. + x*x*Amax);
+		if (pi_part < 0.) pi_part = 0.;
 	}while( pi_part*(1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
 	delete [] Xarg;
 	double E2 = x*Temp;

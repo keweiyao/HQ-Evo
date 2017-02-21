@@ -33,7 +33,7 @@ class rates{
 protected:
 	std::random_device rd;
     std::mt19937 gen;
-    std::gamma_distribution<double> dist_x;
+    std::gamma_distribution<double> dist_x, dist_xcorr;
 	std::uniform_real_distribution<double> dist_norm_y;
 	std::uniform_real_distribution<double> dist_reject;
 	virtual void tabulate_E1_T(size_t T_start, size_t dnT) = 0;
