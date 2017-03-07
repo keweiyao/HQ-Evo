@@ -184,11 +184,11 @@ cdef class pyR2to2:
 		cdef double result =self.cR2to2.interpR(arg)
 		free(arg)
 		return result
-	cpdef sample_initial(self, double & E1, double & Temp, vector[double] & pi):
+	cpdef sample_initial(self, double & E1, double & Temp):
 		cdef vector[ vector[double] ] IS
 		cdef double * arg = <double*>malloc(7*sizeof(double))
 		arg[0] = E1; arg[1] = Temp
-		arg[2] = pi[0]; arg[3] = pi[1]; arg[4] = pi[2]; arg[5] = pi[3]; arg[6] = pi[4]
+		arg[2] = 0.; arg[3] = 0.; arg[4] = 0.; arg[5] = 0.; arg[6] = 0.
 		self.cR2to2.sample_initial(arg, IS)
 		free(arg)
 		return IS
@@ -296,14 +296,14 @@ cdef class HqEvo:
 			self.Nchannels += self.N32
 		print "Number of Channels", self.Nchannels
 
-	cpdef sample_channel(self, double & E1, double & T, double & pi33, double & dt23, double & dt32):
+	cpdef sample_channel(self, double & E1, double & T, double & dt23, double & dt32):
 		cdef double r, psum = 0.0, dt, Pmax = 0.1
 		cdef size_t i=0
 		cdef int channel_index = -1
 		cdef double p[6]
 		if self.elastic:
 			for Rchannel in self.R22list:
-				psum += Rchannel.interpR(E1, T, pi33)
+				psum += Rchannel.interpR(E1, T, 0.)
 				p[i] = psum
 				i += 1
 		if self.inelastic:
@@ -330,11 +330,11 @@ cdef class HqEvo:
 				break
 		return channel_index, dt
 
-	cpdef sample_initial(self, int channel, double & E1, double & T, vector[double] & pi, double & mean_dt23, double & mean_dt32):
+	cpdef sample_initial(self, int channel, double & E1, double & T, double & mean_dt23, double & mean_dt32):
 		if channel < 0:
 			raise ValueError("channel must be > 0, channel < 0 correspond to no scattering")
 		elif channel < self.N22:
-			return self.R22list[channel].sample_initial(E1, T, pi)
+			return self.R22list[channel].sample_initial(E1, T)
 		elif channel-self.N22 < self.N23:
 			return self.R23list[channel-self.N22].sample_initial(E1, T, mean_dt23)
 		elif channel-self.N22-self.N23 < self.N32:
