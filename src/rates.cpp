@@ -305,41 +305,28 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	// and uniform sample y within (-1., 1.)
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
 	// this function returns all initial state particles' four-vector in the order (p1, p2)
-	double E1 = arg[0], Temp = arg[1], 
-		   pi11 = arg[2], pi12 = arg[3], pi13 = arg[4],
-		   pi22 = arg[5], pi23 = arg[6];
-	double pi33 = - pi11 - pi22;
-	double Amax = std::sqrt(pi11*pi11 + pi22*pi22 + pi33*pi33 + pi12*pi12*2. + pi13*pi13*2. + pi23*pi23*2.);
+	double E1 = arg[0], Temp = arg[1];
 	double * Xarg = new double[2]; Xarg[1] = Temp;
-	double M2 = M*M, x, y, max, smax, stemp, phi2, pi_part, 
-			cosphi2, sinphi2, costheta2, sintheta2;
+	double M2 = M*M, x, y, max, smax, stemp, costheta2, sintheta2;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*5. + coeff2*5.;
+	smax = M2 + coeff1*10. + coeff2*10.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
 		do{
-			if ( (rand()*1.)/RAND_MAX <= 1./(1. + 6.*Amax)) x = dist_x(gen);
-			else  x = dist_xcorr(gen);
-		  }while(x>5.);
+			x = dist_x(gen);
+		  }while(x>10.);
 		y = dist_norm_y(gen);
-		phi2 = (rand()*2.*M_PI)/RAND_MAX;
-
-		cosphi2 = std::cos(phi2); sinphi2 = std::sin(phi2);
 		costheta2 = y; sintheta2 = std::sqrt(1. - y*y); 
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp;
-		pi_part = ( 1. + x*x*( sintheta2*sintheta2*(pi11*cosphi2*cosphi2 + 2.*pi12*cosphi2*sinphi2
-													+ pi22*sinphi2*sinphi2)
-								+ costheta2*costheta2*pi33
-							+ 2.*sintheta2*costheta2*(pi13*cosphi2 + pi23*sinphi2) )
-					)/(1. + x*x*Amax);
-		if (pi_part < 0.) pi_part = 0.;
-	}while( pi_part*(1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
+	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
 	delete [] Xarg;
 	double E2 = x*Temp;
+	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
+	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
 	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
