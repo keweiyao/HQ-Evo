@@ -14,6 +14,22 @@ double interpolate2d(	boost::multi_array<double, 2> * A,
 	return result;
 }
 
+
+
+double interpolate2d_YX(boost::multi_array<double, 3> * A, const int& index, 
+					 	const int& ni, const int& nj, 
+					 	const double& ri, const double& rj)
+{
+	double wi[2] = {1.-ri, ri}, wj[2] = {1.-rj, rj};
+	double result = 0.;
+	for (int i=0; i<2; i++){
+		for (int j=0; j<2; j++){
+			result += (*A)[index][ni+i][nj+j]*wi[i]*wj[j];
+		}
+	}
+	return result;
+}
+
 double interpolate3d(	boost::multi_array<double, 3> * A, 
 						const int& ni, const int& nj, const int& nk,
 						const double& ri, const double& rj, const double& rk)
