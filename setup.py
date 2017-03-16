@@ -12,15 +12,10 @@ for key, value in cfg_vars.items():
 #-------------HqEvo Module------------------
 filelist1 = list(set(['cython/HqEvo.pyx'] + glob('src/*.cpp'))-set(["src/main.cpp"]))
 extensions = [
-    Extension(
-        'HqEvo',
-		filelist1,
-		 language="c++",
-        extra_compile_args=["-std=c++11"],
-		libraries=["m", "gsl", "gslcblas", "boost_filesystem", "hdf5", "hdf5_cpp"])
+        Extension('HqEvo', filelist1, language="c++", extra_compile_args=["-std=c++11"], libraries=["m", "gsl", "gslcblas", "boost_filesystem", "hdf5", "hdf5_cpp"]),
 ]
+
 
 setup(
     ext_modules=cythonize(extensions)
-	)
-
+)
