@@ -1,3 +1,4 @@
+# cython: c_string_type=str, c_string_encoding=ascii
 from libcpp.string cimport string
 from libcpp.vector cimport vector
 from libcpp cimport bool
@@ -29,52 +30,6 @@ cdef extern from "../src/qhat.h":
 		Qhat_2to2(QhatXsection_2to2 *Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
 		double calculate(double *args)
 		double interpQ(double *args)
-			
-
-
-# ----- Wrapper for QhatXsection_2to2 and Qhat class ------------
-cdef class pyQhatX2to2:
-	cdef QhatXsection_2to2 *cQhatX2to2
-	def __cinit__(self, channel, double mass, string filename, bool refresh):
-		if channel == 'Qq->Qq':
-				self.cQhatX2to2 = new QhatXsection_2to2(&dqhat_Qq2Qq_dPS, &approx_XQq2Qq, mass, filename, refresh)
-		elif channel == 'Qg->Qg':
-				self.cQhatX2to2 = new QhatXsection_2to2(&dqhat_Qg2Qg_dPS, &approx_XQg2Qg, mass, filename, refresh)
-		else:
-				raise ValueError("channel %s is not implemented"%channel)
-
-	cpdef double calculate(self, double s, double Temp, int index):
-		cdef double * args = <double*>malloc(3*sizeof(double))
-		args[0] = s; args[1] = Temp; args[2] = index
-		cdef double result = self.cQhatX2to2.calculate(args)
-		free(args)
-		return result
-
-	cpdef double interpX(self, double s, double Temp, int index):
-		cdef double * args = <double*>malloc(3*sizeof(double))
-		args[0] = s; args[1] = Temp; args[2] = index
-		cdef double result = self.cQhatX2to2.interpX(args)
-		free(args)
-		return result
-
-cdef class pyQhat2to2:
-	cdef Qhat_2to2 *cQhat2to2
-	def __cinit__(self, pyQhatX2to2 x2to2, int degeneracy, double eta2, string filename, bool refresh):
-		self.cQhat2to2 = new Qhat_2to2(x2to2.cQhatX2to2, degeneracy, eta2, filename, refresh)
-
-	cpdef double calculate(self, double &E1, double &Temp, int &iweight, int &qidx):
-		cdef double * args = <double*>malloc(4*sizeof(double))
-		args[0] = E1; args[1] = Temp; args[2] = iweight; args[3] = qidx
-		cdef double result = self.cQhat2to2.calculate(args)
-		free(args)
-		return result
-
-	cpdef double interpQ(self, double &E1, double &Temp, int &iweight, int &qidx):
-		cdef double * args = <double*>malloc(4*sizeof(double))
-		args[0] = E1; args[1] = Temp; args[2] = iweight; args[3] = qidx
-		cdef double result = self.cQhat2to2.interpQ(args)
-		free(args)
-		return result
 
 #------------- Import c++ function for Langevin evolution
 cdef extern from "../src/Langevin.h":
@@ -86,7 +41,10 @@ cdef extern from "../src/Langevin.h":
 #------------ Heavy quark Langevin transport evolution class -------------
 cdef class HqLGV:
 	cdef bool elastic, EinR
-	cdef object qhat_Qq2Qq, qhat_Qg2Qg  # no need to qhatX_Qq2Qq object, since we are not actually publicly using them....
+	cdef QhatXsection_2to2 * qhatX_Qq2Qq
+	cdef QhatXsection_2to2 * qhatX_Qg2Qg
+	cdef Qhat_2to2 * qhat_Qq2Qq
+	cdef Qhat_2to2 * qhat_Qg2Qg 
 	cdef size_t Nf
 	cdef double mass, deltat_lrf
 		
@@ -101,21 +59,27 @@ cdef class HqLGV:
 			os.makedirs(table_folder)
 
 		if self.elastic:
-			qhatX_Qq2Qq = pyQhatX2to2('Qq->Qq', self.mass, "%s/QhatX_Qq2Qq.hdf5"%table_folder, refresh_table)
-			qhatX_Qg2Qg = pyQhatX2to2('Qg->Qg', self.mass, "%s/QhatX_Qg2Qg.hdf5"%table_folder, refresh_table)
-			self.qhat_Qq2Qq = pyQhat2to2(qhatX_Qq2Qq, 12*self.Nf, 0., "%s/Qhat_Qq2Qq.hdf5"%table_folder, refresh_table)
-			self.qhat_Qg2Qg = pyQhat2to2(qhatX_Qg2Qg, 16, 0., "%s/Qhat_Qg2Qg.hdf5"%table_folder, refresh_table)
+			self.qhatX_Qq2Qq = new QhatXsection_2to2(&dqhat_Qq2Qq_dPS, &approx_XQq2Qq, self.mass, "%s/QhatX_Qq2Qq.hdf5"%table_folder, refresh_table)
+			self.qhatX_Qg2Qg = new QhatXsection_2to2(&dqhat_Qg2Qg_dPS, &approx_XQg2Qg, self.mass, "%s/QhatX_Qg2Qg.hdf5"%table_folder, refresh_table)
+			self.qhat_Qq2Qq = new Qhat_2to2(self.qhatX_Qq2Qq, 12*self.Nf, 0., "%s/Qhat_Qq2Qq.hdf5"%table_folder, refresh_table)
+			self.qhat_Qg2Qg = new Qhat_2to2(self.qhatX_Qg2Qg, 16, 0., "%s/Qhat_Qg2Qg.hdf5"%table_folder, refresh_table)
 		
 		# giving the incoming heavy quark energy E1 in cell frame, return new_p(p0, px, py, pz) in (0, 0, p_length) frame
 	cpdef update_by_Langevin(self, double E1, double temp):
-		cdef double drag_Qq, drag_Qg, drag, kperp_Qq, kperp_Qg, kperp, kpara_Qq, kpara_Qg
+		cdef double drag_Qq, drag_Qg, drag
+		cdef double kperp_Qq, kperp_Qg, kperp, \
+					kpara_Qq, kpara_Qg, kpara
 		cdef double p_length = sqrt(E1*E1 - self.mass*self.mass)
-		drag_Qq = self.qhat_Qq2Qq.interpQ(E1, temp, 0, 0)
-		drag_Qg = self.qhat_Qg2Qg.interpQ(E1, temp, 0, 0)
-		kperp_Qq = self.qhat_Qq2Qq.interpQ(E1, temp, 0, 1)
-		kperp_Qg = self.qhat_Qg2Qg.interpQ(E1, temp, 0, 1)
-		kpara_Qq = self.qhat_Qq2Qq.interpQ(E1, temp, 0, 2)
-		kpara_Qg = self.qhat_Qg2Qg.interpQ(E1, temp, 0, 2)
+		cdef double * arg = <double*> malloc(4*sizeof(double))
+		arg[0] = E1; arg[1] = temp; arg[2] = 0; arg[3] = 0
+		drag_Qq = self.qhat_Qq2Qq.interpQ(arg)
+		drag_Qg = self.qhat_Qg2Qg.interpQ(arg)
+		arg[3] = 1
+		kperp_Qq = self.qhat_Qq2Qq.interpQ(arg)
+		kperp_Qg = self.qhat_Qg2Qg.interpQ(arg)
+		arg[3] = 2
+		kpara_Qq = self.qhat_Qq2Qq.interpQ(arg)
+		kpara_Qg = self.qhat_Qg2Qg.interpQ(arg)
 
 		drag = (drag_Qq + drag_Qg) / p_length * GeV_to_Invfm
 		kperp = (kperp_Qq + kperp_Qg) * GeV_to_Invfm
@@ -127,11 +91,15 @@ cdef class HqLGV:
 		cdef vector[double] pre_result = Langevin_pre(E1, self.mass, temp, drag, kperp, kpara, self.deltat_lrf)
 		cdef double new_energy = sqrt(self.mass**2 + pre_result[0]**2 + pre_result[1]**2 + pre_result[2]**2)
 
-		kperp_Qq = self.qhat_Qq2Qq.interpQ(new_energy, temp, 0, 1)
-		kperp_Qg = self.qhat_Qg2Qg.interpQ(new_energy, temp, 0, 1)
-		kpara_Qq = self.qhat_Qq2Qq.interpQ(new_energy, temp, 0, 2)
-		kpara_Qg = self.qhat_Qg2Qg.interpQ(new_energy, temp, 0, 2)
+		arg[0] = new_energy
+		arg[3] = 1
+		kperp_Qq = self.qhat_Qq2Qq.interpQ(arg)
+		kperp_Qg = self.qhat_Qg2Qg.interpQ(arg)
+		arg[3] = 2
+		kpara_Qq = self.qhat_Qq2Qq.interpQ(arg)
+		kpara_Qg = self.qhat_Qg2Qg.interpQ(arg)
 
+		free(arg)
 		kperp = (kperp_Qq + kperp_Qg) * GeV_to_Invfm
 		kpara = (kpara_Qq + kpara_Qg) * GeV_to_Invfm
 
