@@ -103,11 +103,11 @@ double fy_wrapper22_YX(double y, void *params_)
         double s = M2 + coeff * (1. - v1*y);
         double *args = new double[3];
         args[0] = s; args[1] = Temp;
-        args[2] = 0; double QhatXsection_q1 = params->f(args);
+        //args[2] = 0; double QhatXsection_q1 = params->f(args);
         args[2] = 1; double QhatXsection_q3 = params->f(args);
         args[2] = 2; double QhatXsection_q11 = params->f(args);
         args[2] = 3; double QhatXsection_q33 = params->f(args);
-        args[2] = 4; double QhatXsection_q13 = params->f(args);
+        //args[2] = 4; double QhatXsection_q13 = params->f(args);
         delete [] args;
 
         double E2 = coeff/(2.*E1);
@@ -371,7 +371,6 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 double Qhat_2to2::interpQ(double * args)
 {
         double E1 = args[0], Temp = args[1];
-        double norm_pi33 = args[2];
         int qidx = int(args[3]+0.5);
 
         if (Temp < TL) Temp = TL;
