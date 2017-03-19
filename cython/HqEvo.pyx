@@ -110,7 +110,7 @@ cdef class HqEvo(object):
 			
 		print "Number of Channels", self.Nchannels
 
-	cpdef sample_channel(self, double E1, double T, double Tc, double dt23, double dt32):	
+	cpdef sample_channel(self, double E1, double T, double dt23, double dt32):	
 		cdef double r, psum = 0.0, dt, Pmax = 0.1, R1, R2, Relastic
 		cdef size_t i=0
 		cdef int channel_index = -1
@@ -143,7 +143,7 @@ cdef class HqEvo(object):
 		free(arg)
 		dt = Pmax/psum
 		r = (<double>rand())/dt/RAND_MAX
-		if r >= p[self.Nchannels-1] or T < Tc:
+		if r >= p[self.Nchannels-1]:
 			return -1, dt
 		for i in range(self.Nchannels):
 			if r < p[i]:
