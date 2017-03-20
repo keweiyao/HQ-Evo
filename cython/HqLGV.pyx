@@ -85,7 +85,6 @@ cdef class HqLGV:
                 drag = (drag_Qq + drag_Qg) / p_length * GeV_to_Invfm
                 kperp = (kperp_Qq + kperp_Qg) * GeV_to_Invfm
                 kpara = (kpara_Qq + kpara_Qg) * GeV_to_Invfm
-
                 if self.EinR:
                         drag = kperp / (2.*temp*E1);
 
