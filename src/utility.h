@@ -34,7 +34,9 @@ double interpolate3d(	boost::multi_array<double, 3> * A,
 double interpolate4d(	boost::multi_array<double, 4> * A, 
 						const int& ni, const int& nj, const int& nk, const int& nt, 
 						const double& ri, const double& rj, const double& rk, const double& rt);
-
+double interpolate2d_YX(   boost::multi_array<double, 3> * A, const int& index, 
+					 	const int& ni, const int& nj, 
+					 	const double& ri, const double& rj);
 
 template <typename T> inline const H5::PredType& type();
 template <> inline const H5::PredType& type<size_t>() { return H5::PredType::NATIVE_HSIZE; }

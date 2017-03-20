@@ -1,5 +1,5 @@
 #ifndef QHAT_XSECTION_H
-#define QAHT_XSECTION_H
+#define QHAT_XSECTION_H
 
 #include <cstdlib>
 #include <vector>

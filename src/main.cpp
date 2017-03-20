@@ -2,97 +2,171 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
+#include <boost/multi_array.hpp>
+#include <H5Cpp.h>
 
-int main(){
-	//double M = 1.3;
-	//update updater(M);
-	//updater.sample_channel(10.0, 0.4);
-	
+#include "matrix_elements.h"
+#include "Xsection.h"
+#include "rates.h"
+//#include "qhat_Xsection.h"
+#include "qhat.h"
+#include "Langevin.h"
 
-	// Here is a sample code for a medium cell
-	double temp=0.3;
-	std::vector<double> vcell(3);
-	vcell[0] = 0.7; vcell[1] = 0.0; vcell[2] = 0.0;
-	
-	std::vector<std::vector<double> > ensamble(10000);
-	for (auto&& p_lab : ensamble){
-		p_lab.resize(4);
-		p_lab[0] = 10.0; p_lab[1] = 0.0; p_lab[2] = 0.0; p_lab[3] = std::sqrt(10.0*10.0-M*M);
-	}
 
-	for (auto&& p1 : ensamble){
-	std::vector<double> p_lab = p1;
-	double t = 0.0, dt = 0.04/0.197;
-	for (int i=0; i<1500; i++){
-	// Step1: boost to cell frame and sample scattering rates
-	std::vector<double>  p_cell(4), p_cell_z(4);
-	boost_by3(p_lab, p_cell, vcell);
-	
-	double rQg2Qg = RQg2Qg.interpR(p_cell[0], temp);	
-	double rQq2Qq = RQq2Qq.interpR(p_cell[0], temp);
-	double rtot = rQg2Qg + rQq2Qq;
-	double P = dt*rtot;
-	if (P > 0.15) std::cout << " P too large " << P << std::endl;
-	double r = std::rand()*1./RAND_MAX;
-	if (r > P) {
-		print4vec(p_lab);
-		continue;
-	}
-	// sample channel;
-	
-	// Step2: sample E2, s; given E1, temp within cell rest frame assuming p1 in z-direction
-	double s, E2;
-	if (r/P > rQg2Qg/rtot) RQg2Qg.sample_initial(p_cell[0], temp, E2, s);
-	else  RQq2Qq.sample_initial(p_cell[0], temp, E2, s);
+using std::vector;
 
-	// Step3: construct (E1, 0, 0, p1) and (E2, p2x, p2y, p2z) assuming incident HQ in z-direction
-	
-	double E1 = p_cell[0], p1 = std::sqrt(E1*E1-M*M);
-	double costheta2 = (M*M + 2.*p_cell[0]*E2 - s)/2./p1/E2;
-	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
-	double phi = 2.*M_PI*(std::rand()*1./RAND_MAX);
-	double cosphi = std::cos(phi), sinphi = std::sin(phi);
-	std::vector<double> pQ(4), p2(4);
-	pQ[0] = E1; pQ[1] = 0.; pQ[2] = 0.; pQ[3] = p1;
-	p2[0] = E2; p2[1] = E2*sintheta2*cosphi; p2[2] = E2*sintheta2*sinphi; p2[3] = E2*costheta2;
-	
-	// Step4: Boost to center of mass frame of pQ and p2:
-	std::vector<double> pQcom(4), vcom(3);
-	vcom[0] = (pQ[1] + p2[1])/(pQ[0] + p2[0]);
-	vcom[1] = (pQ[2] + p2[2])/(pQ[0] + p2[0]);
-	vcom[2] = (pQ[3] + p2[3])/(pQ[0] + p2[0]);
-	boost_by3(pQ, pQcom, vcom);
-	
-	// Step5: Sample final state momentum in CoM, assuming incident HQ in z-direction
-	std::vector<std::vector<double> > fs;
-	XQg2Qg.sample_dXdPS(s, temp, fs);
+int main()
+{
+        double M = 1.3;
 
-	// Step-5: rotate final state momentum back to CoM frame with the original orientation
-	std::vector<double> pnew_com(4);
-	double alpha1 = std::atan2(pQcom[2], pQcom[1])+M_PI/2.;
-	double beta1 = std::atan2(std::sqrt(pQcom[1]*pQcom[1]+pQcom[2]*pQcom[2]), pQcom[3]);
-	double gamma1 = 0.0;
-	rotate_Euler(fs[0], pnew_com, -gamma1, -beta1, -alpha1);
+        double temp = 0.3;
 
-	// Step-3: boost back to cell rest frame
-	std::vector<double> pnew_cell_z(4), ivcom(3);
-	ivcom[0] = -vcom[0]; ivcom[1] = -vcom[1]; ivcom[2] = -vcom[2];
-	boost_by3(pnew_com, pnew_cell_z, ivcom);
+        //Xsection_2to2 xQq2Qq(&dX_Qq2Qq_dPS, &approx_XQq2Qq, M, "XQq2Qq.hdf5", false);
+        //Xsection_2to2 xQg2Qg(&dX_Qg2Qg_dPS, &approx_XQg2Qg, M, "XQg2Qg.hdf5", false);
+        //rates_2to2 rQq2Qq(&xQq2Qq, 36, 0., "rQq2Qq.hdf5", false);
+        //rates_2to2 rQg2Qg(&xQg2Qg, 16, 0., "rQg2Qg.hdf5", false);
 
-	// Step-2: rotate back to Cell frame with the original orientation;
-	std::vector<double> pnew_cell(4);
-	double alpha = std::atan2(p_cell[2], p_cell[1])+M_PI/2.;
-	double beta = std::atan2(std::sqrt(p_cell[1]*p_cell[1]+p_cell[2]*p_cell[2]), p_cell[3]);
-	double gamma = 0.0;
-	rotate_Euler(pnew_cell_z, pnew_cell, -gamma, -beta, -alpha);
-	
-	// Step-1: boost back to lab frame
-	std::vector<double> pnew_lab(4), ivcell(3);
-	ivcell[0] = -vcell[0]; ivcell[1] = -vcell[1]; ivcell[2] = -vcell[2]; 
-	boost_by3(pnew_cell, p_lab, ivcell);
+        bool refresh = true;
+        QhatXsection_2to2 qhat_xQq2Qq(&dqhat_Qq2Qq_dPS, &approx_XQq2Qq, M, "qhat_XQq2Qq.hdf5", refresh);
+        QhatXsection_2to2 qhat_xQg2Qg(&dqhat_Qg2Qg_dPS, &approx_XQg2Qg, M, "qhat_XQg2Qg.hdf5", refresh);
+        Qhat_2to2 qhatQq2Qq(&qhat_xQq2Qq, 36, 0., "qhat_Qq2Qq.hdf5", refresh);
+        Qhat_2to2 qhatQg2Qg(&qhat_xQg2Qg, 16, 0., "qhat_Qg2Qg.hdf5", refresh);
 
-	print4vec(p_lab);}
-	}
+/*
 
-	return 0;
+        std::cout << "read in table successfully :) " << std::endl;
+
+        particle testHQ;
+    
+        double E1 = 10.;
+    
+        testHQ.p={E1, 0., 0, std::sqrt(E1*E1 - M*M)};
+        testHQ.x={0., 0., 0.};
+
+        double drag_Qq, drag_Qg, drag;
+        double kperp_Qq, kperp_Qg, kperp;
+        double kpara_Qq, kpara_Qg, kpara;
+
+        int npart = 20000;
+        vector<particle> events(npart, testHQ);
+
+        int ntime = 10000;
+        double deltat = 0.01;
+
+        int NTau = int(ntime*deltat);
+
+
+        typedef boost::multi_array<double, 3> array3D;
+        array3D part_info(boost::extents[NTau][npart][4]);
+
+*/
+        // test 
+        /*
+        particle HQ;
+        HQ.p = testHQ.p;
+        HQ.x = testHQ.x;
+
+        double* args = new double[4];
+        args[0] = HQ.p[0];
+        args[1] = temp;
+        args[2] = 0.0;
+ 
+        args[3] = 1;  drag_Qq = qhatQq2Qq.interpQ(args); drag_Qg = qhatQg2Qg.interpQ(args);
+        args[3] = 2;  kperp_Qq = qhatQq2Qq.interpQ(args); kperp_Qg = qhatQg2Qg.interpQ(args);
+        args[3] = 3;  kpara_Qq = qhatQq2Qq.interpQ(args); kpara_Qg = qhatQg2Qg.interpQ(args);
+        delete [] args;
+        drag = (drag_Qq + drag_Qg) * 5.068;
+        kperp = (kperp_Qq + kperp_Qg) * 5.068;
+        kpara = ((kpara_Qq - drag_Qq*drag_Qq) + (kpara_Qg - drag_Qg*drag_Qg) ) * 5.068;
+
+        std::cout << "main: " << HQ.p[0] <<" " <<  drag << " " << kperp << " " << kpara << std::endl;
+
+
+        //update_by_Langevin_test(HQ, &qhatQq2Qq, &qhatQg2Qg, temp, deltat, true);
+        update_by_Langevin(HQ, temp, drag, kpara, kperp, deltat, false);
+        std::cout << "main: " << HQ.p[0] <<" " <<  HQ.p[1]<< " " << HQ.p[2] << " " << HQ.p[3] << std::endl;
+        */
+
+/*
+        for (size_t ipart = 0; ipart < npart; ++ipart)
+        {
+                particle HQ;
+                HQ.p = testHQ.p;
+                HQ.x = testHQ.x;
+
+                for (size_t itime=0; itime<ntime; ++itime)
+                {
+                        update_by_Langevin_test(HQ, &qhatQq2Qq, &qhatQg2Qg, temp, deltat, false);
+                        if (itime % 100 == 0)
+                        {
+                                int idx_t = itime/100;
+                                part_info[idx_t][ipart][0] = HQ.p[0];
+                                part_info[idx_t][ipart][1] = HQ.p[1];
+                                part_info[idx_t][ipart][2] = HQ.p[2];
+                                part_info[idx_t][ipart][3] = HQ.p[3];
+                        }
+                }
+
+        }
+      
+*/
+ 
+/*
+        for (int ipart = 0; ipart < npart; ++ipart)
+        {
+
+        particle HQ;
+        HQ.p = testHQ.p;
+        HQ.x = testHQ.x;
+
+        for (int itime = 0; itime < ntime; ++itime)
+        {
+                double *args = new double[4];
+                args[0] = HQ.p[0];
+                args[1] = temp;
+                args[2] = 0.0;
+                args[3] = 1;  drag_Qq = qhatQq2Qq.interpQ(args); drag_Qg = qhatQg2Qg.interpQ(args);
+                args[3] = 2;  kperp_Qq = qhatQq2Qq.interpQ(args); kperp_Qg = qhatQg2Qg.interpQ(args);
+                args[3] = 3;  kpara_Qq = qhatQq2Qq.interpQ(args); kpara_Qg = qhatQg2Qg.interpQ(args);
+
+                drag = (drag_Qq + drag_Qg)*5.068;
+                kperp = (kperp_Qq + kperp_Qg) * 5.068;
+                kpara = ((kpara_Qq - drag_Qq*drag_Qq) + (kpara_Qg - drag_Qg*drag_Qg)) * 5.068;
+
+                delete [] args;
+
+                update_by_Langevin(HQ, temp, drag, kpara, kperp, deltat, false);
+
+                if (itime % 100 == 0)
+                {
+                    int idx_t = itime/100;
+                    part_info[idx_t][ipart][0] = HQ.p[0];
+                    part_info[idx_t][ipart][1] = HQ.p[1];
+                    part_info[idx_t][ipart][2] = HQ.p[2];
+                    part_info[idx_t][ipart][3] = HQ.p[3];
+                }
+        }
+        }
+*/
+
+
+/*
+
+        H5::H5File* file = new H5::H5File("Event_static_EinRFalse_preIto.hdf5", H5F_ACC_TRUNC);
+        std::string datasetname("Langevin-events");
+        const size_t rank=3;
+        hsize_t dims[rank] = {NTau, npart, 4};
+        H5::DSetCreatPropList proplist{};
+        proplist.setChunk(rank, dims);
+
+        H5::DataSpace dataspace(rank, dims);
+        auto datatype(H5::PredType::NATIVE_DOUBLE);
+        H5::DataSet* dataset = new H5::DataSet( file->createDataSet(datasetname, datatype, dataspace, proplist) );
+        dataset->write(part_info.data(), datatype);
+
+        delete dataset;
+        delete file;
+*/
+
+        return 0;
 }

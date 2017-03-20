@@ -109,7 +109,7 @@ void QhatXsection_2to2::read_from_file(std::string filename, std::string dataset
         dsqrts2 = (sqrtsH - sqrtsM)/(Nsqrts - 1.);
 
         hdf5_read_scalar_attr(dataset, "T_low", TL);
-        hdf5_read_scalar_attr(dataset, "T_hight", TH);
+        hdf5_read_scalar_attr(dataset, "T_high", TH);
         hdf5_read_scalar_attr(dataset, "N_T", NT);
         dT = (TH - TL)/ (NT-1.);
 
@@ -122,6 +122,7 @@ void QhatXsection_2to2::read_from_file(std::string filename, std::string dataset
 
         H5::DataSpace data_space = dataset.getSpace();
         dataset.read(QhatXtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+        //std::cout << "Read in QhatXtab successfully :)" << std::endl;
 }
 
 void QhatXsection_2to2::tabulate(size_t T_start, size_t dnT)

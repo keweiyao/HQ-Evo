@@ -13,8 +13,9 @@
 
 
 using std::placeholders::_1;
+using std::vector;
 
-double* transform_from_CoM_array2(double *args)
+vector<double> transform_from_CoM_array2(double *args)
 // args ={sqrts, M2, E1, E2, cos_theta12}
 // return Boost*Rotation([1][1], [1][3], [3][1], [3][3])
 {
@@ -44,18 +45,17 @@ double* transform_from_CoM_array2(double *args)
         //std::cout << cosTheta13 << std::endl;
         double sinTheta13 = std::sqrt(1. - cosTheta13 * cosTheta13);
 
-        double* botMatrix = new double [4];
-
+        vector<double> botMatrix(4);
         double gammaBetaxx = gamma2*betax*betax;
         double gammaBetaxz = gamma2*betax*betaz;
         double gammaBetazz = gamma2*betaz*betaz;
 
         //double check = gamma*gamma*(1-betax*betax - betaz*betaz) - 1.0;
         //std::cout << "transformation: " << check << std::endl;
-        botMatrix[0] = (1. + gammaBetaxx) * cosTheta13 + gammaBetaxz * sinTheta13;
-        botMatrix[1] = -(1. + gammaBetaxx) * sinTheta13 + gammaBetaxz * cosTheta13;
-        botMatrix[2] = gammaBetaxz *cosTheta13 + (1. + gammaBetazz) * sinTheta13;
-        botMatrix[3] = - gammaBetaxz*sinTheta13 + (1. + gammaBetazz) * cosTheta13;
+        botMatrix[0] = (1. + gammaBetaxx) * cosTheta13 + gammaBetaxz * sinTheta13 ;
+        botMatrix[1] = -(1. + gammaBetaxx) * sinTheta13 + gammaBetaxz * cosTheta13 ;
+        botMatrix[2] = gammaBetaxz *cosTheta13 + (1. + gammaBetazz) * sinTheta13 ;
+        botMatrix[3] = - gammaBetaxz*sinTheta13 + (1. + gammaBetazz) * cosTheta13 ;
         //std::cout << "transform: " << botMatrix[0] << " " << botMatrix[1] << " " << botMatrix[2] << " " << botMatrix[3] << std::endl;
         return botMatrix;
 }
@@ -103,17 +103,17 @@ double fy_wrapper22_YX(double y, void *params_)
         double s = M2 + coeff * (1. - v1*y);
         double *args = new double[3];
         args[0] = s; args[1] = Temp;
-        args[2] = 0; double QhatXsection_q1 = params->f(args);
+        //args[2] = 0; double QhatXsection_q1 = params->f(args);
         args[2] = 1; double QhatXsection_q3 = params->f(args);
         args[2] = 2; double QhatXsection_q11 = params->f(args);
         args[2] = 3; double QhatXsection_q33 = params->f(args);
-        args[2] = 4; double QhatXsection_q13 = params->f(args);
+        //args[2] = 4; double QhatXsection_q13 = params->f(args);
         delete [] args;
 
         double E2 = coeff/(2.*E1);
         double* args_ = new double[5];
         args_[0] = std::sqrt(s); args_[1] = M2; args_[2] = E1; args_[3] = E2; args_[4] = y;
-        double* botMatrix = transform_from_CoM_array2(args_); // [1][1], [1][3], [3][1], [3][3]
+        vector<double> botMatrix = transform_from_CoM_array2(args_); // [1][1], [1][3], [3][1], [3][3]
         delete[] args_;
 
         /*
@@ -130,7 +130,6 @@ double fy_wrapper22_YX(double y, void *params_)
 
 
         //std::cout << "wrapper_fy: " << botMatrix[0] << " " << botMatrix[1] << " " << botMatrix[2] << " " << botMatrix[3] << std::endl;
-        delete [] botMatrix;
 
         double Qhat[] = {Qhat_q1cell, Qhat_q3cell, Qhat_q11cell, Qhat_q33cell};
         //double Qhat[] = {QhatXsection_q1, QhatXsection_q3, QhatXsection_q11, QhatXsection_q33};
@@ -213,11 +212,11 @@ Qhat::Qhat(std::string name_)
 Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :  Qhat(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()),
    degeneracy(degeneracy_), eta_2(eta_2_),
-   NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
+   NE1(101), NT(10), E1L(M*1.01), E1H(M*100), TL(0.15), TH(0.60),
    dE1((E1H - E1L)/(NE1 -1.)), dT((TH - TL)/(NT -1.)),
-   QhatTab(boost::extents[4][NE1][NT]),
-   Qhat1Tab(boost::extents[4][NE1][NT]),
-   Qhat2Tab(boost::extents[4][NE1][NT])
+   QhatTab(boost::extents[3][NE1][NT]),
+   Qhat1Tab(boost::extents[3][NE1][NT]),
+   Qhat2Tab(boost::extents[3][NE1][NT])
 {
         bool fileexist = boost::filesystem::exists(name_);
         if ((!fileexist) || (fileexist && refresh))
@@ -248,8 +247,8 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
                 std::cout << "loading existing table " << std::endl;
                 H5::H5File file(name_, H5F_ACC_RDONLY);
                 read_from_file(&file, "Qhat-tab", 0);
-                read_from_file(&file, "Qhat-1-tab", 1);
-                read_from_file(&file, "Qhat-2-tab", 2);
+                //read_from_file(&file, "Qhat-1-tab", 1);
+                //read_from_file(&file, "Qhat-2-tab", 2);
                 file.close();
         }
         std::cout << std::endl;
@@ -260,7 +259,7 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
 void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname, int index)
 {
         const size_t rank=3;
-        hsize_t dims[rank] = {4, NE1, NT};
+        hsize_t dims[rank] = {3, NE1, NT};
         H5::DSetCreatPropList proplist{};
         proplist.setChunk(rank, dims);
 
@@ -300,10 +299,47 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int i
         if (index==1) Qhat1Tab.resize(boost::extents[4][NE1][NT]);
         if (index==2) Qhat2Tab.resize(boost::extents[4][NE1][NT]);
 
+        hsize_t dims_mem[rank];
+        dims_mem[0] = 3;
+        dims_mem[1] = NE1;
+        dims_mem[2] = NT;
+
+        H5::DataSpace mem_space(rank, dims_mem);
+
+        H5::DataSpace data_space = dataset.getSpace();
+        if (index==0) dataset.read(QhatTab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+        if (index==1) dataset.read(Qhat1Tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+        if (index==2) dataset.read(Qhat2Tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+
+        //std::cout << "read in QhatTab successfully :)" << std::endl;
+
 }
 
 
+void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
+{
+        double *args = new double[4];
+        for (size_t i=0; i < NE1; ++i)
+        {
+                args[0] = E1L + i * dE1;
+                for (size_t j = T_start; j < (T_start + dnT) ; ++j)
+                {
+                        args[1] = TL + j * dT;
+                        args[2] = 0.;
+                        args[3] = 1; double drag = calculate(args);
+                        args[3] = 2; double kperp = calculate(args);
+                        args[3] = 3; double kpara = calculate(args);
+                        QhatTab[0][i][j] = drag;
+                        QhatTab[1][i][j] = kperp;
+                        QhatTab[2][i][j] = kpara - drag*drag;
+                }
+        }
 
+        delete [] args;
+}
+
+
+/*
 void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 {
         double *args = new double[4];
@@ -329,13 +365,12 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
         
         delete [] args;
 }
-
+*/
 
 
 double Qhat_2to2::interpQ(double * args)
 {
         double E1 = args[0], Temp = args[1];
-        double norm_pi33 = args[2];
         int qidx = int(args[3]+0.5);
 
         if (Temp < TL) Temp = TL;
@@ -347,12 +382,8 @@ double Qhat_2to2::interpQ(double * args)
         size_t iT, iE1;
         xT = (Temp - TL)/dT;    iT = floor(xT);     rT = xT - iT;
         xE1 = (E1 - E1L)/dE1;   iE1 = floor(xE1);       rE1 = xE1 - iE1;
-       
-        boost::multi_array<double, 2> ref = QhatTab[qidx];
-        boost::multi_array<double, 2> ref1 = Qhat1Tab[qidx];
-        boost::multi_array<double, 2> ref2 = Qhat2Tab[qidx];
 
-        return interpolate2d(&ref, iE1, iT, rE1, rT) + norm_pi33*(interpolate2d(&ref1, iE1, iT, rE1, rT) + interpolate2d(&ref2, iE1, iT, rE1, rT));
+        return interpolate2d_YX(&QhatTab, qidx, iE1, iT, rE1, rT);  //+ norm_pi33*(interpolate2d_YX(&Qhat1Tab, index, iE1, iT, rE1, rT) + interpolate2d_YX(&Qhat2Tab, index, iE1, iT, rE1, rT));
 }
 
 
