@@ -43,8 +43,8 @@ private:
         const double M;
         const int degeneracy;
         const double eta_2;
-        size_t NE1, NT;
-        double E1L, E1H, TL, TH, dE1, dT;
+        size_t NE, NT;
+        double E1L, E1M, E1H, TL, TH, dE1, dE2, dT;
         boost::multi_array<double, 3> QhatTab, Qhat1Tab, Qhat2Tab;
         void tabulate_E1_T(size_t T_start, size_t dnT);
         void save_to_file(H5::H5File * file, std::string datasetname, int index);
