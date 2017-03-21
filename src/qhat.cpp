@@ -273,6 +273,7 @@ void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname, int inde
 
         hdf5_add_scalar_attr(dataset, "E1_low", E1L);
         hdf5_add_scalar_attr(dataset, "E1_high", E1H);
+        hdf5_add_scalar_attr(dataset, "E1_mid", E1M);
         hdf5_add_scalar_attr(dataset, "N_E1_half", NE);
 
         hdf5_add_scalar_attr(dataset, "T_low", TL);
@@ -288,6 +289,7 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int i
         H5::DataSet dataset = file->openDataSet(datasetname);
         hdf5_read_scalar_attr(dataset, "E1_low", E1L);
         hdf5_read_scalar_attr(dataset, "E1_high", E1H);
+        hdf5_read_scalar_attr(dataset, "E1_mid", E1M);
         hdf5_read_scalar_attr(dataset, "N_E1_half", NE);
         dE1 = (E1M - E1L) / (NE -1.);
 	dE2 = (E1H - E1M) / (NE - 1.);
