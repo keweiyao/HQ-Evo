@@ -178,8 +178,9 @@ double fx_wrapper22_YX(double x, void *px_)
 
         while(status && nloop < 10)
         {
-        gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000, 6, w, &result, &error);
-        nloop += 1;
+                status = gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000,6, w, &result, &error);
+                nloop += 1;
+                if (nloop > 1) std::cout << Temp << " " << E1 << " " << result << " " << error << std::endl;
         }
 
 
@@ -212,7 +213,7 @@ Qhat::Qhat(std::string name_)
 Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :  Qhat(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()),
    degeneracy(degeneracy_), eta_2(eta_2_),
-   NE(50), NT(10), E1L(M*1.01), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
+   NE(50), NT(10), E1L(M*3), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
    dE1((E1M - E1L)/(NE -1.)), dE2((E1H - E1M)/(NE -1.)),
    dT((TH - TL)/(NT -1.)),
    QhatTab(boost::extents[3][2*NE][NT]),
@@ -225,8 +226,10 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
                 std::cout << "Populating table with new calculation" << std::endl;
                 std::vector<std::thread> threads;
                 size_t Ncores = std::thread::hardware_concurrency();
-                size_t call_per_core = std::ceil(NT*1./Ncores);
+                    
+                size_t call_per_core = int(NT*1./Ncores);
                 size_t call_for_last_core = NT - call_per_core*(Ncores -1);
+                //std::cout << Ncores << " " << call_per_core <<  " " << call_for_last_core << std::endl;
                 for (size_t i=0; i< Ncores; i++)
                 {
                         size_t Nstart = i*call_per_core;
@@ -337,9 +340,11 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
                         QhatTab[0][i][j] = drag;
                         QhatTab[1][i][j] = kperp;
                         QhatTab[2][i][j] = kpara - drag*drag;
+                        //if (i == 0) std::cout << i <<  " " << j <<" " <<  TL << " " << dT << " " << args[0] << " " << args[1] << " " << QhatTab[0][i][j] << " "<< QhatTab[1][i][j] << " " << QhatTab[2][i][j] << std::endl;
+                           
                 }
         }
-
+        
         delete [] args;
 }
 
@@ -428,8 +433,10 @@ double Qhat_2to2::calculate(double *args)
         int status = 1, nloop = 0;
         while(status && nloop < 5)
         {
-        gsl_integration_qag(&F, xmin, xmax, 0, 1e-3, 5000, 6,  w, &result, &error);
+        status = gsl_integration_qag(&F, xmin, xmax, 0, 1e-3, 5000, 6, w, &result, &error);
         nloop += 1;
+        if (nloop >1)
+                std::cout << E1 << " " << Temp << " " << result << " " << error << std::endl;
         }
 
         gsl_set_error_handler(old_handler);
