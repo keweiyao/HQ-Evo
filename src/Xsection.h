@@ -32,10 +32,9 @@ protected:
 	virtual void save_to_file(std::string filename, std::string datasetname) = 0;
 	virtual void read_from_file(std::string filename, std::string datasetname) = 0;
 	double (*dXdPS)(double * PS, size_t n_dims, void * params);
-	double (*approx_X)(double * arg, double M);
 	double M1;
 public:
-	Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
+	Xsection(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh);
 	double get_M1(void) {return M1;};
 	// arg = [s, T] fot X22, arg = [s, T, dt] for X23, arg = [s, T, s1k, s2k] for f32
 	virtual double interpX(double * arg) = 0; 
@@ -58,7 +57,7 @@ private:
 		   TL, TH, dT;
 	boost::multi_array<double, 2> Xtab;
 public:
-    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
+    Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
@@ -80,7 +79,7 @@ private:
 				 dtL, dtH, ddt;
 	boost::multi_array<double, 3> Xtab;
 public:
-    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
+    Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);
@@ -105,7 +104,7 @@ private:
 	boost::multi_array<double, 4> Xtab;
 
 public:
-    f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh);
+    f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh);
 	double interpX(double * arg);
     double calculate(double * arg);
 	void sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS);

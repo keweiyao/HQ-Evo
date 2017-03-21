@@ -17,6 +17,41 @@
 #include "matrix_elements.h"
 #include "Xsection.h"
 
+
+double approx_X22(double * arg, double M){	
+	double s = arg[0], T = arg[1];
+	return 1.0/std::pow(1.0 - M*M/s, 2)/T/T;
+}
+
+double approx_X23(double * arg, double M){
+	double Temp = arg[1], dt = arg[2];
+	(void)M;	
+	return std::pow(dt/Temp, 2);
+}
+
+double approx_X32(double * arg, double M){
+	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
+	double sqrts = std::sqrt(s);
+	double xk = 0.5*(a1*a2 + a1 - a2);
+	double x2 = 0.5*(-a1*a2 + a1 + a2);
+	double M2 = M*M;
+	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
+	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
+	double k = xk/x2*E2;
+	double p1 = (1. - x2 - xk)/x2*E2;
+	double E1 = std::sqrt(p1*p1 + M2);
+	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
+	double kz = k*cosk;
+	double kt2 = k*k - kz*kz;
+	double frac = (k + kz)/(E1 + p1);
+	double x2M2 = frac*frac*M2;
+	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
+	double D1 = kt2 + x2M2 + Lambda2;
+	double D2 = kt2 + x2M2 + mD2t;
+	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
+	return (s - M*M)/Temp/Temp/x2*prop2;
+}
+
 double gsl_1dfunc_wrapper(double x, void * params_){
 	Mygsl_integration_params * p = static_cast<Mygsl_integration_params*>(params_);
 	return p->f(&x, 1, p->params);
@@ -24,16 +59,16 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 
 //=============Xsection base class===================================================
 // this is the base class for 2->2 and 2->3 cross-sections
-Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
-: dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_)
+Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
+: dXdPS(dXdPS_), M1(M1_)
 {
 	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
 
 
 //============Derived 2->2 Xsection class===================================
-Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
-:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI), 
+Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, M1_, name_, refresh), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI), 
 	Nsqrts(50), NT(32), 
 	sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*30.), 
 	dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH-sqrtsM)/(Nsqrts-1.)),
@@ -120,7 +155,7 @@ void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
 		else arg[0] = std::pow(sqrtsM + (i-Nsqrts)*dsqrts2, 2);
 		for (size_t j=T_start; j<(T_start+dnT); j++) {
 			arg[1] = TL + j*dT;
-			Xtab[i][j] = calculate(arg)/approx_X(arg, M1);
+			Xtab[i][j] = calculate(arg)/approx_X22(arg, M1);
 		}
 	}
 	delete [] arg;
@@ -138,7 +173,7 @@ double Xsection_2to2::interpX(double * arg){
 	if (sqrts < sqrtsM) {dsqrts = dsqrts1; sqrtsmin=sqrtsL; Noffsets=0;}
 	else {dsqrts = dsqrts2; sqrtsmin=sqrtsM; Noffsets=Nsqrts;}
 	xsqrts = (sqrts - sqrtsmin)/dsqrts; isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts; isqrts += Noffsets;
-	return approx_X(arg, M1)*interpolate2d(&Xtab, isqrts, iT, rsqrts, rT);
+	return approx_X22(arg, M1)*interpolate2d(&Xtab, isqrts, iT, rsqrts, rT);
 }
 
 
@@ -192,12 +227,12 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 }
 
 //============Derived 2->3 Xsection class===================================
-Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
-:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), 
+Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI), 
 	Nsqrts(50), NT(16), Ndt(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
-	dtL(0.1), dtH(5.0), ddt((dtH-dtL)/(Ndt-1.)), Xtab(boost::extents[Nsqrts][NT][Ndt])
+	dtL(0.1), dtH(10.0), ddt((dtH-dtL)/(Ndt-1.)), Xtab(boost::extents[Nsqrts][NT][Ndt])
 {
 
 	bool fileexist = boost::filesystem::exists(name_);
@@ -290,7 +325,7 @@ void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
 			arg[1] = TL + j*dT;
 			for (size_t k=0; k<Ndt; k++) {
 				arg[2] = dtL + k*ddt;
-				Xtab[i][j][k] = calculate(arg)/approx_X(arg, M1);
+				Xtab[i][j][k] = calculate(arg)/approx_X23(arg, M1);
 			}
 		}
 	}
@@ -312,7 +347,7 @@ double Xsection_2to3::interpX(double * arg){
 	xsqrts = (sqrts-sqrtsL)/dsqrts;	isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
-	return approx_X(arg, M1)*interpolate3d(&Xtab, isqrts, iT, idt, rsqrts, rT, rdt);
+	return approx_X23(arg, M1)*interpolate3d(&Xtab, isqrts, iT, idt, rsqrts, rT, rdt);
 }
 
 double Xsection_2to3::calculate(double * arg){
@@ -415,8 +450,8 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 // where p2 momentum fraction x2 = |p2|/(|p1| + |p2| + |k|)
 // and k momentum fraction xk = |k|/(|p1| + |p2| + |k|)
 
-f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double *, double), double M1_, std::string name_, bool refresh)
-:	Xsection(dXdPS_, approx_X_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
+f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
+:	Xsection(dXdPS_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
 	Nsqrts(40), NT(8), Na1(20), Na2(20), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
@@ -523,7 +558,7 @@ void f_3to2::tabulate(size_t T_start, size_t dnT){
 		for (size_t j=0; j<NT; j++) { arg[1] = TL + j*dT;
 			for (size_t k=0; k<Na1; k++) { arg[2] = a1L + k*da1;
 				for (size_t t=0; t<Na2; t++) { arg[3] = a2L + t*da2;
-					Xtab[i][j][k][t] = calculate(arg)/approx_X(arg, M1);
+					Xtab[i][j][k][t] = calculate(arg)/approx_X32(arg, M1);
 				}
 			}
 		}
@@ -553,7 +588,7 @@ double f_3to2::interpX(double * arg){
 	xa1 = (a1-a1L)/da1;	ia1 = floor(xa1); ra1 = xa1 - ia1;
 	xa2 = (a2-a2L)/da2;	ia2 = floor(xa2); ra2 = xa2 - ia2;
 
-	double raw_result = interpolate4d(&Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X(arg, M1);
+	double raw_result = interpolate4d(&Xtab, isqrts, iT, ia1, ia2, rsqrts, rT, ra1, ra2)*approx_X32(arg, M1);
 
 	double xk = 0.5*(a1*a2 + a1 - a2);
 	double x2 = 0.5*(-a1*a2 + a1 + a2);

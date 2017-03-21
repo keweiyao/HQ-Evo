@@ -47,11 +47,6 @@ double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params){
 	return M2_Qq2Qq(t, params)/c16pi/std::pow(s-M2, 2);
 }
 
-double approx_XQq2Qq(double * arg, double M){
-	double T = arg[1];	  // Temp
-	return 1.0/T/T;
-}
-
 //=============Baisc function for Q+g --> Q+g==================================
 double M2_Qg2Qg(double t, void * params) {
 	// unpacking parameters
@@ -102,11 +97,6 @@ double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params){
 	double * p = static_cast<double *>(params);
 	double s = p[0], M2 = p[2]*p[2];
 	return M2_Qg2Qg(t, params)/c16pi/std::pow(s-M2, 2);	
-}
-
-double approx_XQg2Qg(double * arg, double M){	
-	double s = arg[0], T = arg[1];
-	return 1.0/std::pow(1.0 - M*M/s, 2)/T/T;
 }
 
 //=============Basic for 2->3===========================================
@@ -168,11 +158,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	return c48pi*the_M2_Qq2Qq*Pg;
 }
 
-double approx_XQq2Qqg(double * arg, double M){
-	double Temp = arg[1], dt = arg[2];
-	(void)M;	
-	return std::pow(dt/Temp, 2);
-}
+
 
 double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
@@ -230,12 +216,6 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	return c48pi*the_M2_Qg2Qg*Pg;
 }
 
-double approx_XQg2Qgg(double * arg, double M){
-	double Temp = arg[1], dt = arg[2];
-	(void)M;	
-	return std::pow(dt/Temp, 2);
-}
-
 
 
 //=============Basic for 3->2===========================================
@@ -273,29 +253,6 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 	return the_M2*Pg/16.;
 }
 
-double approx_XQqg2Qq(double * arg, double M){
-	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
-	double sqrts = std::sqrt(s);
-	double xk = 0.5*(a1*a2 + a1 - a2);
-	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	double M2 = M*M;
-	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
-	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
-	double k = xk/x2*E2;
-	double p1 = (1. - x2 - xk)/x2*E2;
-	double E1 = std::sqrt(p1*p1 + M2);
-	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
-	double kz = k*cosk;
-	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
-	double x2M2 = frac*frac*M2;
-	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2 + Lambda2;
-	double D2 = kt2 + x2M2 + mD2t;
-	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
-	return (s - M*M)/Temp/Temp/x2*prop2;
-}
-
 double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 (void) n_dims_;
 	// unpack variables costheta42 = x_[0]
@@ -329,28 +286,3 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	// 2->3 = 2->2 * 1->2
 	return the_M2*Pg/16.;
 }
-
-double approx_XQgg2Qg(double * arg, double M){
-	double s = arg[0], Temp = arg[1], a1 = arg[2], a2 = arg[3];
-	double sqrts = std::sqrt(s);
-	double xk = 0.5*(a1*a2 + a1 - a2);
-	double x2 = 0.5*(-a1*a2 + a1 + a2);
-	double M2 = M*M;
-	double A = (2.*xk/x2 - 1.), B = -2.*sqrts*(1. + xk/x2), C = s - M2;
-	double E2 = (-B - std::sqrt(B*B-4.*A*C))/2./A;
-	double k = xk/x2*E2;
-	double p1 = (1. - x2 - xk)/x2*E2;
-	double E1 = std::sqrt(p1*p1 + M2);
-	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
-	double kz = k*cosk;
-	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
-	double x2M2 = frac*frac*M2;
-	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2 + Lambda2;
-	double D2 = kt2 + x2M2 + mD2t;
-	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
-	return (s - M*M)/Temp/Temp/x2*prop2;
-}
-
-

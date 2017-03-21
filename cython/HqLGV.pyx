@@ -11,9 +11,6 @@ cdef double GeV_to_Invfm = 5.068
 
 #------------------Import C++ fucntions and class for Xsection and rates------------------
 cdef extern from "../src/matrix_elements.h":
-	cdef double approx_XQq2Qq(double* args, double M)
-	cdef double approx_XQg2Qg(double* args, double M)
-
 	cdef double dqhat_Qq2Qq_dPS(double* PS, size_t ndims, void* params)
 	cdef double dqhat_Qg2Qg_dPS(double* PS, size_t ndims, void* params)
 
@@ -21,7 +18,7 @@ cdef extern from "../src/matrix_elements.h":
 
 cdef extern from "../src/qhat_Xsection.h":
 	cdef cppclass QhatXsection_2to2:
-		QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void *), double (*approx_X_)(double*, double), double M1_, string name_, bool refresh)
+		QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void *), double M1_, string name_, bool refresh)
 		double calculate(double *args)
 		double interpX(double *args)
 
@@ -59,8 +56,8 @@ cdef class HqLGV:
 			os.makedirs(table_folder)
 
 		if self.elastic:
-			self.qhatX_Qq2Qq = new QhatXsection_2to2(&dqhat_Qq2Qq_dPS, &approx_XQq2Qq, self.mass, "%s/QhatX_Qq2Qq.hdf5"%table_folder, refresh_table)
-			self.qhatX_Qg2Qg = new QhatXsection_2to2(&dqhat_Qg2Qg_dPS, &approx_XQg2Qg, self.mass, "%s/QhatX_Qg2Qg.hdf5"%table_folder, refresh_table)
+			self.qhatX_Qq2Qq = new QhatXsection_2to2(&dqhat_Qq2Qq_dPS, self.mass, "%s/QhatX_Qq2Qq.hdf5"%table_folder, refresh_table)
+			self.qhatX_Qg2Qg = new QhatXsection_2to2(&dqhat_Qg2Qg_dPS, self.mass, "%s/QhatX_Qg2Qg.hdf5"%table_folder, refresh_table)
 			self.qhat_Qq2Qq = new Qhat_2to2(self.qhatX_Qq2Qq, 12*self.Nf, 0., "%s/Qhat_Qq2Qq.hdf5"%table_folder, refresh_table)
 			self.qhat_Qg2Qg = new Qhat_2to2(self.qhatX_Qg2Qg, 16, 0., "%s/Qhat_Qg2Qg.hdf5"%table_folder, refresh_table)
 		

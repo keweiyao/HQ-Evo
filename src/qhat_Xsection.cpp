@@ -21,10 +21,14 @@ double gsl_1dfunc_wrapper_YX(double x, void *params_)
 }
 
 
+double approx_QhatX22(double * arg, double M){	
+	double s = arg[0], T = arg[1];
+	return 1.0/std::pow(1.0 - M*M/s, 2)/T/T;
+}
 
 // ===== QhatXsection base class
-QhatXsection::QhatXsection(double (*dXdPS_)(double* , size_t, void*), double (*approx_X_)(double*, double), double M1_, std::string name_, bool refresh)
-:  dXdPS(dXdPS_), approx_X(approx_X_), M1(M1_)
+QhatXsection::QhatXsection(double (*dXdPS_)(double* , size_t, void*), double M1_, std::string name_, bool refresh)
+:  dXdPS(dXdPS_), M1(M1_)
 {
         std::cout << "--------" << __func__ << "  " << name_ << "--------" << std::endl;
 }
@@ -32,8 +36,8 @@ QhatXsection::QhatXsection(double (*dXdPS_)(double* , size_t, void*), double (*a
 
 
 // ==== derived 2->2 QhatXsection class ========
-QhatXsection_2to2::QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void*), double (*approx_X_)(double*, double), double M1_, std::string name_, bool refresh)
-:    QhatXsection(dXdPS_, approx_X_, M1_, name_, refresh),
+QhatXsection_2to2::QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void*), double M1_, std::string name_, bool refresh)
+:    QhatXsection(dXdPS_, M1_, name_, refresh),
      Nsqrts(50), NT(32),
      sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*40.),
      dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH - sqrtsM)/(Nsqrts - 1.)),
@@ -138,7 +142,7 @@ void QhatXsection_2to2::tabulate(size_t T_start, size_t dnT)
                         for (size_t j = T_start; j < (T_start + dnT); j++)
                         {
                                 args[1] = TL + j*dT;
-                                QhatXtab[index][i][j] = calculate(args)/approx_X(args, M1);
+                                QhatXtab[index][i][j] = calculate(args)/approx_QhatX22(args, M1);
                                 //QhatXtab[index][i][j] = calculate(args);
                         }
                 }
@@ -171,7 +175,7 @@ double QhatXsection_2to2::interpX(double* args)
         xT = (Temp - TL)/dT; iT = floor(xT);  rT = xT-iT;
 
 //        std::cout << "interpX: "<< iT << " " << isqrts <<" " << interpolate2d_YX(&QhatXtab, index, isqrts, iT, rsqrts, rT) <<std::endl;
-        return approx_X(args, M1) * interpolate2d_YX(&QhatXtab, index, isqrts, iT, rsqrts, rT);
+        return approx_QhatX22(args, M1) * interpolate2d_YX(&QhatXtab, index, isqrts, iT, rsqrts, rT);
 //        return interpolate2d_YX(&QhatXtab, index, isqrts, iT, rsqrts, rT);
 }
 

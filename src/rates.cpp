@@ -31,6 +31,25 @@ double viscos_gn(double costheta, int n){
 	else return 1.5*costheta*costheta;
 }
 
+double approx_R22(double * arg){
+	//double E1 = arg[0];
+	double T = arg[1];
+	return T;
+}
+
+double approx_R23(double * arg){
+	//double E1 = arg[0];
+	double T = arg[1];
+	double dt = arg[2];
+	return dt*dt*std::pow(T, 3);
+}
+
+double approx_R32(double * arg){
+	double E1 = arg[0];
+	double T = arg[1];
+	double dt = arg[2];
+	return dt*dt*std::pow(T, 4)/E1;
+}
 
 double fy_wrapper22(double y, void * params_){
 	// unpack Vegas params
@@ -39,13 +58,12 @@ double fy_wrapper22(double y, void * params_){
 	double Temp = params->params[1];
 	double M2 = params->params[2];
 	double v1 = params->params[3];
-	int index = static_cast<int>(params->params[4]);
 	double s = M2 + coeff*(1.-v1*y);
 	double * arg = new double[2];
 	arg[0] = s; arg[1] = Temp;
 	double Xsection = params->f(arg);
 	delete [] arg;
-	return (1.-v1*y)*Xsection * viscos_gn(y, index);
+	return (1.-v1*y)*Xsection;
 } 
 
 double fx_wrapper22(double x, void * px_){
@@ -55,18 +73,16 @@ double fx_wrapper22(double x, void * px_){
 	double Temp = px->params[2];
 	double M2 = px->params[3];
 	double zeta = px->params[4];
-	double index = px->params[5];
 
 	double result, error, ymin, ymax;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(10000);
 	integrate_params_2 * py = new integrate_params_2;
 	py->f = px->f;
-	py->params = new double[5];
+	py->params = new double[4];
 	py->params[0] = 2.*E1*x*Temp;
 	py->params[1] = Temp;
 	py->params[2] = M2;
 	py->params[3] = v1;
-	py->params[4] = index;
 
     gsl_function F;
 	F.function = fy_wrapper22;
@@ -77,7 +93,7 @@ double fx_wrapper22(double x, void * px_){
 	delete [] py->params;
 	delete py;
 	gsl_integration_workspace_free(w);
-	return x*x*f_0(x, zeta)*result * viscos_fn(x, index);
+	return x*x*f_0(x, zeta)*result;
 }
 
 
@@ -154,8 +170,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 	eta_2(eta_2_),
 	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
-	Rtab(boost::extents[NE1][NT]), R1tab(boost::extents[NE1][NT]), 
-	R2tab(boost::extents[NE1][NT])
+	Rtab(boost::extents[NE1][NT])
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
@@ -173,23 +188,19 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 		for (std::thread& t : threads)	t.join();
 
 		H5::H5File file(name_, H5F_ACC_TRUNC);
-		save_to_file(&file, "Rates-tab", 0);
-		save_to_file(&file, "Rates-1-tab", 1);
-		save_to_file(&file, "Rates-2-tab", 2);
+		save_to_file(&file, "Rates-tab");
 		file.close();
 	}
 	else{
 		std::cout << "loading existing table" << std::endl;
 		H5::H5File file(name_, H5F_ACC_RDONLY);
-		read_from_file(&file, "Rates-tab", 0);
-		read_from_file(&file, "Rates-1-tab", 1);
-		read_from_file(&file, "Rates-2-tab", 2);
+		read_from_file(&file, "Rates-tab");
 		file.close();
 	}
 	std::cout << std::endl;
 }
 
-void rates_2to2::save_to_file(H5::H5File * file, std::string datasetname, int index){
+void rates_2to2::save_to_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 2;
 	hsize_t dims[rank] = {NE1, NT};
 	H5::DSetCreatPropList proplist{};
@@ -198,9 +209,8 @@ void rates_2to2::save_to_file(H5::H5File * file, std::string datasetname, int in
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
 	H5::DataSet dataset = file->createDataSet(datasetname, datatype, dataspace, proplist);
-	if (index == 0) dataset.write(Rtab.data(), datatype);
-	if (index == 1) dataset.write(R1tab.data(), datatype);
-	if (index == 2) dataset.write(R2tab.data(), datatype);
+	dataset.write(Rtab.data(), datatype);
+
 	// Attributes
 	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
@@ -212,7 +222,7 @@ void rates_2to2::save_to_file(H5::H5File * file, std::string datasetname, int in
 
 }
 
-void rates_2to2::read_from_file(H5::H5File * file, std::string datasetname, int index){
+void rates_2to2::read_from_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 2;
 	
 	H5::DataSet dataset = file->openDataSet(datasetname);
@@ -226,9 +236,7 @@ void rates_2to2::read_from_file(H5::H5File * file, std::string datasetname, int 
 	hdf5_read_scalar_attr(dataset, "N_T", NT);
 	dT = (TH-TL)/(NT-1.);
 	
-	if (index == 0) Rtab.resize(boost::extents[NE1][NT]);
-	if (index == 1) R1tab.resize(boost::extents[NE1][NT]);
-	if (index == 2) R2tab.resize(boost::extents[NE1][NT]);
+	Rtab.resize(boost::extents[NE1][NT]);
 
 	hsize_t dims_mem[rank];
   	dims_mem[0] = NE1;
@@ -236,20 +244,16 @@ void rates_2to2::read_from_file(H5::H5File * file, std::string datasetname, int 
 	H5::DataSpace mem_space(rank, dims_mem);
 
 	H5::DataSpace data_space = dataset.getSpace();
-	if (index == 0) dataset.read(Rtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
-	if (index == 1) dataset.read(R1tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
-	if (index == 2) dataset.read(R2tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+	dataset.read(Rtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 }
 
 void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
-	double * arg = new double[3];
+	double * arg = new double[2];
 	for (size_t i=0; i<NE1; i++){
 		arg[0] = E1L + i*dE1;
 		for (size_t j=T_start; j<(T_start+dnT); j++){
 			arg[1] = TL + j*dT;	
-			arg[2] = 0.; Rtab[i][j] = calculate(arg);
-			arg[2] = 1.; R1tab[i][j] = calculate(arg);
-			arg[2] = 2.; R2tab[i][j] = calculate(arg);
+			Rtab[i][j] = calculate(arg)/approx_R22(arg);
 		}
 	}
 	delete [] arg;
@@ -257,7 +261,6 @@ void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
 
 double rates_2to2::interpR(double * arg){
 	double E1 = arg[0], Temp = arg[1];
-	double norm_pi33 = arg[2];
 	if (Temp < TL) Temp = TL;
 	if (Temp >= TH) Temp = TH-dT;
 	if (E1 < E1L) E1 = E1L;
@@ -266,24 +269,23 @@ double rates_2to2::interpR(double * arg){
 	size_t iT, iE1;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate2d(&Rtab, iE1, iT, rE1, rT) +  norm_pi33*(interpolate2d(&R1tab, iE1, iT, rE1, rT) + interpolate2d(&R2tab, iE1, iT, rE1, rT));
+	return interpolate2d(&Rtab, iE1, iT, rE1, rT)*approx_R22(arg);
 }
 
 double rates_2to2::calculate(double * arg)
 {
-	double E1 = arg[0], Temp = arg[1], index = arg[2];
+	double E1 = arg[0], Temp = arg[1];
 	double p1 = std::sqrt(E1*E1-M*M);
 	double result, error, xmin, xmax;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(5000);
 	integrate_params_2 * px = new integrate_params_2;
 	px->f = std::bind( &Xsection_2to2::interpX, Xprocess, _1);
-	px->params = new double[6];
+	px->params = new double[5];
 	px->params[0] = E1;
 	px->params[1] = p1/E1;
 	px->params[2] = Temp;
 	px->params[3] = M*M;
 	px->params[4] = eta_2;
-	px->params[5] = index;
 
     gsl_function F;
 	F.function = fx_wrapper22;
@@ -340,7 +342,7 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_),
-	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
@@ -359,19 +361,19 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 		}
 		for (std::thread& t : threads)	t.join();
 		H5::H5File file(name_, H5F_ACC_TRUNC);
-		save_to_file(&file, "Rates-tab", 0);
+		save_to_file(&file, "Rates-tab");
 		file.close();
 	}
 	else{
 		std::cout << "loading existing table" << std::endl;
 		H5::H5File file(name_, H5F_ACC_RDONLY);
-		read_from_file(&file, "Rates-tab", 0);
+		read_from_file(&file, "Rates-tab");
 		file.close();
 	}
 	std::cout << std::endl;
 }
 
-void rates_2to3::save_to_file(H5::H5File * file, std::string datasetname, int index){
+void rates_2to3::save_to_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 3;
 
 	hsize_t dims[rank] = {NE1, NT, Ndt};
@@ -397,7 +399,7 @@ void rates_2to3::save_to_file(H5::H5File * file, std::string datasetname, int in
 	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
 }
 
-void rates_2to3::read_from_file(H5::H5File * file, std::string datasetname, int index){
+void rates_2to3::read_from_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 3;
 
 	H5::DataSet dataset = file->openDataSet(datasetname);
@@ -435,7 +437,7 @@ void rates_2to3::tabulate_E1_T(size_t T_start, size_t dnT){
 			arg[1] = TL + j*dT;
 			for (size_t k=0; k<Ndt; k++){
 				arg[2] = dtL + k*ddt;
-				Rtab[i][j][k] = calculate(arg);
+				Rtab[i][j][k] = calculate(arg)/approx_R23(arg);
 			}
 		}
 	}
@@ -455,7 +457,7 @@ double rates_2to3::interpR(double * arg){
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt);
+	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt)*approx_R23(arg);;
 }
 
 double rates_2to3::calculate(double * arg)
@@ -477,7 +479,7 @@ double rates_2to3::calculate(double * arg)
     gsl_function F;
 	F.function = fx_wrapper23;
 	F.params = px;
-	xmax = 5.0;
+	xmax = 10.0;
 	xmin = 0.0;
 	gsl_integration_qag(&F, xmin, xmax, 0, 1e-2, 2000, 6, w, &result, &error);
 
@@ -498,12 +500,12 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*20. + coeff2*20.;
+	smax = M2 + coeff1*10. + coeff2*10.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{ x = dist_x(gen); }while(x>20.);
+		do{ x = dist_x(gen); }while(x>10.);
 		y = dist_norm_y(gen);
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp; 
@@ -523,7 +525,7 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_), eta_k(eta_k_),
-	NE1(30), NT(8), Ndt(10), E1L(M*1.01), E1H(M*30), TL(0.13), TH(0.75), dtL(0.1), dtH(5.0),
+	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
@@ -543,19 +545,19 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 		for (std::thread& t : threads)	t.join();
 		
 		H5::H5File file(name_, H5F_ACC_TRUNC);
-		save_to_file(&file, "Rates-tab", 0);
+		save_to_file(&file, "Rates-tab");
 		file.close();
 	}
 	else{
 		std::cout << "loading existing table" << std::endl;
 		H5::H5File file(name_, H5F_ACC_RDONLY);
-		read_from_file(&file, "Rates-tab", 0);
+		read_from_file(&file, "Rates-tab");
 		file.close();
 	}
 	std::cout << std::endl;
 }
 
-void rates_3to2::save_to_file(H5::H5File * file, std::string datasetname, int index){
+void rates_3to2::save_to_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 3;
 
 	hsize_t dims[rank] = {NE1, NT, Ndt};
@@ -581,7 +583,7 @@ void rates_3to2::save_to_file(H5::H5File * file, std::string datasetname, int in
 	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
 }
 
-void rates_3to2::read_from_file(H5::H5File * file, std::string datasetname, int index){
+void rates_3to2::read_from_file(H5::H5File * file, std::string datasetname){
 	const size_t rank = 3;
 
 	H5::DataSet dataset = file->openDataSet(datasetname);
@@ -619,7 +621,7 @@ void rates_3to2::tabulate_E1_T(size_t T_start, size_t dnT){
 			arg[1] = TL + j*dT;
 			for (size_t k=0; k<Ndt; k++){
 				arg[2] = dtL + k*ddt;
-				Rtab[i][j][k] = calculate(arg);
+				Rtab[i][j][k] = calculate(arg)/approx_R32(arg);
 			}
 		}
 	}
@@ -639,7 +641,7 @@ double rates_3to2::interpR(double * arg){
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt);
+	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt)*approx_R32(arg);;
 }
 
 
@@ -647,7 +649,7 @@ double rates_3to2::interpR(double * arg){
 double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	integrate_params_2 * params = static_cast<integrate_params_2 *>(params_);
 	double x2 = x_[0], costheta2 = x_[1], xk = x_[2], costhetak = x_[3], phik = x_[4];
-	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 5. || xk >= 5.) return 0.;
+	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 7. || xk >= 7.) return 0.;
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
@@ -706,9 +708,9 @@ double rates_3to2::calculate(double * arg){
 	
 	// integration limits
 	double xl[5], xu[5];
-	xl[0] = 0.0; xu[0] = 5.;
+	xl[0] = 0.0; xu[0] = 7.;
 	xl[1] = -1.; xu[1] = 1.;
-	xl[2] = 0.0; xu[2] = 5.;
+	xl[2] = 0.0; xu[2] = 7.;
 	xl[3] = -1.; xu[3] = 1.;
 	xl[4] = 0.0; xu[4] = 2.0*M_PI;
 

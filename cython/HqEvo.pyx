@@ -10,32 +10,25 @@ import os
 #------------------Import C++ fucntions and class for Xsection and rates------------------
 cdef extern from "../src/matrix_elements.h":
 	cdef double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params) 
-	cdef double approx_XQq2Qq(double * arg, double M)
 	cdef double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params)
-	cdef double approx_XQg2Qg(double * arg, double M) 
 
 	cdef double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_) 
-	cdef double approx_XQq2Qqg(double * arg, double M)
 	cdef double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_) 
-	cdef double approx_XQg2Qgg(double * arg, double M) 
 
-	cdef double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_) 
-	cdef double approx_XQqg2Qq(double * arg, double M) 
+	cdef double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_)  
 	cdef double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_)
-	cdef double approx_XQgg2Qg(double * arg, double M)
-	
 
 cdef extern from "../src/Xsection.h":
 	cdef cppclass Xsection_2to2:
-		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_, bool refresh) 
+		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh) 
 		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS) 
 	
 	cdef cppclass Xsection_2to3:
-		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_, bool refresh) 
+		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh) 
 		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS) 
 
 	cdef cppclass f_3to2:
-		f_3to2(double (*dXdPS_)(double *, size_t, void *), double (*approx_X_)(double * arg, double), double M1_, string name_, bool refresh) 
+		f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh) 
 		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS) 
 
 cdef extern from "../src/rates.h":
@@ -56,7 +49,7 @@ cdef extern from "../src/rates.h":
 
 
 #-------------Heavy quark evolution class------------------------
-cdef double dtmin = 0.11
+cdef double dtmin = 0.1
 
 cdef class HqEvo(object):
 	cdef bool elastic, inelastic, detailed_balance
@@ -88,22 +81,22 @@ cdef class HqEvo(object):
 			os.makedirs(table_folder)
 
 		if self.elastic:
-			self.x_Qq_Qq = new Xsection_2to2(&dX_Qq2Qq_dPS, &approx_XQq2Qq, self.mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
-			self.x_Qg_Qg = new Xsection_2to2(&dX_Qg2Qg_dPS, &approx_XQg2Qg, self.mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
+			self.x_Qq_Qq = new Xsection_2to2(&dX_Qq2Qq_dPS, self.mass, "%s/XQq2Qq.hdf5"%table_folder, refresh_table)
+			self.x_Qg_Qg = new Xsection_2to2(&dX_Qg2Qg_dPS, self.mass, "%s/XQg2Qg.hdf5"%table_folder, refresh_table)
 			self.r_Qq_Qq = new rates_2to2(self.x_Qq_Qq, 12*self.Nf, 0., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
 			self.r_Qg_Qg = new rates_2to2(self.x_Qg_Qg, 16, 0., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
 			
 		if self.inelastic:
-			self.x_Qq_Qqg = new Xsection_2to3(&M2_Qq2Qqg, &approx_XQq2Qqg, self.mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
-			self.x_Qg_Qgg = new Xsection_2to3(&M2_Qg2Qgg, &approx_XQg2Qgg, self.mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
+			self.x_Qq_Qqg = new Xsection_2to3(&M2_Qq2Qqg, self.mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
+			self.x_Qg_Qgg = new Xsection_2to3(&M2_Qg2Qgg, self.mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.r_Qq_Qqg = new rates_2to3(self.x_Qq_Qqg, 12*self.Nf, 0., "%s/RQq2Qqg.hdf5"%table_folder, refresh_table)
 			self.r_Qg_Qgg = new rates_2to3(self.x_Qg_Qgg, 16/2, 0., "%s/RQg2Qgg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
 
 		if self.detailed_balance:
-			self.x_Qqg_Qq = new f_3to2(&Ker_Qqg2Qq, &approx_XQq2Qqg, self.mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
-			self.x_Qgg_Qg = new f_3to2(&Ker_Qgg2Qg, &approx_XQg2Qgg, self.mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
+			self.x_Qqg_Qq = new f_3to2(&Ker_Qqg2Qq, self.mass, "%s/XQqg2Qq.hdf5"%table_folder, refresh_table)
+			self.x_Qgg_Qg = new f_3to2(&Ker_Qgg2Qg, self.mass, "%s/XQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.r_Qqg_Qq = new rates_3to2(self.x_Qqg_Qq, 12*self.Nf*16, 0., 0., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
 			self.r_Qgg_Qg = new rates_3to2(self.x_Qgg_Qg, 16*16/2, 0., 0., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
@@ -125,7 +118,7 @@ cdef class HqEvo(object):
 			p[i] = psum; i += 1
 			Relastic = psum
 		if self.inelastic:
-			arg[2] = max(dt23, 0.1)
+			arg[2] = max(dt23, dtmin)
 			R1 = self.r_Qq_Qqg.interpR(arg)
 			R2 = self.r_Qg_Qgg.interpR(arg)
 			psum += R1
@@ -133,7 +126,7 @@ cdef class HqEvo(object):
 			psum += R2
 			p[i] = psum; i += 1
 		if self.detailed_balance:
-			arg[2] = max(dt32, 0.1)
+			arg[2] = max(dt32, dtmin)
 			R1 = self.r_Qqg_Qq.interpR(arg)
 			R2 = self.r_Qgg_Qg.interpR(arg)
 			psum += R1
