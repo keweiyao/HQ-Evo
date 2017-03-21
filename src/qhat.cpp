@@ -97,8 +97,7 @@ double fy_wrapper22_YX(double y, void *params_)
         double M2 = params->params[2];
         double v1 = params->params[3];
         double E1 = params->params[4];
-        int iweight = static_cast<int>(params->params[5]);
-        int qidx = static_cast<int>(params->params[6]);
+        int qidx = int(params->params[5] + 0.5);
 
         double s = M2 + coeff * (1. - v1*y);
         double *args = new double[3];
@@ -134,7 +133,7 @@ double fy_wrapper22_YX(double y, void *params_)
         double Qhat[] = {Qhat_q1cell, Qhat_q3cell, Qhat_q11cell, Qhat_q33cell};
         //double Qhat[] = {QhatXsection_q1, QhatXsection_q3, QhatXsection_q11, QhatXsection_q33};
         
-        return Qhat[qidx] * (1. - v1*y) * viscosgn(y, iweight);
+        return Qhat[qidx] * (1. - v1*y);
 
 }
 
@@ -149,10 +148,8 @@ double fx_wrapper22_YX(double x, void *px_)
         double Temp = px->params[2];
         double M2 = px->params[3];
         double zeta = px->params[4];
-        double iweight = px->params[5];
 
-        //double qidx = px->params[6];
-        int qidx = int(px->params[6]+0.5);
+        int qidx = int(px->params[5]+0.5);
 
         {
         double result, error, ymin, ymax;
@@ -166,8 +163,7 @@ double fx_wrapper22_YX(double x, void *px_)
         py->params[2] = M2;
         py->params[3] = v1;
         py->params[4] = E1;
-        py->params[5] = iweight;
-        py->params[6] = qidx;
+        py->params[5] = qidx;
 
         gsl_function F;
         F.function = fy_wrapper22_YX;
@@ -180,21 +176,19 @@ double fx_wrapper22_YX(double x, void *px_)
         {
                 status = gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000,6, w, &result, &error);
                 nloop += 1;
-                if (nloop > 1) std::cout << Temp << " " << E1 << " " << result << " " << error << std::endl;
+                //if (nloop > 1) std::cout << Temp << " " << E1 << " " << result << " " << error << std::endl;
         }
 
 
         delete [] py->params;
         delete py;
        
-        //if ((E1-1.313)<0.001 && (Temp - 0.13) < 0.001 && (x>2 && x<2.3) && iweight==0)       
-        //        std::cout << "qhat: "<< x << " " << Temp << " " << E1 << " " << result << std::endl;
         gsl_set_error_handler(old_handler);
         gsl_integration_workspace_free(w);
-       return x*x*f0(x, zeta)*result *viscosfn(x, iweight);
+       
+        return x*x*f0(x, zeta)*result;
        }
 
-      // else       return 0;
 }
 
 
@@ -216,9 +210,7 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
    NE(50), NT(10), E1L(M*3), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
    dE1((E1M - E1L)/(NE -1.)), dE2((E1H - E1M)/(NE -1.)),
    dT((TH - TL)/(NT -1.)),
-   QhatTab(boost::extents[3][2*NE][NT]),
-   Qhat1Tab(boost::extents[3][2*NE][NT]),
-   Qhat2Tab(boost::extents[3][2*NE][NT])
+   QhatTab(boost::extents[3][2*NE][NT])
 {
         bool fileexist = boost::filesystem::exists(name_);
         if ((!fileexist) || (fileexist && refresh))
@@ -241,18 +233,14 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
                 for (std::thread& t: threads) t.join();
 
                 H5::H5File file(name_, H5F_ACC_TRUNC);
-                save_to_file(&file, "Qhat-tab", 0);
-                save_to_file(&file, "Qhat-1-tab", 1);
-                save_to_file(&file, "Qhat-2-tab", 2);
+                save_to_file(&file, "Qhat-tab");
                 file.close();
         }
         else
         {
                 std::cout << "loading existing table " << std::endl;
                 H5::H5File file(name_, H5F_ACC_RDONLY);
-                read_from_file(&file, "Qhat-tab", 0);
-                //read_from_file(&file, "Qhat-1-tab", 1);
-                //read_from_file(&file, "Qhat-2-tab", 2);
+                read_from_file(&file, "Qhat-tab");
                 file.close();
         }
         std::cout << std::endl;
@@ -260,7 +248,7 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
 
 
 
-void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname, int index)
+void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname)
 {
         const size_t rank=3;
         hsize_t dims[rank] = {3, 2*NE, NT};
@@ -270,9 +258,7 @@ void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname, int inde
         H5::DataSpace dataspace(rank, dims);
         auto datatype(H5::PredType::NATIVE_DOUBLE);
         H5::DataSet dataset = file->createDataSet(datasetname, datatype, dataspace, proplist);
-        if (index==0) dataset.write(QhatTab.data(), datatype);
-        if (index==1) dataset.write(Qhat1Tab.data(), datatype);
-        if (index==2) dataset.write(Qhat2Tab.data(), datatype);
+        dataset.write(QhatTab.data(), datatype);
 
         hdf5_add_scalar_attr(dataset, "E1_low", E1L);
         hdf5_add_scalar_attr(dataset, "E1_high", E1H);
@@ -286,7 +272,7 @@ void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname, int inde
 
 
 
-void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int index)
+void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname)
 {
         const size_t rank=3;
         H5::DataSet dataset = file->openDataSet(datasetname);
@@ -302,9 +288,7 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int i
         hdf5_read_scalar_attr(dataset, "N_T", NT);
         dT = (TH - TL)/(NT -1.);
 
-        if (index==0) QhatTab.resize(boost::extents[4][2*NE][NT]);
-        if (index==1) Qhat1Tab.resize(boost::extents[4][2*NE][NT]);
-        if (index==2) Qhat2Tab.resize(boost::extents[4][2*NE][NT]);
+        QhatTab.resize(boost::extents[3][2*NE][NT]);
 
         hsize_t dims_mem[rank];
         dims_mem[0] = 3;
@@ -314,9 +298,7 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int i
         H5::DataSpace mem_space(rank, dims_mem);
 
         H5::DataSpace data_space = dataset.getSpace();
-        if (index==0) dataset.read(QhatTab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
-        if (index==1) dataset.read(Qhat1Tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
-        if (index==2) dataset.read(Qhat2Tab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+        dataset.read(QhatTab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
 
         //std::cout << "read in QhatTab successfully :)" << std::endl;
 
@@ -325,7 +307,7 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname, int i
 
 void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 {
-        double *args = new double[4];
+        double *args = new double[3];
         for (size_t i=0; i < 2*NE; ++i)
         {
         	if (i < NE) args[0] = E1L + i * dE1;
@@ -333,10 +315,9 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
                 for (size_t j = T_start; j < (T_start + dnT) ; ++j)
                 {
                         args[1] = TL + j * dT;
-                        args[2] = 0.;
-                        args[3] = 1; double drag = calculate(args);
-                        args[3] = 2; double kperp = calculate(args);
-                        args[3] = 3; double kpara = calculate(args);
+                        args[2] = 1; double drag = calculate(args);
+                        args[2] = 2; double kperp = calculate(args);
+                        args[2] = 3; double kpara = calculate(args);
                         QhatTab[0][i][j] = drag;
                         QhatTab[1][i][j] = kperp;
                         QhatTab[2][i][j] = kpara - drag*drag;
@@ -349,39 +330,12 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 }
 
 
-/*
-void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
-{
-        double *args = new double[4];
-        for (size_t i=0; i<NE1; i++)
-        {
-                args[0] = E1L + i*dE1;
-                for (size_t j = T_start; j < (T_start + dnT); j++)
-                {
-                        args[1] = TL + j*dT;
-                        for (int qidx = 0; qidx < 4; ++qidx)
-                        {
-                                args[3] = qidx;
-                                args[2] = 0.; QhatTab[qidx][i][j] = calculate(args);
-
-                                //args[2] = 1.; Qhat1Tab[qidx][i][j] = calculate(args);
-                                //args[2] = 2.; Qhat2Tab[qidx][i][j] = calculate(args);
-                                //std::cout << args[0] << "   " << args[1] << "    " << args[3] << " " <<  QhatTab[qidx][i][j] << "   " << std::endl;
-                        }
-                        //std::cout << args[0] << " " << args[1] << " " << QhatTab[0][i][j] << " " << QhatTab[1][i][j] << " " << QhatTab[2][i][j] << " " << QhatTab[3][i][j] << std::endl;         
-                }
-        }
-
-        
-        delete [] args;
-}
-*/
 
 
 double Qhat_2to2::interpQ(double * args)
 {
         double E1 = args[0], Temp = args[1];
-        int qidx = int(args[3]+0.5);
+        int qidx = int(args[2]+0.5);
 
         if (Temp < TL) Temp = TL;
         if (Temp >= TH) Temp = TH - dT;
@@ -398,7 +352,7 @@ double Qhat_2to2::interpQ(double * args)
         xT = (Temp - TL)/dT;    iT = floor(xT);     rT = xT - iT;
         xE = (E1 - Emin)/dE;    iE = floor(xE);     rE = xE - iE; iE += Noffset;
 
-        return interpolate2d_YX(&QhatTab, qidx, iE, iT, rE, rT);  //+ norm_pi33*(interpolate2d_YX(&Qhat1Tab, index, iE1, iT, rE1, rT) + interpolate2d_YX(&Qhat2Tab, index, iE1, iT, rE1, rT));
+        return interpolate2d_YX(&QhatTab, qidx, iE, iT, rE, rT); 
 }
 
 
@@ -406,8 +360,8 @@ double Qhat_2to2::interpQ(double * args)
 
 double Qhat_2to2::calculate(double *args)
 {
-        double E1 = args[0], Temp = args[1], iweight = args[2];
-        int qidx = int(args[3]+0.5);
+        double E1 = args[0], Temp = args[1];
+        int qidx = int(args[2]+0.5);
         double p1 = std::sqrt(E1*E1 - M*M);
         double result, error, xmin, xmax;
 
@@ -416,14 +370,13 @@ double Qhat_2to2::calculate(double *args)
         gsl_integration_workspace * w = gsl_integration_workspace_alloc(5000);
         integrate_params_2_YX * px = new integrate_params_2_YX;
         px->f = std::bind(&QhatXsection_2to2::interpX, Xprocess, _1);
-        px->params = new double[7];
+        px->params = new double[6];
         px->params[0] = E1;
         px->params[1] = p1/E1;
         px->params[2] = Temp;
         px->params[3] = M*M;
         px->params[4] = eta_2;
-        px->params[5] = iweight;
-        px->params[6] = qidx;
+        px->params[5] = qidx;
 
         gsl_function F;
         F.function = fx_wrapper22_YX;
@@ -435,8 +388,6 @@ double Qhat_2to2::calculate(double *args)
         {
         status = gsl_integration_qag(&F, xmin, xmax, 0, 1e-3, 5000, 6, w, &result, &error);
         nloop += 1;
-        if (nloop >1)
-                std::cout << E1 << " " << Temp << " " << result << " " << error << std::endl;
         }
 
         gsl_set_error_handler(old_handler);
