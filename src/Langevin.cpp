@@ -94,7 +94,8 @@ int Langevin_pre(double E, double M, double temp, double drag, double kpara, dou
         // if there is no second step, it will be pre-point scheme Langevin
 	
 //	std::cout << "Langevin_pre: " << pre_result[0] << " " << pre_result[1] << " " << pre_result[2] << " " << pre_result[3] <<" " << pre_result[4] << " " << pre_result[5] << " " << pre_result[6] << std::endl;
-        return 1;
+	return 0;
+
 }
 
 
@@ -115,6 +116,7 @@ int Langevin_post(double E, double M, double temp, double drag, double kpara, do
         xi[0] = std::sqrt(kperp/deltat_lrf) * rho[0];
         xi[1] = std::sqrt(kperp/deltat_lrf) * rho[1];
         xi[2] = std::sqrt(kpara/deltat_lrf) * rho[2];
+int update_by_Langevin_test(particle& HQ, Qhat_2to2* qhatQq2Qq, Qhat_2to2* qhatQg2Qg, double temp, double deltat, bool EinR);
 
 	post_result.resize(4);
         post_result[1] = xi[0] * deltat_lrf;
@@ -123,7 +125,7 @@ int Langevin_post(double E, double M, double temp, double drag, double kpara, do
         post_result[0] = std::sqrt(M*M + post_result[1]*post_result[1] + post_result[2]*post_result[2] + post_result[3]*post_result[3]);
 
 //	std::cout << "Langevin_post: " << post_result[0] << " " << post_result[1] << " " << post_result[2] << " " << post_result[3] << std::endl;
-        return 1;
+	return 0;
 }
 
 

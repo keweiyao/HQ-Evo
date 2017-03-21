@@ -23,6 +23,5 @@ int Langevin_post(double E, double M, double temp, double drag, double kpara, do
 
 
 int update_by_Langevin(particle& HQ, Qhat_2to2* qhatQq2Qq, Qhat_2to2* qhatQg2Qg, double temp, double deltat, bool EinR);
-int update_by_Langevin_test(particle& HQ, Qhat_2to2* qhatQq2Qq, Qhat_2to2* qhatQg2Qg, double temp, double deltat, bool EinR);
 
 #endif
