@@ -66,17 +66,18 @@ cdef class HqLGV:
 		cdef double kperp_Qq, kperp_Qg, kperp, \
 					kpara_Qq, kpara_Qg, kpara
 		cdef double p_length = sqrt(E1*E1 - self.mass*self.mass)
-		cdef double * arg = <double*> malloc(4*sizeof(double))
-		arg[0] = E1; arg[1] = temp; arg[2] = 0; arg[3] = 0
+		cdef double * arg = <double*> malloc(3*sizeof(double))
+		arg[0] = E1; arg[1] = temp; arg[2] = 0;
 		drag_Qq = self.qhat_Qq2Qq.interpQ(arg)
 		drag_Qg = self.qhat_Qg2Qg.interpQ(arg)
-		arg[3] = 1
+		arg[2] = 1
 		kperp_Qq = self.qhat_Qq2Qq.interpQ(arg)
 		kperp_Qg = self.qhat_Qg2Qg.interpQ(arg)
-		arg[3] = 2
+		arg[2] = 2
 		kpara_Qq = self.qhat_Qq2Qq.interpQ(arg)
 		kpara_Qg = self.qhat_Qg2Qg.interpQ(arg)
 
+		
 		drag = (drag_Qq + drag_Qg) / p_length * GeV_to_Invfm
 		kperp = (kperp_Qq + kperp_Qg) * GeV_to_Invfm
 		kpara = (kpara_Qq + kpara_Qg) * GeV_to_Invfm
@@ -88,10 +89,10 @@ cdef class HqLGV:
 
 
 		arg[0] = new_energy
-		arg[3] = 1
+		arg[2] = 1
 		kperp_Qq = self.qhat_Qq2Qq.interpQ(arg)
 		kperp_Qg = self.qhat_Qg2Qg.interpQ(arg)
-		arg[3] = 2
+		arg[2] = 2
 		kpara_Qq = self.qhat_Qq2Qq.interpQ(arg)
 		kpara_Qg = self.qhat_Qg2Qg.interpQ(arg)
 

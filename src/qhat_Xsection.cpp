@@ -23,7 +23,7 @@ double gsl_1dfunc_wrapper_YX(double x, void *params_)
 
 double approx_QhatX22(double * arg, double M){	
 	double s = arg[0], T = arg[1];
-	return 1.0/std::pow(1.0 - M*M/s, 2)/T/T;
+	return 1.0;///T/T;/std::pow(1.0 - M*M/s, 2)
 }
 
 // ===== QhatXsection base class

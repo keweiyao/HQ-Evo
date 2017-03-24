@@ -151,6 +151,7 @@ double fx_wrapper22_YX(double x, void *px_)
 
         int qidx = int(px->params[5]+0.5);
 
+
         {
         double result, error, ymin, ymax;
         gsl_integration_workspace *w = gsl_integration_workspace_alloc(10000);
@@ -158,7 +159,7 @@ double fx_wrapper22_YX(double x, void *px_)
         integrate_params_2_YX* py = new integrate_params_2_YX;
         py->f = px->f;
         py->params = new double[7];
-        py->params[0] = 2*E1*x*Temp;
+        py->params[0] = 2.*E1*x*Temp;
         py->params[1] = Temp;
         py->params[2] = M2;
         py->params[3] = v1;
@@ -172,11 +173,10 @@ double fx_wrapper22_YX(double x, void *px_)
         ymin = -1.;
         int status = 1, nloop = 0;
 
-        while(status && nloop < 10)
+        while(status && nloop < 5)
         {
                 status = gsl_integration_qag(&F, ymin, ymax, 0, 1e-3, 10000,6, w, &result, &error);
                 nloop += 1;
-                //if (nloop > 1) std::cout << Temp << " " << E1 << " " << result << " " << error << std::endl;
         }
 
 
@@ -207,7 +207,7 @@ Qhat::Qhat(std::string name_)
 Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :  Qhat(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()),
    degeneracy(degeneracy_), eta_2(eta_2_),
-   NE(50), NT(10), E1L(M*3), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
+   NE(50), NT(10), E1L(M*1.01), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
    dE1((E1M - E1L)/(NE -1.)), dE2((E1H - E1M)/(NE -1.)),
    dT((TH - TL)/(NT -1.)),
    QhatTab(boost::extents[3][2*NE][NT])
