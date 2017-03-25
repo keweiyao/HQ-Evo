@@ -64,7 +64,7 @@ unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 std::default_random_engine generator(seed);
 std::normal_distribution<double> distribution(0.0, 1.0);
         
-int Langevin_pre(double E, double M, double temp, double drag, double kpara, double kperp, double deltat_lrf, std::vector<double> &pre_result)
+int Langevin_pre(double E, double M, double temp, double drag, double kperp, double kpara, double deltat_lrf, std::vector<double> &pre_result)
 {
         double p_length = std::sqrt(E*E - M*M);
 
@@ -102,7 +102,7 @@ int Langevin_pre(double E, double M, double temp, double drag, double kpara, dou
 // for the two step post-point scheme, between step 1 (pre) and step 2(post), there are a few steps missing 
 // the pre-step1 returns new_p, with new_p, we can update kpara and kperp 
 
-int Langevin_post(double E, double M, double temp, double drag, double kpara, double kperp, double deltat_lrf, std::vector<double> const& pre_result, std::vector<double> & post_result)
+int Langevin_post(double E, double M, double temp, double drag, double kperp, double kpara, double deltat_lrf, std::vector<double> const& pre_result, std::vector<double> & post_result)
 {
         // use the pre-point stored rho
 //        std::cout << "Langevin_post: " << pre_result[0] << " " << pre_result[1] << " " << pre_result[2] << " " << pre_result[3] <<" " << pre_result[4] << " " << pre_result[5] << " " << pre_result[6] << std::endl;
@@ -116,16 +116,15 @@ int Langevin_post(double E, double M, double temp, double drag, double kpara, do
         xi[0] = std::sqrt(kperp/deltat_lrf) * rho[0];
         xi[1] = std::sqrt(kperp/deltat_lrf) * rho[1];
         xi[2] = std::sqrt(kpara/deltat_lrf) * rho[2];
-int update_by_Langevin_test(particle& HQ, Qhat_2to2* qhatQq2Qq, Qhat_2to2* qhatQg2Qg, double temp, double deltat, bool EinR);
 
-	post_result.resize(4);
+    	post_result.resize(4);
         post_result[1] = xi[0] * deltat_lrf;
         post_result[2] = xi[1] * deltat_lrf;
         post_result[3] = p_length + (-drag * p_length + xi[2]) * deltat_lrf;
         post_result[0] = std::sqrt(M*M + post_result[1]*post_result[1] + post_result[2]*post_result[2] + post_result[3]*post_result[3]);
 
 //	std::cout << "Langevin_post: " << post_result[0] << " " << post_result[1] << " " << post_result[2] << " " << post_result[3] << std::endl;
-	return 0;
+        return 0;
 }
 
 
