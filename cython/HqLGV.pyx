@@ -28,8 +28,8 @@ cdef extern from "../src/qhat.h":
 
 #------------- Import c++ function for Langevin evolution
 cdef extern from "../src/Langevin.h":
-	cdef int Langevin_pre(double E1, double mass, double temp, double drag, double kpara, double kperp, double delta_lrf, vector[double] & pre_result)
-	cdef int Langevin_post(double E1, double mass, double temp, double drag, double kpara, double kperp, double delta_lrf, vector[double] & pre_result, vector[double] & post_result)
+	cdef void Langevin_pre(double p_length, double mass, double temp, double drag, double kpara, double kperp, double delta_lrf, vector[double] & pre_result)
+	cdef void Langevin_post(double p_length, double mass, double temp, double drag, double kpara, double kperp, double delta_lrf, vector[double] & pre_result, vector[double] & post_result)
 
 
 
@@ -84,9 +84,8 @@ cdef class HqLGV:
 		if self.EinR:
 			drag = kperp / (2.*temp*E1);
 
-		Langevin_pre(E1, self.mass, temp, drag, kperp, kpara, self.deltat_lrf, self.pre_result)
+		Langevin_pre(p_length, self.mass, temp, drag, kperp, kpara, self.deltat_lrf, self.pre_result)
 		cdef double new_energy = self.pre_result[0]
-
 
 		arg[0] = new_energy
 		arg[2] = 1
@@ -100,6 +99,6 @@ cdef class HqLGV:
 		kperp = (kperp_Qq + kperp_Qg) * GeV_to_Invfm
 		kpara = (kpara_Qq + kpara_Qg) * GeV_to_Invfm
 
-		Langevin_post(E1, self.mass, temp, drag, kperp, kpara, self.deltat_lrf, self.pre_result, self.post_result)
-		return 1 
+		Langevin_post(p_length, self.mass, temp, drag, kperp, kpara, self.deltat_lrf, self.pre_result, self.post_result)
+		
 
