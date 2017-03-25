@@ -11,20 +11,20 @@ cdef double GeV_to_Invfm = 5.068
 
 #------------------Import C++ fucntions and class for Xsection and rates------------------
 cdef extern from "../src/matrix_elements.h":
-	cdef double dqhat_Qq2Qq_dPS(double* PS, size_t ndims, void* params)
-	cdef double dqhat_Qg2Qg_dPS(double* PS, size_t ndims, void* params)
+    cdef double dqhat_Qq2Qq_dPS(double* PS, size_t ndims, void* params)
+    cdef double dqhat_Qg2Qg_dPS(double* PS, size_t ndims, void* params)
 
 cdef extern from "../src/qhat_Xsection.h":
-	cdef cppclass QhatXsection_2to2:
-		QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void *), double M1_, string name_, bool refresh)
-		double calculate(double *args)
-		double interpX(double *args)
+    cdef cppclass QhatXsection_2to2:
+        QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void *), double M1_, string name_, bool refresh)
+        double calculate(double *args)
+        double interpX(double *args)
 
 cdef extern from "../src/qhat.h":
-	cdef cppclass Qhat_2to2:
-		Qhat_2to2(QhatXsection_2to2 *Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
-		double calculate(double *args)
-		double interpQ(double *args)
+    cdef cppclass Qhat_2to2:
+        Qhat_2to2(QhatXsection_2to2 *Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
+        double calculate(double *args)
+        double interpQ(double *args)
 
 #------------- Import c++ function for Langevin evolution
 cdef extern from "../src/Langevin.h":
@@ -100,5 +100,3 @@ cdef class HqLGV:
 		kpara = (kpara_Qq + kpara_Qg) * GeV_to_Invfm
 
 		Langevin_post(p_length, self.mass, temp, drag, kperp, kpara, self.deltat_lrf, self.pre_result, self.post_result)
-		
-
