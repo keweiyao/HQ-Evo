@@ -32,7 +32,7 @@ void Langevin_pre(double p_length, double M, double temp, double drag, double kp
         new_p[1] = xi[0] * deltat_lrf;
         new_p[2] = xi[1] * deltat_lrf;
         new_p[3] = p_length + (-drag * p_length + xi[2]) *deltat_lrf;
-        new_p[0] = std::sqrt(M*M + new_p[0]*new_p[0] + new_p[1]*new_p[1] + new_p[2]*new_p[2]);
+        new_p[0] = std::sqrt(M*M + new_p[1]*new_p[1] + new_p[2]*new_p[2] + new_p[3]*new_p[3]);
 
         pre_result={new_p[0], new_p[1], new_p[2], new_p[3], rho_xi[0], rho_xi[1], rho_xi[2]};
 
