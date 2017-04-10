@@ -16,7 +16,7 @@
 #include "utility.h"
 #include "matrix_elements.h"
 #include "Xsection.h"
-
+#include "H5Cpp.h"
 
 double approx_X22(double * arg, double M){	
 	double s = arg[0], T = arg[1];
@@ -119,6 +119,7 @@ void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "T_low", TL);
 	hdf5_add_scalar_attr(dataset, "T_high", TH);
 	hdf5_add_scalar_attr(dataset, "N_T", NT);
+	file.close();
 }
 
 void Xsection_2to2::read_from_file(std::string filename, std::string datasetname){
@@ -146,6 +147,7 @@ void Xsection_2to2::read_from_file(std::string filename, std::string datasetname
 
 	H5::DataSpace data_space = dataset.getSpace();
 	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+	file.close();
 }
 
 void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
@@ -283,6 +285,7 @@ void Xsection_2to3::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "dt_low", dtL);
 	hdf5_add_scalar_attr(dataset, "dt_high", dtH);
 	hdf5_add_scalar_attr(dataset, "N_dt", Ndt);
+	file.close();
 }
 
 void Xsection_2to3::read_from_file(std::string filename, std::string datasetname){
@@ -315,6 +318,7 @@ void Xsection_2to3::read_from_file(std::string filename, std::string datasetname
 
 	H5::DataSpace data_space = dataset.getSpace();
 	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+	file.close();
 }
 
 void Xsection_2to3::tabulate(size_t T_start, size_t dnT){
@@ -512,6 +516,7 @@ void f_3to2::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "a2_low", a2L);
 	hdf5_add_scalar_attr(dataset, "a2_high", a2H);
 	hdf5_add_scalar_attr(dataset, "N_a2", Na2);
+	file.close();
 }
 
 void f_3to2::read_from_file(std::string filename, std::string datasetname){
@@ -550,6 +555,7 @@ void f_3to2::read_from_file(std::string filename, std::string datasetname){
 
 	H5::DataSpace data_space = dataset.getSpace();
 	dataset.read(Xtab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
+	file.close();
 }
 
 void f_3to2::tabulate(size_t T_start, size_t dnT){

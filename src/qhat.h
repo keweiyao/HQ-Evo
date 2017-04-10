@@ -10,7 +10,6 @@
 #include <gsl/gsl_integration.h>
 
 #include <boost/multi_array.hpp>
-#include <H5Cpp.h>
 
 
 #include "qhat_Xsection.h"
@@ -26,8 +25,8 @@ class Qhat
 {
 protected:
         virtual void tabulate_E1_T(size_t T_start, size_t dnT) = 0;
-        virtual void save_to_file(H5::H5File * file, std::string datasetname) = 0;
-        virtual void read_from_file(H5::H5File *file, std::string datasetname) = 0;
+        virtual void save_to_file(std::string filename, std::string datasetname) = 0;
+        virtual void read_from_file(std::string filename, std::string datasetname) = 0;
 
 public:
         Qhat(std::string name_);
@@ -47,8 +46,8 @@ private:
         double E1L, E1M, E1H, TL, TH, dE1, dE2, dT;
         boost::multi_array<double, 3> QhatTab;
         void tabulate_E1_T(size_t T_start, size_t dnT);
-        void save_to_file(H5::H5File * file, std::string datasetname);
-        void read_from_file(H5::H5File * file, std::string datasetname);
+        void save_to_file(std::string filename, std::string datasetname);
+        void read_from_file(std::string filename, std::string datasetname);
 
 public:
         Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh);

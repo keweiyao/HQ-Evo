@@ -10,7 +10,7 @@
 #include "utility.h"
 #include "qhat.h"
 #include "TLorentz.h"
-
+#include "H5Cpp.h"
 
 using std::placeholders::_1;
 using std::vector;
@@ -232,24 +232,22 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
 
                 for (std::thread& t: threads) t.join();
 
-                H5::H5File file(name_, H5F_ACC_TRUNC);
-                save_to_file(&file, "Qhat-tab");
-                file.close();
+                
+                save_to_file(name_, "Qhat-tab");
         }
         else
         {
                 std::cout << "loading existing table " << std::endl;
-                H5::H5File file(name_, H5F_ACC_RDONLY);
-                read_from_file(&file, "Qhat-tab");
-                file.close();
+                read_from_file(name_, "Qhat-tab");
         }
         std::cout << std::endl;
 }
 
 
 
-void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname)
+void Qhat_2to2::save_to_file(std::string filename, std::string datasetname)
 {
+		H5::H5File file(filename, H5F_ACC_TRUNC);
         const size_t rank=3;
         hsize_t dims[rank] = {3, 2*NE, NT};
         H5::DSetCreatPropList proplist{};
@@ -257,7 +255,7 @@ void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname)
 
         H5::DataSpace dataspace(rank, dims);
         auto datatype(H5::PredType::NATIVE_DOUBLE);
-        H5::DataSet dataset = file->createDataSet(datasetname, datatype, dataspace, proplist);
+        H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
         dataset.write(QhatTab.data(), datatype);
 
         hdf5_add_scalar_attr(dataset, "E1_low", E1L);
@@ -268,14 +266,16 @@ void Qhat_2to2::save_to_file(H5::H5File *file, std::string datasetname)
         hdf5_add_scalar_attr(dataset, "T_low", TL);
         hdf5_add_scalar_attr(dataset, "T_high", TH);
         hdf5_add_scalar_attr(dataset, "N_T", NT);
+		file.close();
 }
 
 
 
-void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname)
+void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
 {
+		H5::H5File file(filename, H5F_ACC_TRUNC);
         const size_t rank=3;
-        H5::DataSet dataset = file->openDataSet(datasetname);
+        H5::DataSet dataset = file.openDataSet(datasetname);
         hdf5_read_scalar_attr(dataset, "E1_low", E1L);
         hdf5_read_scalar_attr(dataset, "E1_high", E1H);
         hdf5_read_scalar_attr(dataset, "E1_mid", E1M);
@@ -299,9 +299,7 @@ void Qhat_2to2::read_from_file(H5::H5File * file, std::string datasetname)
 
         H5::DataSpace data_space = dataset.getSpace();
         dataset.read(QhatTab.data(), H5::PredType::NATIVE_DOUBLE, mem_space, data_space);
-
-        //std::cout << "read in QhatTab successfully :)" << std::endl;
-
+		file.close();
 }
 
 
