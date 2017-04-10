@@ -100,14 +100,14 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
 	const size_t rank = 2;
 
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	hsize_t dims[rank] = {Nsqrts*2, NT};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Xtab.data(), datatype);
 
 	// Attributes
@@ -125,8 +125,8 @@ void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
 void Xsection_2to2::read_from_file(std::string filename, std::string datasetname){
 	const size_t rank = 2;
 
-	H5::H5File file(filename, H5F_ACC_RDONLY);
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
 	hdf5_read_scalar_attr(dataset, "sqrts_mid", sqrtsM);
 	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
@@ -263,14 +263,14 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 void Xsection_2to3::save_to_file(std::string filename, std::string datasetname){
 	const size_t rank = 3;
 
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	hsize_t dims[rank] = {Nsqrts, NT, Ndt};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Xtab.data(), datatype);
 
 	// Attributes
@@ -291,8 +291,8 @@ void Xsection_2to3::save_to_file(std::string filename, std::string datasetname){
 void Xsection_2to3::read_from_file(std::string filename, std::string datasetname){
 	const size_t rank = 3;
 
-	H5::H5File file(filename, H5F_ACC_RDONLY);
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 
 	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
 	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
@@ -490,14 +490,14 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::stri
 void f_3to2::save_to_file(std::string filename, std::string datasetname){
 	const size_t rank = 4;
 
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	hsize_t dims[rank] = {Nsqrts, NT, Na1, Na2};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Xtab.data(), datatype);
 
 	// Attributes
@@ -522,8 +522,8 @@ void f_3to2::save_to_file(std::string filename, std::string datasetname){
 void f_3to2::read_from_file(std::string filename, std::string datasetname){
 	const size_t rank = 4;
 
-	H5::H5File file(filename, H5F_ACC_RDONLY);
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 
 	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
 	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);

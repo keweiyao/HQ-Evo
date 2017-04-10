@@ -197,7 +197,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 }
 
 void rates_2to2::save_to_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 
 	const size_t rank = 2;
 	hsize_t dims[rank] = {NE1, NT};
@@ -206,7 +206,7 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Rtab.data(), datatype);
 
 	// Attributes
@@ -222,10 +222,10 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_2to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);	
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);	
 	const size_t rank = 2;
 	
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
@@ -371,7 +371,7 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 }
 
 void rates_2to3::save_to_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	const size_t rank = 3;
 
 	hsize_t dims[rank] = {NE1, NT, Ndt};
@@ -380,7 +380,7 @@ void rates_2to3::save_to_file(std::string filename, std::string datasetname){
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Rtab.data(), datatype);
 
 	// Attributes
@@ -399,10 +399,10 @@ void rates_2to3::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_2to3::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	const size_t rank = 3;
 
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
@@ -555,7 +555,7 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 }
 
 void rates_3to2::save_to_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
 	const size_t rank = 3;
 
 	hsize_t dims[rank] = {NE1, NT, Ndt};
@@ -564,7 +564,7 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 	
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
-	H5::DataSet dataset = file.createDataSet(datasetname, datatype, dataspace, proplist);
+	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
 	dataset.write(Rtab.data(), datatype);
 
 	// Attributes
@@ -583,10 +583,10 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_3to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename, H5F_ACC_TRUNC);	
+	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);	
 	const size_t rank = 3;
 
-	H5::DataSet dataset = file.openDataSet(datasetname);
+	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);

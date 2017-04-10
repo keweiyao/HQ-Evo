@@ -46,7 +46,7 @@ template <typename T>
 void hdf5_add_scalar_attr(
   const H5::DataSet& dataset, const std::string& name, const T& value) {
   const auto& datatype = type<T>();
-  auto attr = dataset.createAttribute(name, datatype, H5::DataSpace{});
+  auto attr = dataset.createAttribute(name.c_str(), datatype, H5::DataSpace{});
   attr.write(datatype, &value);
 }
 
@@ -54,7 +54,7 @@ template <typename T>
 void hdf5_read_scalar_attr(
   const H5::DataSet& dataset, const std::string& name, T& value) {
   const auto& datatype = type<T>();
-  auto attr = dataset.openAttribute(name);
+  auto attr = dataset.openAttribute(name.c_str());
   attr.read(datatype, &value);
 }
 #endif
