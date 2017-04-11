@@ -114,30 +114,30 @@ cdef class HqEvo(object):
 		arg[0] = E1; arg[1] = T;
 		if self.elastic:
 			arg[2] = 0.
-			psum += self.r_Qq_Qq.interpR(arg)*Kfactor
+			psum += self.r_Qq_Qq.interpR(arg)
 			p[i] = psum; i += 1
-			psum += self.r_Qg_Qg.interpR(arg)*Kfactor
+			psum += self.r_Qg_Qg.interpR(arg)
 			p[i] = psum; i += 1
 			Relastic = psum
 		if self.inelastic:
 			arg[2] = max(dt23, dtmin)
-			R1 = self.r_Qq_Qqg.interpR(arg)*Kfactor
-			R2 = self.r_Qg_Qgg.interpR(arg)*Kfactor
+			R1 = self.r_Qq_Qqg.interpR(arg)
+			R2 = self.r_Qg_Qgg.interpR(arg)
 			psum += R1
 			p[i] = psum; i += 1
 			psum += R2
 			p[i] = psum; i += 1
 		if self.detailed_balance:
 			arg[2] = max(dt32, dtmin)
-			R1 = self.r_Qqg_Qq.interpR(arg)*Kfactor
-			R2 = self.r_Qgg_Qg.interpR(arg)*Kfactor
+			R1 = self.r_Qqg_Qq.interpR(arg)
+			R2 = self.r_Qgg_Qg.interpR(arg)
 			psum += R1
 			p[i] = psum; i += 1
 			psum += R2
 			p[i] = psum; i += 1
 		free(arg)
-		dt = Pmax/psum
-		r = (<double>rand())/dt/RAND_MAX
+		dt = Pmax/psum/self.Kfactor
+		r = (<double>rand())/dt/self.Kfactor/RAND_MAX
 		if r >= p[self.Nchannels-1]:
 			return -1, dt
 		for i in range(self.Nchannels):
