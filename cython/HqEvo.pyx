@@ -67,7 +67,7 @@ cdef class HqEvo(object):
 	cdef rates_3to2 * r_Qqg_Qq
 	cdef rates_3to2 * r_Qgg_Qg
 	cdef size_t Nchannels, Nf
-	cdef double mass
+	cdef double mass, Kfactor
 	cdef public vector[vector[double]] IS, FS
 	
 	def __cinit__(self, options, table_folder='./tables', refresh_table=False):
@@ -77,6 +77,7 @@ cdef class HqEvo(object):
 		self.Nchannels = 0
 		self.mass = options['mass']
 		self.Nf = options['Nf']
+		self.Kfactor = options['Kfactor']
 		
 		if not os.path.exists(table_folder):
 			os.makedirs(table_folder)
@@ -113,23 +114,23 @@ cdef class HqEvo(object):
 		arg[0] = E1; arg[1] = T;
 		if self.elastic:
 			arg[2] = 0.
-			psum += self.r_Qq_Qq.interpR(arg)
+			psum += self.r_Qq_Qq.interpR(arg)*Kfactor
 			p[i] = psum; i += 1
-			psum += self.r_Qg_Qg.interpR(arg)
+			psum += self.r_Qg_Qg.interpR(arg)*Kfactor
 			p[i] = psum; i += 1
 			Relastic = psum
 		if self.inelastic:
 			arg[2] = max(dt23, dtmin)
-			R1 = self.r_Qq_Qqg.interpR(arg)
-			R2 = self.r_Qg_Qgg.interpR(arg)
+			R1 = self.r_Qq_Qqg.interpR(arg)*Kfactor
+			R2 = self.r_Qg_Qgg.interpR(arg)*Kfactor
 			psum += R1
 			p[i] = psum; i += 1
 			psum += R2
 			p[i] = psum; i += 1
 		if self.detailed_balance:
 			arg[2] = max(dt32, dtmin)
-			R1 = self.r_Qqg_Qq.interpR(arg)
-			R2 = self.r_Qgg_Qg.interpR(arg)
+			R1 = self.r_Qqg_Qq.interpR(arg)*Kfactor
+			R2 = self.r_Qgg_Qg.interpR(arg)*Kfactor
 			psum += R1
 			p[i] = psum; i += 1
 			psum += R2
