@@ -2,6 +2,7 @@ from setuptools import setup, Extension
 from Cython.Build import cythonize
 from glob import glob
 import os
+
 # Remove the "-Wstrict-prototypes" compiler option, which isn't valid for C++.
 import distutils.sysconfig
 cfg_vars = distutils.sysconfig.get_config_vars()
