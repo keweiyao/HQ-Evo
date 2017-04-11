@@ -49,7 +49,7 @@ QhatXsection_2to2::QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void*), d
         {
                 std::cout << "Populating table with new calculation" << std::endl;
                 std::vector<std::thread> threads;
-                size_t Ncores = std::thread::hardware_concurrency();
+                size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
                 size_t call_per_core = std::ceil(NT*1./Ncores);
                 size_t call_for_last_core = NT - call_per_core * (Ncores- 1);
                 for (size_t i=0; i < Ncores; i++)

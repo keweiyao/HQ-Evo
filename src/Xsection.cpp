@@ -78,7 +78,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	
@@ -241,7 +241,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	
@@ -468,7 +468,7 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::stri
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	

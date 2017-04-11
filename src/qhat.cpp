@@ -217,7 +217,7 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
         {
                 std::cout << "Populating table with new calculation" << std::endl;
                 std::vector<std::thread> threads;
-                size_t Ncores = std::thread::hardware_concurrency();
+                size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
                     
                 size_t call_per_core = int(NT*1./Ncores);
                 size_t call_for_last_core = NT - call_per_core*(Ncores -1);

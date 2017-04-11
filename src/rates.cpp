@@ -176,7 +176,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	
@@ -351,7 +351,7 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	
@@ -534,7 +534,7 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
-		size_t Ncores = std::thread::hardware_concurrency();
+		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		for (size_t i=0; i< Ncores ; i++){	
