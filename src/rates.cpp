@@ -164,6 +164,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
 		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "threads " << std::thread::hardware_concurrency() << std::endl; 
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = std::ceil(NT*1./Ncores);

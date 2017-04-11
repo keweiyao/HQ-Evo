@@ -20,6 +20,7 @@ fileLBT = [	'cython/HqEvo.pyx',
 			'src/rates.cpp']
 fileLGV = [	'cython/HqLGV.pyx', 
 			'src/Langevin.cpp',
+			'src/matrix_elements.cpp',
 			'src/qhat_matrix_elements.cpp', 
 			'src/utility.cpp', 
 			'src/qhat_Xsection.cpp',
