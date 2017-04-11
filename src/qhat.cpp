@@ -273,7 +273,7 @@ void Qhat_2to2::save_to_file(std::string filename, std::string datasetname)
 
 void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
 {
-		H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
+		H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
         const size_t rank=3;
         H5::DataSet dataset = file.openDataSet(datasetname.c_str());
         hdf5_read_scalar_attr(dataset, "E1_low", E1L);

@@ -20,17 +20,6 @@ double inline f_0(double x, double xi){
 }
 
 //=============function wrapper for GSL integration R22======================
-double viscos_fn(double e, int n){
-	if (n == 0)	return 1.;
-	else return e*e;
-}
-
-double viscos_gn(double costheta, int n){
-	if (n == 0)	return 1.;
-	if (n == 1) return -0.5;
-	else return 1.5*costheta*costheta;
-}
-
 double approx_R22(double * arg){
 	//double E1 = arg[0];
 	double T = arg[1];
@@ -222,7 +211,7 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_2to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);	
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);	
 	const size_t rank = 2;
 	
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
@@ -399,7 +388,7 @@ void rates_2to3::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_2to3::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
 	const size_t rank = 3;
 
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
@@ -583,7 +572,7 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_3to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);	
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);	
 	const size_t rank = 3;
 
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
