@@ -50,7 +50,7 @@ cdef extern from "../src/rates.h":
 
 
 #-------------Heavy quark evolution class------------------------
-cdef double dtmin = 0.1
+cdef double dtmin = 0.11
 
 cdef class HqEvo(object):
 	cdef bool elastic, inelastic, detailed_balance
@@ -136,15 +136,15 @@ cdef class HqEvo(object):
 			psum += R2
 			p[i] = psum; i += 1
 		free(arg)
-		dt = Pmax/psum/self.Kfactor
-		r = (<double>rand())/dt/self.Kfactor/RAND_MAX
+		dt = Pmax/psum
+		r = (<double>rand())/dt/RAND_MAX
 		if r >= p[self.Nchannels-1]:
 			return -1, dt
 		for i in range(self.Nchannels):
 			if r < p[i]:
 				channel_index = i
 				break
-		return channel_index, dt
+		return channel_index, dt/self.Kfactor
 
 	cpdef sample_initial(self, int channel, double E1, double T, double dt23, double dt32):
 		cdef double * arg = <double*>malloc(3*sizeof(double))

@@ -4,6 +4,8 @@
 #include "utility.h"
 #include "matrix_elements.h"
 
+#include <boost/math/tools/roots.hpp>
+
 
 //=============running coupling=================================================
 double alpha_s(double Q2){
@@ -15,6 +17,38 @@ double alpha_s(double Q2){
         return alpha0 * ( .5 - std::atan( std::log(Q2/Lambda2)/M_PI ) / M_PI );
 }
 
+self_consistent_mD2::self_consistent_mD2(const double _TL, const double _TH, const size_t _NT)
+:	TL(_TL), TH(_TH), dT((_TH-_TL)/(_NT-1.)), NT(_NT), mD2(new double[_NT])
+{
+	for (size_t i=0; i<NT; i++){
+		double T = TL+dT*i;
+		size_t maxiter=100;
+		boost::math::tools::eps_tolerance<double> tol{
+   		 (std::numeric_limits<double>::digits * 3) / 4};
+		try{
+			auto result = boost::math::tools::toms748_solve(
+	 			[&T](double x) {return pf_g*alpha_s(-x)*T*T - x;},
+	  			0.01, 20., tol, maxiter);
+	 		mD2[i] = .5*(result.first + result.second);
+			std::cout<<mD2[i]<<std::endl;
+		}
+		catch (const std::domain_error&) {
+			throw std::domain_error{
+	  		"unable to calculate mD2"};
+		}
+	}
+}
+
+double self_consistent_mD2::get_mD2(double T){
+	if (T<TL) T=TL;
+	if (T>=TH-dT) T=TH-dT;
+	double x = (T-TL)/dT;
+	size_t index = std::floor(x);
+	double r = x-index;
+	return (1.-r)*mD2[index] + r*mD2[index+1];
+}
+
+self_consistent_mD2 t_channel_mD2(0.1, 1.0, 100);
 
 //=============Soft regulator==================================================
 double f_IR(double x){
@@ -32,7 +66,7 @@ double M2_Qq2Qq(double t, void * params){
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*At*pf_g*T2;
+	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);//0.2*At*pf_g*T2;
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
@@ -57,7 +91,8 @@ double M2_Qg2Qg(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*At*pf_g*T2, mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
+	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]), //0.2*At*pf_g*T2, 
+		   mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
 	double result = 0.0;
 	// t*t
 	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
@@ -85,7 +120,7 @@ double M2_Qg2Qg_only_t(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*At*pf_g*T2;
+	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);//0.2*At*pf_g*T2;
 	double result = c16pi2*2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;

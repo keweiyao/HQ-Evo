@@ -5,6 +5,17 @@
 //======running coupling=======================================================
 double alpha_s(double Q2);
 
+class self_consistent_mD2{
+private:
+	const double TL, TH, dT;
+	const size_t NT;
+	double * mD2;
+public:	
+	self_consistent_mD2(const double TL, const double TH, const size_t NT);
+	~self_consistent_mD2(){delete[] mD2;};
+	double get_mD2(double T);
+};
+
 //=============Baisc function for Q+q --> Q+q==================================
 double M2_Qq2Qq(double t, void * params);
 double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params);

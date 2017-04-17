@@ -20,9 +20,11 @@ const double pf_g = 4.*M_PI/3.*(Nc + nf/2.); // prefractor for gluon self energy
 
 const double pf_q = M_PI/2.*(Nc*Nc - 1)/2./Nc; // prefractor for quark self energy^2 
 const double alpha0 = 4.*M_PI/(11. - 2./3.*nf); // alpha_s(Q2 = e*Lambda2)
-const double Lambda = 0.15; // [GeV] Lambda QCD
+const double Lambda = 0.2; // [GeV] Lambda QCD
 const double Lambda2 = Lambda*Lambda; // [GeV^2] Lambda QCD squared
-const double Q2cut_l = -Lambda2*exp(alpha0), Q2cut_h = 0.; // [GeV^2] ranges within which alphas > 1 and will be cut
+const double Q2cut_l = -Lambda2*std::exp(alpha0),
+			 Q2cut_h = Lambda2*std::exp(M_PI*std::tan(M_PI*(0.5-1./alpha0)));
+// [GeV^2] ranges within which alphas > 1 and will be cut
 
 
 double interpolate2d(	boost::multi_array<double, 2> * A, 
