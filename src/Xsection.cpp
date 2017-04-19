@@ -610,7 +610,7 @@ double f_3to2::interpX(double * arg){
 	double frac = (k + kz)/(E1 + p1);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double x2M2 = frac*frac*M2;
-	double tauk = k/(kt2 + x2M2);
+	double tauk = (1.-frac)*k/(kt2 + x2M2);
 	double u = dt/tauk;
 	double LPM = u*u/(1. + u*u);
 	double alpha_rad = alpha_s(kt2);
@@ -716,8 +716,8 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	// sample costheta_24, phi_24
 	double * guessl = new double[2];
 	double * guessh = new double[2];
-	guessl[0] = -0.1; guessl[1] = M_PI*0.5;
-	guessh[0] = 0.1; guessh[1] = M_PI*1.5;
+	guessl[0] = -0.1; guessl[1] = M_PI*0.9;
+	guessh[0] = 0.1; guessh[1] = M_PI*1.1;
 	std::vector<double> result = sampler.sample(dXdPS, 2, params, guessl, guessh);
 	double costheta_24 = result[0], phi_24 = result[1];
 	double sintheta_24 = std::sqrt(1. - costheta_24*costheta_24);

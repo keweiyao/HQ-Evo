@@ -50,10 +50,10 @@ cdef extern from "../src/rates.h":
 
 
 #-------------Heavy quark evolution class------------------------
-cdef double dtmin = 0.11
+cdef double dtmin = 0.1
 
 cdef class HqEvo(object):
-	cdef bool elastic, inelastic, detailed_balance
+	cdef bool elastic, inelastic, detailed_balance #2->2, 2->3, 3->2
 	cdef Xsection_2to2 * x_Qq_Qq
 	cdef Xsection_2to2 * x_Qg_Qg
 	cdef Xsection_2to3 * x_Qq_Qqg
@@ -107,11 +107,18 @@ cdef class HqEvo(object):
 
 	cpdef (double, double) sample_channel(self, double E1, double T, double dt23, double dt32):	
 		cdef double r, psum = 0.0, dt, Pmax = 0.1, R1, R2, Relastic
-		cdef size_t i=0
+		cdef int i=0
 		cdef int channel_index = -1
 		cdef double p[6]
 		cdef double * arg = <double*>malloc(3*sizeof(double))
 		arg[0] = E1; arg[1] = T;
+		# channel < 0 : freestream
+		# 0:	Qq->Qq
+		# 1: 	Qg->Qg
+		# 2:	Qq->Qqg
+		# 3: 	Qg->Qgg
+		# 4:	Qqg->Qq
+		# 5: 	Qgg->Qg
 		if self.elastic:
 			arg[2] = 0.
 			psum += self.r_Qq_Qq.interpR(arg)
@@ -133,7 +140,7 @@ cdef class HqEvo(object):
 			R2 = self.r_Qgg_Qg.interpR(arg)
 			psum += R1
 			p[i] = psum; i += 1
-			psum += R2
+			psum += R2 
 			p[i] = psum; i += 1
 		free(arg)
 		dt = Pmax/psum
@@ -166,7 +173,7 @@ cdef class HqEvo(object):
 			arg[2] = max(dt32, dtmin)
 			self.r_Qgg_Qg.sample_initial(arg,  self.IS)
 		else:
-			channel = channel
+			pass
 		free(arg)
 
 	cpdef sample_final(self, int channel, double s, double T, double dt23, double a1, double a2):
@@ -189,7 +196,7 @@ cdef class HqEvo(object):
 			arg[2] = a1; arg[3] = a2
 			self.x_Qgg_Qg.sample_dXdPS(arg,  self.FS)
 		else:
-			channel = channel
+			pass
 		free(arg)
 
 		

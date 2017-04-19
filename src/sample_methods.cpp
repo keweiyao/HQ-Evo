@@ -116,7 +116,7 @@ void AiMS::update(void){
 std::vector<double> AiMS::sample(double (*f_) (double*, size_t, void*), size_t n_dims_, void * params_, double * guessl_, double * guessh_){
 	walkers.clear();
 	f = f_; n_dims = n_dims_; params = params_; guessl = guessl_; guessh = guessh_;
-	Nwalker = n_dims*2;
+	Nwalker = n_dims*4;
 	walkers.resize(Nwalker);
 	buff_walkers.resize(Nwalker);
 	for (auto&& w : walkers) w.posi = new double[n_dims];

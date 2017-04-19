@@ -639,15 +639,26 @@ double rates_3to2::interpR(double * arg){
 //-------------3->2 wrapper function--------------------------
 double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	integrate_params_2 * params = static_cast<integrate_params_2 *>(params_);
-	double x2 = x_[0], costheta2 = x_[1], xk = x_[2], costhetak = x_[3], phik = x_[4];
-	if ( costheta2 <= -1. || costheta2 >= 1. || costhetak <= -1. || costhetak >= 1. || phik <= 0. || phik >= 2.*M_PI || x2 < 0.01 || xk < 0.01 || x2 >= 7. || xk >= 7.) return 0.;
+	double x2 = x_[0], costheta2 = x_[1], 
+		   xk = x_[2], costhetak = x_[3], 
+		   phik = x_[4];
+	if (costheta2 <= -1. || costheta2 >= 1.) return 0.;
+	if (costhetak <= -1. || costhetak >= 1. ) return 0.;
+	if (phik <= 0. || phik >= 2.*M_PI) return 0.;
+	if (x2 <= 0.0 || x2 >= 1.) return 0.;
+	if (xk <= 0.0 || xk >= 1.) return 0.;
+
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
 
-	double E1 = params->params[0], Temp = params->params[1], dt = params->params[2], 
-		   M = params->params[3], p1 = params->params[4],
-		   eta_2 = params->params[5], eta_k = params->params[6];
+	double E1 = params->params[0], 
+		   Temp = params->params[1],
+		   dt = params->params[2], 
+		   M = params->params[3], 
+		   p1 = params->params[4],
+		   eta_2 = params->params[5], 
+		   eta_k = params->params[6];
 	double E2 = x2*Temp, k = xk*Temp;
 	
 	double kx = k*sinthetak*cosphik, ky = k*sinthetak*sinphik, kz = k*costhetak;
@@ -669,7 +680,7 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	// Quantity in CoM frame of p1 and p2
 	double * arg = new double[5];
 	arg[0] = s; arg[1] = Temp; arg[2] =  w2 + wk; arg[3] = (w2 - wk)/(1. - w2 - wk); arg[4] = gamma*(1. - vz*p1/E1)*dt;
-	double result = x2*f_0(x2, eta_2)*params->f(arg)*xk*f_0(xk, eta_k);
+	double result = x2*f_0(x2, eta_2)*xk*f_0(xk, eta_k)*params->f(arg);
 	delete [] arg;
 	return result;
 }
@@ -723,17 +734,19 @@ void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double p1 = std::sqrt(E1*E1-M*M);
 	integrate_params_2 * params = new integrate_params_2;
 	params->f = std::bind(&f_3to2::interpX, Xprocess, _1);
-	params->params = new double[5];
+	params->params = new double[7];
 	params->params[0] = E1; 
 	params->params[1] = Temp; 
 	params->params[2] = dt; 
 	params->params[3] = M;
 	params->params[4] = p1;
+	params->params[5] = eta_2;
+	params->params[6] = eta_k;
 	size_t n_dims = 5;
 	double * guessl = new double[n_dims];
 	double * guessh = new double[n_dims];
-	guessl[0] = 0.6; guessl[1] = -0.1; guessl[2] = 0.6; guessl[3] = -0.1; guessl[4] = 0.9*M_PI;
-	guessh[0] = 0.8; guessh[1] = 0.1; guessh[2] = 0.8; guessh[3] = 0.1;; guessl[4] = 1.1*M_PI;
+	guessl[0] = 0.9; guessl[1] = -0.1; guessl[2] = 0.9; guessl[3] = -0.1; guessl[4] = 0.9*M_PI;
+	guessh[0] = 1.1; guessh[1] = 0.1; guessh[2] = 1.1; guessh[3] = 0.1; guessh[4] = 1.1*M_PI;
 	std::vector<double> vec5 = sampler.sample(dRdPS_wrapper, n_dims, params, guessl, guessh);
 	double x2 = vec5[0], 
 		   costheta2 = vec5[1], 
@@ -742,7 +755,8 @@ void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> >
 		   phik = vec5[4];	
 	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
 	double E2 = x2*Temp, k = xk*Temp, 
-		   sintheta2 = std::sqrt(1. - costheta2*costheta2), sinthetak = std::sqrt(1. - costhetak*costhetak);
+		   sintheta2 = std::sqrt(1. - costheta2*costheta2), 
+		   sinthetak = std::sqrt(1. - costhetak*costhetak);
 	IS.resize(3); IS[0].resize(4); IS[1].resize(4); IS[2].resize(4); // HQ, light q or g, absorbed g
 	IS[0][0] = E1; IS[0][1] = 0.; IS[0][2] = 0.; IS[0][3] = p1; 
 	IS[1][0] = E2; IS[1][1] = E2*sintheta2*std::cos(phi2); IS[1][2] = E2*sintheta2*std::sin(phi2); IS[1][3] = E2*costheta2; 
