@@ -26,11 +26,11 @@ double approx_R22(double * arg){
 	return T;
 }
 
-double approx_R23(double * arg){
-	//double E1 = arg[0];
+double approx_R23(double * arg, double M){
+	double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
-	return dt*dt*std::pow(T, 3);
+	return T*std::pow(T*dt, 2)/sqrt(E1*dt)/(1.+std::log(E1/M));
 }
 
 double approx_R32(double * arg){
@@ -94,7 +94,7 @@ double fy_wrapper23(double y, void * params_){
 	double Temp = params->params[1];
 	double M2 = params->params[2];
 	double v1 = params->params[3];
-	double dt = params->params[4];// dt in the Cell Frame
+	double dt = params->params[4];// dts in the Cell Frame
 	double E2 = params->params[5];// E2 in the Cell Frame
 	double E1 = params->params[6];// E1 in the Cell Frame
 	double s = M2 + coeff*(1.-v1*y);// s variable
@@ -428,7 +428,7 @@ void rates_2to3::tabulate_E1_T(size_t T_start, size_t dnT){
 			arg[1] = TL + j*dT;
 			for (size_t k=0; k<Ndt; k++){
 				arg[2] = dtL + k*ddt;
-				Rtab[i][j][k] = calculate(arg)/approx_R23(arg);
+				Rtab[i][j][k] = calculate(arg)/approx_R23(arg, M);
 			}
 		}
 	}
@@ -448,7 +448,7 @@ double rates_2to3::interpR(double * arg){
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xdt = (dt-dtL)/ddt;	idt = floor(xdt); rdt = xdt - idt;
 	xE1 = (E1 - E1L)/dE1; iE1 = floor(xE1); rE1 = xE1 - iE1;
-	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt)*approx_R23(arg);;
+	return interpolate3d(&Rtab, iE1, iT, idt, rE1, rT, rdt)*approx_R23(arg, M);
 }
 
 double rates_2to3::calculate(double * arg)

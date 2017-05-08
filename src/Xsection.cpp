@@ -26,7 +26,7 @@ double approx_X22(double * arg, double M){
 double approx_X23(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return std::pow(dt/Temp, 2);
+	return dt*dt/std::sqrt(dt*Temp);
 }
 
 double approx_X32(double * arg, double M){
@@ -611,7 +611,12 @@ double f_3to2::interpX(double * arg){
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double x2M2 = frac*frac*M2;
 	double tauk = (1.-frac)*k/(kt2 + x2M2);
-	double u = dt/tauk;
+	
+	// here u is the ratio of the mean-free-path over the formation length
+	// mean-free-path \sim mean-free-time*v_HQ, 
+	// v_HQ = p1/E1
+	// formation length = tau_k*v_k = tau_k
+	double u = dt*p1/E1/tauk;
 	double LPM = u*u/(1. + u*u);
 	double alpha_rad = alpha_s(kt2);
 	

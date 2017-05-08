@@ -166,7 +166,12 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = (1.-x)*k/(kt2+x*x*M2);
 
-	double u = dt/tauk;
+
+	// here u is the ratio of the mean-free-path over the formation length
+	// mean-free-path \sim mean-free-time*v_HQ, 
+	// v_HQ = p/E = (s - M^2)/(s + M^2)
+	// formation length = tau_k*v_k = tau_k
+	double u = dt*(s-M2)/(s+M2)/tauk;
 	double LPM = u*u/(1.+u*u);
 
 	// q-perp-vec
@@ -224,7 +229,11 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double tauk = (1.-x)*k/(kt2+x*x*M2);
 
-	double u = dt/tauk;
+	// here u is the ratio of the mean-free-path over the formation length
+	// mean-free-path \sim mean-free-time*v_HQ, 
+	// v_HQ = p/E = (s - M^2)/(s + M^2)
+	// formation length = tau_k*v_k = tau_k
+	double u = dt*(s-M2)/(s+M2)/tauk;
 	double LPM = u*u/(1.+u*u);
 
 	// q-perp-vec
