@@ -46,7 +46,7 @@ double approx_X32(double * arg, double M){
 	double frac = (k + kz)/(E1 + p1);
 	double x2M2 = frac*frac*M2;
 	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2 + Lambda2;
+	double D1 = kt2 + x2M2 + Gluon_Lambda2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/Temp/Temp/x2*prop2;
@@ -610,7 +610,7 @@ double f_3to2::interpX(double * arg){
 	double frac = (k + kz)/(E1 + p1);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double x2M2 = frac*frac*M2;
-	double tauk = (1.-frac)*k/(kt2 + x2M2);
+	double tauk = 2.*k/(kt2 + x2M2);
 	
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ, 

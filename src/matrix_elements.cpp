@@ -66,7 +66,8 @@ double M2_Qq2Qq(double t, void * params){
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);//0.2*At*pf_g*T2;
+	//double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);
+	double mt2 = 0.2*At*pf_g*T2;
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
@@ -91,7 +92,8 @@ double M2_Qg2Qg(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]), //0.2*At*pf_g*T2, 
+	double //mt2 = 0.2*t_channel_mD2.get_mD2(p[1]), 
+		   mt2 = 0.2*At*pf_g*T2, 
 		   mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
 	double result = 0.0;
 	// t*t
@@ -120,7 +122,8 @@ double M2_Qg2Qg_only_t(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);//0.2*At*pf_g*T2;
+	//double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);
+	double mt2 = 0.2*At*pf_g*T2;
 	double result = c16pi2*2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
@@ -164,7 +167,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = (1.-x)*k/(kt2+x*x*M2);
+	double tauk = 2.*k/(kt2+x*x*M2);
 
 
 	// here u is the ratio of the mean-free-path over the formation length
@@ -188,7 +191,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 
 	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2 + Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2 + Gluon_Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
 				*LPM
 				//*sudakov	
@@ -227,7 +230,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
-	double tauk = (1.-x)*k/(kt2+x*x*M2);
+	double tauk = 2.*k/(kt2+x*x*M2);
 
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ, 
@@ -250,7 +253,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 
 	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2 + Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2+Gluon_Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)
 				*LPM
 				//*sudakov
@@ -289,7 +292,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2 + Lambda2;
+	double D1 = kt2 + x2M2 + Gluon_Lambda2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
@@ -323,7 +326,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2 + Lambda2;
+	double D1 = kt2 + x2M2+Gluon_Lambda2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
