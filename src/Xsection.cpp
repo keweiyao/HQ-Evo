@@ -43,10 +43,10 @@ double approx_X32(double * arg, double M){
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
+	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2t = alpha_s(kt2)*pf_g*Temp*Temp;
-	double D1 = kt2 + x2M2 + Gluon_Lambda2;
+	double D1 = kt2 + x2M2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/Temp/Temp/x2*prop2;
@@ -607,7 +607,7 @@ double f_3to2::interpX(double * arg){
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
+	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double x2M2 = frac*frac*M2;
 	double tauk = 2.*k/(kt2 + x2M2);
@@ -663,7 +663,7 @@ double f_3to2::calculate(double * arg){
 	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
+	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2 = alpha_s(kt2) *pf_g*Temp*Temp;
 	
@@ -712,7 +712,7 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = (k + kz)/(E1 + p1);
+	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2 = alpha_s(kt2) *pf_g*Temp*Temp;
 	double * params = new double[9];

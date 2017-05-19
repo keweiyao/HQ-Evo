@@ -166,7 +166,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	
-	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
 	double tauk = 2.*k/(kt2+x*x*M2);
 
 
@@ -191,7 +191,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 
 	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2 + Gluon_Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
 				*LPM
 				//*sudakov	
@@ -229,7 +229,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   ky = k*sin_star*sin_4k,
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
 	double tauk = 2.*k/(kt2+x*x*M2);
 
 	// here u is the ratio of the mean-free-path over the formation length
@@ -253,7 +253,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 
 	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2+Gluon_Lambda2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)
 				*LPM
 				//*sudakov
@@ -292,7 +292,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2 + Gluon_Lambda2;
+	double D1 = kt2 + x2M2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
@@ -326,7 +326,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2+Gluon_Lambda2;
+	double D1 = kt2 + x2M2;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
