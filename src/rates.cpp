@@ -37,7 +37,7 @@ double approx_R32(double * arg){
 	double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
-	return dt*dt*std::pow(T, 4)/E1;
+	return dt*dt*std::pow(T, 4);
 }
 
 double fy_wrapper22(double y, void * params_){
@@ -645,8 +645,8 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	if (costheta2 <= -1. || costheta2 >= 1.) return 0.;
 	if (costhetak <= -1. || costhetak >= 1. ) return 0.;
 	if (phik <= 0. || phik >= 2.*M_PI) return 0.;
-	if (x2 <= 0.0 || x2 >= 1.) return 0.;
-	if (xk <= 0.0 || xk >= 1.) return 0.;
+	if (x2 <= 0.0 || x2 >= 5.) return 0.;
+	if (xk <= 0.0 || xk >= 5.) return 0.;
 
 	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
@@ -710,9 +710,9 @@ double rates_3to2::calculate(double * arg){
 	
 	// integration limits
 	double xl[5], xu[5];
-	xl[0] = 0.0; xu[0] = 7.;
+	xl[0] = 0.0; xu[0] = 5.;
 	xl[1] = -1.; xu[1] = 1.;
-	xl[2] = 0.0; xu[2] = 7.;
+	xl[2] = 0.0; xu[2] = 5.;
 	xl[3] = -1.; xu[3] = 1.;
 	xl[4] = 0.0; xu[4] = 2.0*M_PI;
 

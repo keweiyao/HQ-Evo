@@ -30,7 +30,7 @@ self_consistent_mD2::self_consistent_mD2(const double _TL, const double _TH, con
 	 			[&T](double x) {return pf_g*alpha_s(-x)*T*T - x;},
 	  			0.01, 20., tol, maxiter);
 	 		mD2[i] = .5*(result.first + result.second);
-			std::cout<<mD2[i]<<std::endl;
+			//std::cout<<mD2[i]<<std::endl;
 		}
 		catch (const std::domain_error&) {
 			throw std::domain_error{
@@ -66,8 +66,8 @@ double M2_Qq2Qq(double t, void * params){
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	//double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);
-	double mt2 = 0.2*At*pf_g*T2;
+	//double mt2 = 0.184*t_channel_mD2.get_mD2(p[1]);
+	double mt2 = 0.184*At*pf_g*T2;
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
@@ -92,8 +92,8 @@ double M2_Qg2Qg(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
 	// define Deybe mass for each channel
-	double //mt2 = 0.2*t_channel_mD2.get_mD2(p[1]), 
-		   mt2 = 0.2*At*pf_g*T2, 
+	double //mt2 = 0.184*t_channel_mD2.get_mD2(p[1]), 
+		   mt2 = 0.184*At*pf_g*T2, 
 		   mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
 	double result = 0.0;
 	// t*t
@@ -122,8 +122,8 @@ double M2_Qg2Qg_only_t(double t, void * params) {
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	//double mt2 = 0.2*t_channel_mD2.get_mD2(p[1]);
-	double mt2 = 0.2*At*pf_g*T2;
+	//double mt2 = 0.184*t_channel_mD2.get_mD2(p[1]);
+	double mt2 = 0.184*At*pf_g*T2;
 	double result = c16pi2*2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
