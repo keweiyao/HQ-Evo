@@ -170,7 +170,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
-	double T2 = params[1]*params[1];
+	double T = params[1];
 	double M = params[2];
 	double M2 = M*M;
 	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
@@ -205,7 +205,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// q-perp-vec
 	double qx = -p4*sin4;
 	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*T2;
+	double mD2 = t_channel_mD2->get_mD2(T);
 
 	double x2M2 = x*x*M2;
 	double qx2Mm = qx*qx + x2M2 + mD2;
@@ -214,7 +214,6 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 
-	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
@@ -234,7 +233,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
-	double T2 = params[1]*params[1];
+	double T = params[1];
 	double M = params[2];
 	double M2 = M*M;
 	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
@@ -267,7 +266,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// q-perp-vec
 	double qx = -p4*sin4;
 	double alpha_rad = alpha_s(kt2);
-	double mD2 = alpha_rad *pf_g*T2;
+	double mD2 = t_channel_mD2->get_mD2(T);
 
 	double x2M2 = x*x*M2;
 	double qx2Mm = qx*qx + x2M2 + mD2;
