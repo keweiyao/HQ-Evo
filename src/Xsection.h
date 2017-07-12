@@ -54,7 +54,7 @@ private:
 	void save_to_file(std::string filename, std::string datasetname);
 	void read_from_file(std::string filename, std::string datasetname);
 	size_t Nsqrts, NT;
-	double sqrtsL, sqrtsM, sqrtsH, dsqrts1, dsqrts2,
+	double sqrtsL, sqrtsH, dsqrts,
 		   TL, TH, dT;
 	boost::multi_array<double, 2> Xtab;
 public:

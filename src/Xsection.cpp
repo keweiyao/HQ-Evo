@@ -71,10 +71,10 @@ Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double M1_, std::
 //============Derived 2->2 Xsection class===================================
 Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
 :	Xsection(dXdPS_, M1_, name_, refresh), rd(), gen(rd()), dist_phi3(0.0, 2.0*M_PI), 
-	Nsqrts(50), NT(32), 
-	sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*30.), 
-	dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH-sqrtsM)/(Nsqrts-1.)),
-	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)), Xtab(boost::extents[Nsqrts*2][NT])
+	Nsqrts(200), NT(32), 
+	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), 
+	dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
+	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)), Xtab(boost::extents[Nsqrts][NT])
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
@@ -103,7 +103,7 @@ void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
 	const size_t rank = 2;
 
 	H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
-	hsize_t dims[rank] = {Nsqrts*2, NT};
+	hsize_t dims[rank] = {Nsqrts, NT};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
 	
@@ -114,9 +114,8 @@ void Xsection_2to2::save_to_file(std::string filename, std::string datasetname){
 
 	// Attributes
 	hdf5_add_scalar_attr(dataset, "sqrts_low", sqrtsL);
-	hdf5_add_scalar_attr(dataset, "sqrts_mid", sqrtsM);
 	hdf5_add_scalar_attr(dataset, "sqrts_high", sqrtsH);
-	hdf5_add_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
+	hdf5_add_scalar_attr(dataset, "N_sqrt", Nsqrts);
 	
 	hdf5_add_scalar_attr(dataset, "T_low", TL);
 	hdf5_add_scalar_attr(dataset, "T_high", TH);
@@ -130,20 +129,18 @@ void Xsection_2to2::read_from_file(std::string filename, std::string datasetname
 	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "sqrts_low", sqrtsL);
-	hdf5_read_scalar_attr(dataset, "sqrts_mid", sqrtsM);
 	hdf5_read_scalar_attr(dataset, "sqrts_high", sqrtsH);
-	hdf5_read_scalar_attr(dataset, "N_sqrt_half", Nsqrts);
-	dsqrts1 = (sqrtsM-sqrtsL)/(Nsqrts-1.);
-	dsqrts2 = (sqrtsH-sqrtsM)/(Nsqrts-1.);
+	hdf5_read_scalar_attr(dataset, "N_sqrt", Nsqrts);
+	dsqrts = (sqrtsH-sqrtsL)/(Nsqrts-1.);
 	
 	hdf5_read_scalar_attr(dataset, "T_low", TL);
 	hdf5_read_scalar_attr(dataset, "T_high", TH);
 	hdf5_read_scalar_attr(dataset, "N_T", NT);
 	dT = (TH-TL)/(NT-1.);
 	
-	Xtab.resize(boost::extents[Nsqrts*2][NT]);
+	Xtab.resize(boost::extents[Nsqrts][NT]);
 	hsize_t dims_mem[rank];
-  	dims_mem[0] = Nsqrts*2;
+  	dims_mem[0] = Nsqrts;
   	dims_mem[1] = NT;
 	H5::DataSpace mem_space(rank, dims_mem);
 
@@ -154,9 +151,8 @@ void Xsection_2to2::read_from_file(std::string filename, std::string datasetname
 
 void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
 	double * arg = new double[2];
-	for (size_t i=0; i<2*Nsqrts; ++i) {
-		if (i<Nsqrts) arg[0] = std::pow(sqrtsL + i*dsqrts1, 2);
-		else arg[0] = std::pow(sqrtsM + (i-Nsqrts)*dsqrts2, 2);
+	for (size_t i=0; i<Nsqrts; ++i) {
+		arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
 		for (size_t j=T_start; j<(T_start+dnT); j++) {
 			arg[1] = TL + j*dT;
 			Xtab[i][j] = calculate(arg)/approx_X22(arg, M1);
@@ -170,13 +166,11 @@ double Xsection_2to2::interpX(double * arg){
 	if (Temp < TL) Temp = TL;
 	if (Temp >= TH) Temp = TH-dT;
 	if (sqrts < sqrtsL) sqrts = sqrtsL;
-	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts2;
-	double xT, rT, xsqrts, rsqrts, dsqrts, sqrtsmin;
+	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
+	double xT, rT, xsqrts, rsqrts;
 	size_t iT, isqrts, Noffsets;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
-	if (sqrts < sqrtsM) {dsqrts = dsqrts1; sqrtsmin=sqrtsL; Noffsets=0;}
-	else {dsqrts = dsqrts2; sqrtsmin=sqrtsM; Noffsets=Nsqrts;}
-	xsqrts = (sqrts - sqrtsmin)/dsqrts; isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts; isqrts += Noffsets;
+	xsqrts = (sqrts - sqrtsL)/dsqrts; isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts;
 	return approx_X22(arg, M1)*interpolate2d(&Xtab, isqrts, iT, rsqrts, rT);
 }
 

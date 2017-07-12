@@ -217,8 +217,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
-				*LPM
-				//*sudakov	
+				*LPM	
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
@@ -275,12 +274,10 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 
-	//double sudakov = std::exp(alpha_rad/M_PI*f_IR(-M2/t)*std::log(-k*k/t));
 	// 1->2
 	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)
 				*LPM
-				//*sudakov
 				*( (qx2Mm+x2M2)*iD1*iD2 - x2M2*iD1*iD1 - (x2M2 + mD2)*iD2*iD2 );
 
 	// 2->3 = 2->2 * 1->2
