@@ -294,23 +294,23 @@ double rates_2to2::calculate(double * arg)
 void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> > & IS){
 	// this function samples x = E2/T and y = cos(theta2) from the distribution:
 	// P(x, y) ~ x^2*exp(-x) * (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T)
-	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^3*exp(-x) (cut off x < 20. )
+	// We first generate X from gamma distribution Gamma(x; 3,1) ~ x^2*exp(-x) (cut off x < 20. )
 	// and uniform sample y within (-1., 1.)
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
 	// this function returns all initial state particles' four-vector in the order (p1, p2)
 	double E1 = arg[0], Temp = arg[1];
-	double * Xarg = new double[2]; Xarg[1] = Temp;
+	double * Xarg = new double[2]; 
 	double M2 = M*M, x, y, max, smax, stemp, costheta2, sintheta2;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*10. + coeff2*10.;
+	smax = M2 + coeff1*10. - coeff2*10.;
 	if (smax < 2.*M2) smax = 2.*M2;
-	Xarg[0] = smax;
+	Xarg[0] = smax; Xarg[1] = Temp;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
 		do{
 			x = dist_x(gen);
-		  }while(x>10.);
+		  }while(x>20.);
 		y = dist_norm_y(gen);
 		costheta2 = y; sintheta2 = std::sqrt(1. - y*y); 
 		stemp = intersection + coeff1*x + coeff2*x*y;
@@ -491,12 +491,12 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*10. + coeff2*10.;
+	smax = M2 + coeff1*10. - coeff2*10.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{ x = dist_x(gen); }while(x>10.);
+		do{ x = dist_x(gen); }while(x>20.);
 		y = dist_norm_y(gen);
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp; 
