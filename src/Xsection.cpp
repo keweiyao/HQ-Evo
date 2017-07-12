@@ -191,7 +191,7 @@ double Xsection_2to2::calculate(double * arg){
 	F.function = gsl_1dfunc_wrapper;
 	F.params = params;
 	tmax = 0.0;
-	tmin = -pow(s-M1*M1, 2)/s;
+	tmin = -std::pow(s-M1*M1, 2)/s;
 	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
 
 	delete [] p;
@@ -204,7 +204,7 @@ double Xsection_2to2::calculate(double * arg){
 void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS){
 	double s = arg[0], Temp = arg[1];
 	double * p = new double[3]; //s, T, M
-	p[0] = s; p[1] = Temp;  p[2] = M1;
+	p[0] = s; p[1] = Temp; p[2] = M1;
 	double M2 = M1*M1;
 	double sqrts = std::sqrt(s);
 	double pQ = (s-M2)/2./sqrts;

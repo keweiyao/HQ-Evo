@@ -77,24 +77,17 @@ void initialize_Debye_mass(const unsigned int type, const double mDTc,
 }
 
 
-
-//=============Soft regulator==================================================
-double f_IR(double x){
-	double a = std::sqrt(1. + 4.*x);
-	return (1. + 2.*x)/a*std::log((a+1.)/(a-1.)) - 1.;
-}
-
 //=============Baisc function for Q+q --> Q+q==================================
 double M2_Qq2Qq(double t, void * params){
 	// unpacking parameters
 	double * p = static_cast<double*>(params);
-	double s = p[0], T2 = p[1]*p[1], M2 = p[2]*p[2];
+	double s = p[0], Temp = p[1], M2 = p[2]*p[2];
 	// define energy scales for each channel
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2->get_mD2(p[1]);
+	double mt2 = 0.2*t_channel_mD2->get_mD2(Temp);
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;
@@ -142,13 +135,13 @@ double M2_Qg2Qg(double t, void * params) {
 double M2_Qg2Qg_only_t(double t, void * params) {
 	// unpacking parameters
 	double * p = static_cast<double *>(params);
-	double s = p[0], T2 = p[1]*p[1], M2 = p[2]*p[2];
+	double s = p[0], Temp = p[1], M2 = p[2]*p[2];
 	// define energy scales for each channel
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2->get_mD2(p[1]);
+	double mt2 = 0.2*t_channel_mD2->get_mD2(Temp);
 	double result = c16pi2*2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
 	if (result < 0.) return 0.;
 	else return result;

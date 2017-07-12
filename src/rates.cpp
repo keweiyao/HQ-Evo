@@ -318,8 +318,11 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
-	IS[0][0] = E1; IS[0][1] = 0.0; IS[0][2] = 0.0; IS[0][3] = v1*E1;
-	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
+	IS[0][0] = E1; IS[0][1] = 0.0; 
+	IS[0][2] = 0.0; IS[0][3] = v1*E1;
+
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; 
+	IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
 }
 
 
