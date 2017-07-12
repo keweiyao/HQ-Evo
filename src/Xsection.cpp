@@ -168,7 +168,7 @@ double Xsection_2to2::interpX(double * arg){
 	if (sqrts < sqrtsL) sqrts = sqrtsL;
 	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
 	double xT, rT, xsqrts, rsqrts;
-	size_t iT, isqrts, Noffsets;
+	size_t iT, isqrts;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
 	xsqrts = (sqrts - sqrtsL)/dsqrts; isqrts = floor(xsqrts); rsqrts = xsqrts - isqrts;
 	return approx_X22(arg, M1)*interpolate2d(&Xtab, isqrts, iT, rsqrts, rT);

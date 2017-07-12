@@ -300,25 +300,21 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	// this function returns all initial state particles' four-vector in the order (p1, p2)
 	double E1 = arg[0], Temp = arg[1];
 	double * Xarg = new double[2]; 
-	double M2 = M*M, x, y, max, smax, stemp, costheta2, sintheta2;
+	double M2 = M*M, x, y, max, smax;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
-	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*10. - coeff2*10.;
-	if (smax < 2.*M2) smax = 2.*M2;
+	double intersection = M2, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*v1*Temp;
+	smax = intersection + (coeff1 + (-1)*coeff2)*20.;
+	if (smax < 4.*M2) smax = 4.*M2;
 	Xarg[0] = smax; Xarg[1] = Temp;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{
-			x = dist_x(gen);
-		  }while(x>20.);
-		y = dist_norm_y(gen);
-		costheta2 = y; sintheta2 = std::sqrt(1. - y*y); 
-		stemp = intersection + coeff1*x + coeff2*x*y;
-		Xarg[0] = stemp;
-	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
+		do{x = dist_x(gen);}while(x>20.);
+		y = dist_norm_y(gen); 
+		Xarg[0] = intersection + (coeff1 + coeff2*y)*x;
+	}while( (1.-v1*y)*Xprocess->interpX(Xarg)/max < dist_reject(gen) );
 	delete [] Xarg;
-	double E2 = x*Temp;
-	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
+	double costheta2 = y, sintheta2 = std::sqrt(1. - y*y);
+	double E2 = x*Temp, phi2 = (rand()*2.*M_PI)/RAND_MAX;
 	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
