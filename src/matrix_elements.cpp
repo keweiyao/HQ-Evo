@@ -55,7 +55,8 @@ Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
 		// use parameterized Debye mass
 		for (size_t i=0; i<NT; i++){
 			double T = TL+dT*i;
-			mD = mDTc*(1. + mDslope*(T-Tc)/Tc*std::pow(T/Tc, mDcurv) );
+			double power = std::pow(T/Tc, mDcurv);
+			mD = T * mDTc*power/(mDslope + (1.-mDslope)*power);
 		 	mD2[i] = mD*mD;
 		}
 	}
@@ -106,14 +107,16 @@ double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params){
 double M2_Qg2Qg(double t, void * params) {
 	// unpacking parameters
 	double * p = static_cast<double *>(params);
-	double s = p[0], T2 = p[1]*p[1], M2 = p[2]*p[2];
+	double s = p[0], Temp = p[1], M2 = p[2]*p[2];
 	// define energy scales for each channel
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
 	// define Deybe mass for each channel
-	double mt2 = 0.2*t_channel_mD2->get_mD2(p[1]), 
-		   mu2 = Au*pf_q*T2, ms2 = As*pf_q*T2;
+	double mD2 = t_channel_mD2->get_mD2(Temp);
+	double mt2 = 0.2*mD2;
+	double mu2 = mD2*pf_q/pf_g;
+	double ms2 = mD2*pf_q/pf_g;
 	double result = 0.0;
 	// t*t
 	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);

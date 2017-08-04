@@ -22,13 +22,13 @@ extern Debye_mass * t_channel_mD2;
 
 double approx_X22(double * arg, double M){	
 	double s = arg[0], T = arg[1];
-	return 1.0/std::pow(1.0 - M*M/s, 2)/T/T;
+	return 1.0/std::pow(1.0 - M*M/s, 2)/t_channel_mD2->get_mD2(T);
 }
 
 double approx_X23(double * arg, double M){
 	double Temp = arg[1], dt = arg[2];
 	(void)M;	
-	return dt*dt/std::sqrt(dt*Temp);
+	return dt*dt/std::sqrt(dt*t_channel_mD2->get_mD2(Temp));
 }
 
 double approx_X32(double * arg, double M){
@@ -47,11 +47,11 @@ double approx_X32(double * arg, double M){
 	double kt2 = k*k - kz*kz;
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
-	double mD2t = t_channel_mD2->get_mD2(Temp);//alpha_s(kt2)*pf_g*Temp*Temp;
+	double mD2t = t_channel_mD2->get_mD2(Temp);
 	double D1 = kt2 + x2M2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
-	return (s - M*M)/Temp/Temp/x2*prop2;
+	return (s - M*M)/mD2t/x2*prop2;
 }
 
 double gsl_1dfunc_wrapper(double x, void * params_){
@@ -81,12 +81,12 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
@@ -150,7 +150,7 @@ void Xsection_2to2::read_from_file(std::string filename, std::string datasetname
 }
 
 void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
-	double * arg = new double[2];
+	double arg[2];
 	for (size_t i=0; i<Nsqrts; ++i) {
 		arg[0] = std::pow(sqrtsL + i*dsqrts, 2);
 		for (size_t j=T_start; j<(T_start+dnT); j++) {
@@ -158,7 +158,6 @@ void Xsection_2to2::tabulate(size_t T_start, size_t dnT){
 			Xtab[i][j] = calculate(arg)/approx_X22(arg, M1);
 		}
 	}
-	delete [] arg;
 }
 
 double Xsection_2to2::interpX(double * arg){
@@ -181,20 +180,18 @@ double Xsection_2to2::calculate(double * arg){
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
 	Mygsl_integration_params * params = new Mygsl_integration_params;
 	params->f = dXdPS;
-	double * p = new double[3];
-	p[0] = s;
-	p[1] = Temp;
-	p[2] = M1;
-	params->params = p;
+	params->params = new double[3];
+	params->params[0] = s;
+	params->params[1] = Temp;
+	params->params[2] = M1;
 
-    gsl_function F;
+        gsl_function F;
 	F.function = gsl_1dfunc_wrapper;
 	F.params = params;
 	tmax = 0.0;
 	tmin = -std::pow(s-M1*M1, 2)/s;
 	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
-
-	delete [] p;
+        delete [] params->params;
 	delete params;
 	gsl_integration_workspace_free(w);
 
@@ -238,12 +235,12 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
@@ -465,12 +462,12 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::stri
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();

@@ -7,10 +7,11 @@
 #include <boost/filesystem.hpp>
 
 #include "utility.h"
+#include "matrix_elements.h"
 #include "rates.h"
 #include "H5Cpp.h"
 using std::placeholders::_1;
-
+extern Debye_mass * t_channel_mD2;
 //=============Thernalized Distribution funtion=================================
 // xi = 1: Fermi Dirac; xi = -1 Bose Einsterin; xi = 0, Maxwell-Boltzmann
 double inline f_0(double x, double xi){
@@ -23,7 +24,7 @@ double inline f_0(double x, double xi){
 double approx_R22(double * arg){
 	//double E1 = arg[0];
 	double T = arg[1];
-	return T;
+	return std::pow(T,3)/t_channel_mD2->get_mD2(T);
 }
 
 double approx_R23(double * arg, double M){
@@ -48,10 +49,9 @@ double fy_wrapper22(double y, void * params_){
 	double M2 = params->params[2];
 	double v1 = params->params[3];
 	double s = M2 + coeff*(1.-v1*y);
-	double * arg = new double[2];
+	double arg[2];
 	arg[0] = s; arg[1] = Temp;
 	double Xsection = params->f(arg);
-	delete [] arg;
 	return (1.-v1*y)*Xsection;
 } 
 
@@ -73,7 +73,7 @@ double fx_wrapper22(double x, void * px_){
 	py->params[2] = M2;
 	py->params[3] = v1;
 
-    gsl_function F;
+        gsl_function F;
 	F.function = fy_wrapper22;
 	F.params = py;
 	ymax = 1.;
@@ -132,7 +132,7 @@ double fx_wrapper23(double x, void * px_){
 	py->params[5] = x*Temp; // E2 in the Cell Frame
 	py->params[6] = E1; // E1 in the Cell Frame
 
-    gsl_function F;
+        gsl_function F;
 	F.function = fy_wrapper23;
 	F.params = py;
 	ymax = 1.;
@@ -167,12 +167,12 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 		std::cout << "threads " << std::thread::hardware_concurrency() << std::endl; 
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
@@ -303,12 +303,12 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double M2 = M*M, x, y, max, smax;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M2, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*v1*Temp;
-	smax = intersection + (coeff1 + (-1)*coeff2)*20.;
-	if (smax < 4.*M2) smax = 4.*M2;
+	smax = intersection + (coeff1 + (-1)*coeff2)*10.;
+	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax; Xarg[1] = Temp;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{x = dist_x(gen);}while(x>20.);
+		do{x = dist_x(gen);}while(x>10.);
 		y = dist_norm_y(gen); 
 		Xarg[0] = intersection + (coeff1 + coeff2*y)*x;
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg)/max < dist_reject(gen) );
@@ -341,12 +341,12 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
@@ -490,12 +490,12 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 	double M2 = M*M, x, y, max, smax, stemp;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
-	smax = M2 + coeff1*10. - coeff2*10.;
+	smax = M2 + (coeff1 +(-1)*coeff2)*10.;
 	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
-		do{ x = dist_x(gen); }while(x>20.);
+		do{ x = dist_x(gen); }while(x>10.);
 		y = dist_norm_y(gen);
 		stemp = intersection + coeff1*x + coeff2*x*y;
 		Xarg[0] = stemp; 
@@ -524,12 +524,12 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 		std::cout << "Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
-		size_t call_per_core = std::ceil(NT*1./Ncores);
+		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
+		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 		for (size_t i=0; i< Ncores ; i++){	
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
-			auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
