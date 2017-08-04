@@ -1,4 +1,5 @@
 build/
+test/
 *.so
 cython/*.c
 cython/*.cpp
