@@ -48,7 +48,7 @@ double approx_X32(double * arg, double M){
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2t = t_channel_mD2->get_mD2(Temp);
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + mD2t*pf_q/pf_g;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/mD2t/x2*prop2;
@@ -658,7 +658,7 @@ double f_3to2::calculate(double * arg){
 	double kt2 = k*k - kz*kz;
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
-	double mD2 = t_channel_mD2->get_mD2(Temp);//alpha_s(kt2) *pf_g*Temp*Temp;
+	double mD2 = t_channel_mD2->get_mD2(Temp);
 	
 
 	// Integration for (1)p4 and (2)phi4
@@ -707,7 +707,7 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double kt2 = k*k - kz*kz;
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
-	double mD2 = t_channel_mD2->get_mD2(Temp);//alpha_s(kt2) *pf_g*Temp*Temp;
+	double mD2 = t_channel_mD2->get_mD2(Temp);
 	double * params = new double[9];
 	params[0] = s; params[1] = Temp; params[2] = M1; params[3] = E2; params[4] = E4;
 	params[5] = kt2; params[6] = cos21; params[7] = x2M2; params[8] = mD2;

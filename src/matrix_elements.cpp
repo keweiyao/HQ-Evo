@@ -211,7 +211,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
 
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2 + mD2*pf_q/pf_g), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
 				*LPM	
 				*(kt2*std::pow(iD1-iD2, 2.) + qx*qx*iD2*iD2 + 2.*kx*qx*iD2*(iD1-iD2));
@@ -270,7 +270,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
 
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
+	double iD1 = 1./(kt2 + x2M2 + mD2*pf_q/pf_g), iD2 = 1./(kt2 - 2.*qx*kx  + qx2Mm);
 	double Pg = alpha_rad*std::pow(1.-xbar, 2)
 				*LPM
 				*(kt2*std::pow(iD1-iD2, 2.) + qx*qx*iD2*iD2 + 2.*kx*qx*iD2*(iD1-iD2));
@@ -307,7 +307,7 @@ double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + mD2*pf_q/pf_q;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 
@@ -341,7 +341,7 @@ double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 		   qy = -E4*sintheta24*sinphi24;
 	double qxkx = -std::sqrt(kt2)*qx;
 	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + mD2*pf_q/pf_q;
 	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + mD2;
 	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
 

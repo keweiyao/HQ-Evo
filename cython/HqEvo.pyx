@@ -209,7 +209,19 @@ cdef class HqEvo(object):
 		else:
 			pass
 		free(arg)
-
+	
+	cpdef rate(self, int channel, double E, double T):
+		cdef double * arg = <double*>malloc(2*sizeof(double))
+		arg[0] = E; arg[1] = T;
+		cdef double result = 0.
+		# 0:	Qq->Qq
+		# 1: 	Qg->Qg
+		if channel == 0:
+			result = self.r_Qq_Qq.interpR(arg)
+		if channel == 1:
+			result = self.r_Qg_Qg.interpR(arg)
+		free(arg)
+		return result
 		
 			
 
