@@ -33,7 +33,7 @@ double approx_R23(double * arg, double M){
 	double dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
 	double u = dt*meff;
-	return (u - std::log(1. + u) )*T;
+	return u/(1.+u)*T;
 }
 
 double approx_R32(double * arg){
@@ -42,7 +42,7 @@ double approx_R32(double * arg){
 	double dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
 	double u = dt*meff;
-	return (u - std::log(1. + u) )*T;
+	return u/(1.+u)*T;
 }
 
 double fy_wrapper22(double y, void * params_){

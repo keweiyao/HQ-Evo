@@ -196,7 +196,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk;
-	double LPM = u - std::log(1.+u);
+	double LPM = u/(1.+u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -255,7 +255,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk;
-	double LPM = u - std::log(1.+u);
+	double LPM = u/(1.+u);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
