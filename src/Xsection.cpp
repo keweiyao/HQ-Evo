@@ -26,9 +26,10 @@ double approx_X22(double * arg, double M){
 }
 
 double approx_X23(double * arg, double M){
-	double Temp = arg[1], dt = arg[2];
-	(void)M;	
-	return dt*dt/std::sqrt(dt*t_channel_mD2->get_mD2(Temp));
+	double s = arg[0], T = arg[1], dt = arg[2];
+	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
+	double u = dt*meff;
+	return (u - std::log(1. + u) )*std::log(s/M/M)/meff/meff;
 }
 
 double approx_X32(double * arg, double M){
@@ -48,7 +49,7 @@ double approx_X32(double * arg, double M){
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2t = t_channel_mD2->get_mD2(Temp);
-	double D1 = kt2 + x2M2 + mD2t*pf_q/pf_g;
+	double D1 = kt2 + x2M2;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/mD2t/x2*prop2;
@@ -206,7 +207,7 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double sqrts = std::sqrt(s);
 	double pQ = (s-M2)/2./sqrts;
 	double EQ = sqrts - pQ;
-	double t = sampler1d.sample(dXdPS, -std::pow(s-M1*M1, 2)/s, 0.0, p);
+	double t = sampler1d.sample(dXdPS, -std::pow(s-M2, 2)/s, 0.0, p);
 	double costheta3 = 1. + t/pQ/pQ/2.;
 	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
 	double phi3 = dist_phi3(gen);
@@ -227,7 +228,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 	Nsqrts(50), NT(16), Ndt(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
-	dtL(0.1), dtH(10.0), ddt((dtH-dtL)/(Ndt-1.)), Xtab(boost::extents[Nsqrts][NT][Ndt])
+	dtL(0.1), dtH(5.0), ddt((dtH-dtL)/(Ndt-1.)), Xtab(boost::extents[Nsqrts][NT][Ndt])
 {
 
 	bool fileexist = boost::filesystem::exists(name_);
@@ -609,8 +610,8 @@ double f_3to2::interpX(double * arg){
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
-	double u = dt*p1/E1/tauk;
-	double LPM = u*u/(1. + u*u);
+	double u = dt/tauk;
+	double LPM = u - std::log(1.+u);
 	double alpha_rad = alpha_s(kt2);
 	
 	return 1.5/M_PI*(1. - M1*M1/s) * alpha_rad * LPM * std::pow(1. - fracbar, 2) * raw_result;

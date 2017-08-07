@@ -31,14 +31,18 @@ double approx_R23(double * arg, double M){
 	double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
-	return T*std::pow(T*dt, 2)/sqrt(E1*dt)/(1.+std::log(E1/M));
+	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
+	double u = dt*meff;
+	return (u - std::log(1. + u) )*T;
 }
 
 double approx_R32(double * arg){
 	double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
-	return dt*dt*std::pow(T, 4);
+	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
+	double u = dt*meff;
+	return (u - std::log(1. + u) )*T;
 }
 
 double fy_wrapper22(double y, void * params_){
@@ -332,7 +336,7 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_),
-	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
+	NE1(100), NT(8), Ndt(20), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
