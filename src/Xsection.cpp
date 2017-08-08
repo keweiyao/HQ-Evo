@@ -28,7 +28,7 @@ double approx_X22(double * arg, double M){
 double approx_X23(double * arg, double M){
 	double s = arg[0], T = arg[1], dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
-	double u = dt*meff;
+	double u = std::sqrt(dt*meff);
 	return u/(1.+u)*std::log(s/M/M)/meff/meff;
 }
 
@@ -49,7 +49,7 @@ double approx_X32(double * arg, double M){
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2t = t_channel_mD2->get_mD2(Temp);
-	double D1 = kt2 + x2M2;
+	double D1 = kt2 + x2M2 + mD2t*pf_q/pf_g;
 	double D2 = kt2 + x2M2 + mD2t;
 	double prop2 = kt2/D1/D1 + mD2t/D2/D2;
 	return (s - M*M)/mD2t/x2*prop2;
@@ -604,13 +604,15 @@ double f_3to2::interpX(double * arg){
 	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
 	double fracbar = (k + std::abs(kz))/(E1 + p1);
 	double x2M2 = frac*frac*M2;
-	double tauk = 2.*k/(kt2 + x2M2);
-	
+	double mD2 = t_channel_mD2->get_mD2(Temp);
+	//double tauk = 2.*k/(kt2 + x2M2);
+	double tauk = std::sqrt(dt*k/0.2/mD2);	
+
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
-	double u = dt/tauk;
+	double u = std::sqrt(dt/tauk);
 	double LPM = u/(1.+u);
 	double alpha_rad = alpha_s(kt2);
 	
