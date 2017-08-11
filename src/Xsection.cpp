@@ -28,7 +28,7 @@ double approx_X22(double * arg, double M){
 double approx_X23(double * arg, double M){
 	double s = arg[0], T = arg[1], dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
-	double u = std::pow(dt*meff,2);
+	double u = std::pow(dt*meff)/6.;
 	return u/(1.+u)*std::log(s/M/M)/meff/meff;
 }
 
