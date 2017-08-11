@@ -610,7 +610,7 @@ double f_3to2::interpX(double * arg){
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
-	double u = dt/tauk*(s-M2)/(s+M2);
+	double u = dt/tauk*p1/E1;
 	double LPM = u/(1.+u);
 	//double LPM = 1. - std::sin(u)/u;
 	double alpha_rad = alpha_s(kt2);
