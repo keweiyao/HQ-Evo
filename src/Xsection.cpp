@@ -28,7 +28,7 @@ double approx_X22(double * arg, double M){
 double approx_X23(double * arg, double M){
 	double s = arg[0], T = arg[1], dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
-	double u = dt*meff;
+	double u = std::pow(dt*meff,2);
 	return u/(1.+u)*std::log(s/M/M)/meff/meff;
 }
 
@@ -611,7 +611,8 @@ double f_3to2::interpX(double * arg){
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk;
-	double LPM = u/(1.+u);
+	//double LPM = u/(1.+u);
+	double LPM = 1. - std::sin(u)/u;
 	double alpha_rad = alpha_s(kt2);
 	
 	return 1.5/M_PI*(1. - M1*M1/s) * alpha_rad * LPM * std::pow(1. - fracbar, 2) * raw_result;
