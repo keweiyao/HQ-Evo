@@ -605,12 +605,12 @@ double f_3to2::interpX(double * arg){
 	double fracbar = (k + std::abs(kz))/(E1 + p1+k + std::abs(kz));
 	double x2M2 = frac*frac*M2;
 	double mD2 = t_channel_mD2->get_mD2(Temp);
-	double tauk = (sqrts-M2/sqrts)*frac*(1.-frac)/(kt2+x2M2);
+	double tauk = 2.*k*(1.-frac)/(kt2+x2M2);
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
-	double u = dt/tauk;
+	double u = dt/tauk*(s-M2)/(s+M2);
 	double LPM = u/(1.+u);
 	//double LPM = 1. - std::sin(u)/u;
 	double alpha_rad = alpha_s(kt2);

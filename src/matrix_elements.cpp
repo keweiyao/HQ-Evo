@@ -189,7 +189,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double kt2 = kx*kx + ky*ky;
 	
 	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
-	double tauk = (sqrts-M2/sqrts)*x*(1.-x)/(kt2+x*x*M2);
+	double tauk = 2.*k*(1.-x)/(kt2+x*x*M2);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -202,7 +202,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
-	double u = dt/tauk;
+	double u = dt/tauk*(s-M2)/(s+M2);
 	double LPM = u/(1.+u);
 	//double LPM = 1. - std::sin(u)/u;
 
@@ -249,7 +249,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
-	double tauk = (sqrts-M2/sqrts)*x*(1.-x)/(kt2+x*x*M2);
+	double tauk = 2.*k*(1.-x)/(kt2+x*x*M2);
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -262,7 +262,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// mean-free-path \sim mean-free-time*v_HQ, 
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
-	double u = dt/tauk;
+	double u = dt/tauk*(s-M2)/(s+M2);
 	double LPM = u/(1.+u);
 	//double LPM = 1. - std::sin(u)/u;
 	// 2->2
