@@ -46,7 +46,7 @@ double approx_X32(double * arg, double M){
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
+	double frac = std::max((k + kz)/(E1 + p1 + k + kz), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2t = t_channel_mD2->get_mD2(Temp);
 	double D1 = kt2 + x2M2;
@@ -450,7 +450,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 
 f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
 :	Xsection(dXdPS_, M1_, name_, refresh), rd(), gen(rd()), dist_phi4(0.0, 2.0*M_PI),
-	Nsqrts(40), NT(8), Na1(20), Na2(20), 
+	Nsqrts(40), NT(8), Na1(10), Na2(10), 
 	sqrtsL(M1_*1.01), sqrtsH(M1_*30.), dsqrts((sqrtsH-sqrtsL)/(Nsqrts-1.)),
 	TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
 	a1L(0.501), a1H(0.999), da1((a1H-a1L)/(Na1-1.)),
@@ -601,8 +601,8 @@ double f_3to2::interpX(double * arg){
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
-	double fracbar = (k + std::abs(kz))/(E1 + p1);
+	double frac = std::max((k + kz)/(E1 + p1+k+kz), min_xfrac);
+	double fracbar = (k + std::abs(kz))/(E1 + p1+k + std::abs(kz));
 	double x2M2 = frac*frac*M2;
 	double mD2 = t_channel_mD2->get_mD2(Temp);
 	double tauk = (sqrts-M2/sqrts)*frac*(1.-frac)/(kt2+x2M2);
@@ -658,7 +658,7 @@ double f_3to2::calculate(double * arg){
 	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
+	double frac = std::max((k + kz)/(E1 + p1+k+kz), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2 = t_channel_mD2->get_mD2(Temp);
 	
@@ -707,7 +707,7 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
 	double kt2 = k*k - kz*kz;
-	double frac = std::max((k + kz)/(E1 + p1), min_xfrac);
+	double frac = std::max((k + kz)/(E1 + p1+k+kz), min_xfrac);
 	double x2M2 = frac*frac*M2;
 	double mD2 = t_channel_mD2->get_mD2(Temp);
 	double * params = new double[9];
