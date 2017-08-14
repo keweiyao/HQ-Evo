@@ -203,8 +203,8 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
-	double LPM = u/(1.+u);
-	//double LPM = 1. - std::sin(u)/u;
+	//double LPM = u/(1.+u);
+	double LPM = 1. - std::sin(u)/u;
 
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
@@ -263,8 +263,8 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
-	double LPM = u/(1.+u);
-	//double LPM = 1. - std::sin(u)/u;
+	//double LPM = u/(1.+u);
+	double LPM = 1. - std::sin(u)/u;
 	// 2->2
 	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
 	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
