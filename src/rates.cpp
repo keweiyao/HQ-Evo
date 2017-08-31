@@ -161,7 +161,7 @@ rates::rates(std::string name_)
 rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_),
-	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
+	NE1(100), NT(32), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	Rtab(boost::extents[NE1][NT])
 {

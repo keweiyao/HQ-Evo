@@ -207,10 +207,10 @@ Qhat::Qhat(std::string name_)
 Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :  Qhat(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()),
    degeneracy(degeneracy_), eta_2(eta_2_),
-   NE(50), NT(10), E1L(M*1.01), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
-   dE1((E1M - E1L)/(NE -1.)), dE2((E1H - E1M)/(NE -1.)),
+   NE(100), NT(32), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75),
+   dE1((E1H - E1L)/(NE -1.)),
    dT((TH - TL)/(NT -1.)),
-   QhatTab(boost::extents[3][2*NE][NT])
+   QhatTab(boost::extents[3][NE][NT])
 {
         bool fileexist = boost::filesystem::exists(name_);
         if ((!fileexist) || (fileexist && refresh))
@@ -249,7 +249,7 @@ void Qhat_2to2::save_to_file(std::string filename, std::string datasetname)
 {
 		H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
         const size_t rank=3;
-        hsize_t dims[rank] = {3, 2*NE, NT};
+        hsize_t dims[rank] = {3, NE, NT};
         H5::DSetCreatPropList proplist{};
         proplist.setChunk(rank, dims);
 
@@ -260,8 +260,7 @@ void Qhat_2to2::save_to_file(std::string filename, std::string datasetname)
 
         hdf5_add_scalar_attr(dataset, "E1_low", E1L);
         hdf5_add_scalar_attr(dataset, "E1_high", E1H);
-        hdf5_add_scalar_attr(dataset, "E1_mid", E1M);
-        hdf5_add_scalar_attr(dataset, "N_E1_half", NE);
+        hdf5_add_scalar_attr(dataset, "N_E1", NE);
 
         hdf5_add_scalar_attr(dataset, "T_low", TL);
         hdf5_add_scalar_attr(dataset, "T_high", TH);
@@ -278,10 +277,8 @@ void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
         H5::DataSet dataset = file.openDataSet(datasetname.c_str());
         hdf5_read_scalar_attr(dataset, "E1_low", E1L);
         hdf5_read_scalar_attr(dataset, "E1_high", E1H);
-        hdf5_read_scalar_attr(dataset, "E1_mid", E1M);
-        hdf5_read_scalar_attr(dataset, "N_E1_half", NE);
-        dE1 = (E1M - E1L) / (NE -1.);
-	dE2 = (E1H - E1M) / (NE - 1.);
+        hdf5_read_scalar_attr(dataset, "N_E1", NE);
+        dE1 = (E1H - E1L) / (NE -1.);
 
         hdf5_read_scalar_attr(dataset, "T_low", TL);
         hdf5_read_scalar_attr(dataset, "T_high", TH);
@@ -292,7 +289,7 @@ void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
 
         hsize_t dims_mem[rank];
         dims_mem[0] = 3;
-        dims_mem[1] = 2*NE;
+        dims_mem[1] = NE;
         dims_mem[2] = NT;
 
         H5::DataSpace mem_space(rank, dims_mem);
@@ -306,10 +303,9 @@ void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
 void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 {
         double *args = new double[3];
-        for (size_t i=0; i < 2*NE; ++i)
+        for (size_t i=0; i < NE; ++i)
         {
-        	if (i < NE) args[0] = E1L + i * dE1;
-		else args[0] = E1M + (i-NE)*dE2;
+        	    args[0] = E1L + i * dE1;
                 for (size_t j = T_start; j < (T_start + dnT) ; ++j)
                 {
                         args[1] = TL + j * dT;
@@ -340,16 +336,11 @@ double Qhat_2to2::interpQ(double * args)
         if (E1 < E1L) E1 = E1L;
         if (E1 > E1H) E1  = E1H - dE1;
 
-        double xT, rT, xE, rE, dE, Emin;
+        double xT, rT, xE, rE ;
         size_t iT, iE, Noffset;
-	if (E1 < E1M)
-	{dE=dE1; Emin = E1L; Noffset = 0;}
-	else
-	{dE=dE2; Emin = E1M; Noffset =NE;}
-
         xT = (Temp - TL)/dT;    iT = floor(xT);     rT = xT - iT;
-        xE = (E1 - Emin)/dE;    iE = floor(xE);     rE = xE - iE; iE += Noffset;
-
+        xE = (E1 - E1L)/dT;    iE = floor(xE);     rT = xE - iE;
+        
         return interpolate2d_YX(&QhatTab, qidx, iE, iT, rE, rT); 
 }
 
