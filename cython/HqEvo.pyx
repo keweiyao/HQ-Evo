@@ -114,7 +114,7 @@ cdef class HqEvo(object):
 			self.r_Qgg_Qg = new rates_3to2(self.x_Qgg_Qg, 16*16/2, 0., 0., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
 			
-		print "Number of Channels", self.Nchannels
+		print "# Number of Channels", self.Nchannels
 
 	cpdef (double, double) sample_channel(self, double E1, double T, double dt23, double dt32):	
 		cdef double r, psum = 0.0, dt, Pmax = 0.1, R1, R2, Relastic

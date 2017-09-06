@@ -67,7 +67,7 @@ double gsl_1dfunc_wrapper(double x, void * params_){
 Xsection::Xsection(double (*dXdPS_)(double *, size_t, void *), double M1_, std::string name_, bool refresh)
 : dXdPS(dXdPS_), M1(M1_)
 {
-	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
+	std::cout << "#----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
 
 
@@ -81,7 +81,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -96,7 +96,7 @@ Xsection_2to2::Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double 
 		save_to_file(name_, "Xsection-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
 	std::cout << std::endl;	
@@ -235,7 +235,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -250,7 +250,7 @@ Xsection_2to3::Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double 
 		save_to_file(name_, "Xsection-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
 	std::cout << std::endl;	
@@ -370,7 +370,7 @@ double Xsection_2to3::calculate(double * arg){
 	double xl[4], xu[4]; // (k+p4), k-p4, phi4k, cos4
 	xl[0] = 0.5*sqrts*(1.-M2/s); xu[0] = sqrts-M1;
 	xl[1] = -0.5*sqrts*(1.-M2/s); xu[1] = 0.5*sqrts*(1.-M2/s);
-	xl[2] = 0.0; xu[2] = 2.*M_PI;
+	xl[2] = -M_PI; xu[2] = M_PI;
 	xl[3] = -1.; xu[3] = 1.;
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
@@ -401,8 +401,15 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double * guessh = new double[n_dims];
 	double scale1 = 0.5*sqrts*(1.0 - M2/s);
 	double scale2 = sqrts-M1;
-	guessl[0] = scale1; guessl[1] = -scale1; guessl[2] = M_PI; guessl[3] = -1.0;
-	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; guessh[1] = -scale1*0.9; guessh[2] = 2.0*M_PI; guessh[3] = -0.5;
+	guessl[0] = scale1; 
+	guessl[1] = -scale1; 
+	guessl[2] = -M_PI/2.; 
+	guessl[3] = -1.0;
+	
+	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; 
+	guessh[1] = -scale1*0.9; 
+	guessh[2] = M_PI/2.; 
+	guessh[3] = -0.9;
 	std::vector<double> vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
 	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) + 1.;
@@ -462,7 +469,7 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::stri
 
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -477,7 +484,7 @@ f_3to2::f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, std::stri
 		save_to_file(name_, "Xsection-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Xsection-tab");
 	}
 	std::cout << std::endl;	

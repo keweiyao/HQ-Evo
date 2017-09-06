@@ -30,7 +30,7 @@ Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
 {
 	
 	if (type==0) {
-		std::cout << "self-consistent Debye mass" << std::endl;
+		std::cout << "# self-consistent Debye mass" << std::endl;
 		// type==0 use self-consistent Debye mass
 		for (size_t i=0; i<NT; i++){
 			double T = TL+dT*i;
@@ -50,7 +50,7 @@ Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
 		}
 	}
 	if (type==1) {
-		std::cout << "parameterized Debye mass" << std::endl;
+		std::cout << "# parameterized Debye mass" << std::endl;
 		double mD = 0.;
 		// use parameterized Debye mass
 		for (size_t i=0; i<NT; i++){
@@ -175,7 +175,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	// check integration range	
-	if ( phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
+	if ( phi4k <= -M_PI || phi4k >= M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
 	if ( p4 <= 0. || k <= 0. || p4 >= pmax || k >= pmax ) return 0.0;
 	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star) return 0.0;
 	// more useful variables

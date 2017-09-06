@@ -154,7 +154,7 @@ rates::rates(std::string name_)
 :	rd(), gen(rd()),
 	dist_x(3.0, 1.0), dist_xcorr(5.0, 1.0), dist_norm_y(-1.0, 1.0), dist_reject(0.0, 1.0)
 {
-	std::cout << "----------" << __func__ << " " << name_  << "----------" << std::endl;
+	std::cout << "#----------" << __func__ << " " << name_  << "----------" << std::endl;
 }
 
 //=======================Derived Scattering Rate class 2 to 2================================
@@ -167,8 +167,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
-		std::cout << "threads " << std::thread::hardware_concurrency() << std::endl; 
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -184,7 +183,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 		save_to_file(name_, "Rates-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Rates-tab");
 	}
 	std::cout << std::endl;
@@ -342,7 +341,7 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -357,7 +356,7 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 		save_to_file(name_, "Rates-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Rates-tab");
 	}
 	std::cout << std::endl;
@@ -525,7 +524,7 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 {
 	bool fileexist = boost::filesystem::exists(name_);
 	if ( (!fileexist) || ( fileexist && refresh) ){
-		std::cout << "Populating table with new calculation" << std::endl;
+		std::cout << "# Populating table with new calculation" << std::endl;
 		std::vector<std::thread> threads;
 		size_t Ncores = std::min(size_t(std::thread::hardware_concurrency()), NT);
 		size_t call_per_core = size_t(NT*1./Ncores);
@@ -541,7 +540,7 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 		save_to_file(name_, "Rates-tab");
 	}
 	else{
-		std::cout << "loading existing table" << std::endl;
+		std::cout << "# loading existing table" << std::endl;
 		read_from_file(name_, "Rates-tab");
 	}
 	std::cout << std::endl;
