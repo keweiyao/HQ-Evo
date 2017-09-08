@@ -367,21 +367,24 @@ double Xsection_2to3::calculate(double * arg){
 	
 	// limits of the integration
 	double sqrts = std::sqrt(s), M2 = M1*M1;
-	double xl[4], xu[4]; // (k+p4), k-p4, phi4k, cos4
-	xl[0] = 0.5*sqrts*(1.-M2/s); xu[0] = sqrts-M1;
-	xl[1] = -0.5*sqrts*(1.-M2/s); xu[1] = 0.5*sqrts*(1.-M2/s);
-	xl[2] = -M_PI; xu[2] = M_PI;
-	xl[3] = -1.; xu[3] = 1.;
+	//double pmax = 0.5*(s-M2)/sqrts;
+	//double g = pmax/Temp;
+	//double eta0 = -std::log(g+std::sqrt(g*g-1.));
+	double xl[4], xu[4];
+	xl[0] = -15.; xu[0] = std::log((sqrts-M1)/(sqrts+M1));
+	xl[1] = -std::log(1.-M2/s); xu[1] = 15.;
+	xl[2] = -10.0; xu[2] = 0.;
+	xl[3] = -M_PI; xu[3] = M_PI;
 	
 	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(4);
 	do{ 
-		gsl_monte_vegas_integrate(&G, xl, xu, 4, 10000, r, sv, &result, &error);
-	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5); 
+		gsl_monte_vegas_integrate(&G, xl, xu, 4, 4000, r, sv, &result, &error);
+	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>1.); 
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
 	delete [] params;
-	return result/c256pi4/(s-M2);
+	return result*2./c256pi4/(s-M2);
 }
 
 void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS){
@@ -399,20 +402,28 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	size_t n_dims = 4;
 	double * guessl = new double[n_dims];
 	double * guessh = new double[n_dims];
-	double scale1 = 0.5*sqrts*(1.0 - M2/s);
-	double scale2 = sqrts-M1;
-	guessl[0] = scale1; 
-	guessl[1] = -scale1; 
-	guessl[2] = -M_PI/2.; 
-	guessl[3] = -1.0;
+	double xlim0 = std::log((sqrts-M1)/(sqrts+M1));
+	double xlim1 = -std::log(1.-M2/s);
+	double pmax = 0.5*(s-M2)/sqrts;
+	double g = pmax/Temp;
+	double eta0 = -std::log(g+std::sqrt(g*g-1.));
+	guessl[0] = xlim0-3.; 
+	guessl[1] = xlim1+2.; 
+	guessl[2] = eta0-1.; 
+	guessl[3] = -M_PI/2.;
 	
-	guessh[0] = scale1 + ( scale2 - scale1 )*0.1; 
-	guessh[1] = -scale1*0.9; 
-	guessh[2] = M_PI/2.; 
-	guessh[3] = -0.9;
-	std::vector<double> vec4 = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
-	double k = 0.5*(vec4[0]+vec4[1]), p4 = 0.5*(vec4[0]-vec4[1]), phi4k = vec4[2], cos4 = vec4[3];
-	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) + 1.;
+	guessh[0] = xlim0-2.; 
+	guessh[1] = xlim1+3.; 
+	guessh[2] = eta0+1.; 
+	guessh[3] = M_PI/2.;
+	std::vector<double> x_ = sampler.sample(dXdPS, n_dims, p, guessl, guessh);
+	double expx1 = std::exp(x_[0]);
+	double expmx2 = std::exp(-x_[1]);
+	double k = pmax*(expx1+expmx2)/(1.-M2/s);
+	double p4 = pmax - pmax*(expx1*M2/s+expmx2)/(1.-M2/s);
+	double cos4 = std::tanh(x_[2]);
+	double phi4k = x_[3];
+	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
 	// k-vec	

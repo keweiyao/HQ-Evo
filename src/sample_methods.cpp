@@ -125,7 +125,7 @@ std::vector<double> AiMS::sample(double (*f_) (double*, size_t, void*), size_t n
 	for (auto&& w : buff_walkers) w.posi = new double[n_dims];
 
 	initialize();
-	for (size_t i = 0; i<Nwalker*200; i++) { update(); }
+	for (size_t i = 0; i<Nwalker*20; i++) { update(); }
 
 	std::vector<double> result;
 	result.resize(n_dims);

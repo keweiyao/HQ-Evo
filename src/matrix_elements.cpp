@@ -162,22 +162,26 @@ double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params){
 // x: k, p4, phi4k, cos4 // both sin4 and sin* > 0
 double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
-	// unpack parameters
+	// unpack variables, parameters and check integration range
+	double phi4k = x_[3];
+	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;	
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
 	double T = params[1];
-	double M = params[2];
-	double M2 = M*M;
-	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
-	double pmax =  0.5*sqrts*(1.-M2/s);
-	// unpack variables
-	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
+	double M2 = params[2]*params[2];
+	double M2s = M2/s;
+	double sfactor = 1. - M2s;
+	double dt = params[3]; 
+	double pmax =  0.5*sqrts*sfactor;
+	double expx1 = std::exp(x_[0]);
+	double expmx2 = std::exp(-x_[1]);
+	double k = pmax*(expx1+expmx2)/sfactor;
+	double p4 = pmax - pmax*(expx1*M2s+expmx2)/sfactor;
+	if ( p4 <= 0. || k <= 0. ||p4 >= pmax || k >= pmax ) return 0.0;
+	double cos4 = std::tanh(x_[2]);
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
-	// check integration range	
-	if ( phi4k <= -M_PI || phi4k >= M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
-	if ( p4 <= 0. || k <= 0. || p4 >= pmax || k >= pmax ) return 0.0;
-	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star) return 0.0;
+	if ( cos_star <= -1. || 1. <= cos_star) return 0.0;
 	// more useful variables
 	double mD2 = t_channel_mD2->get_mD2(T);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
@@ -188,9 +192,10 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
 	
-	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
-	double x2M2 = x*x*M2, mg2 = mD2/2.;
-	double tauk = 2.*k*(1.-xbar)/(kt2 + x*x*M2 + (1.-xbar)*mg2);
+	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	double one_minus_xbar = 1.-xbar;
+	double basic_denominator = kt2 + x*x*M2 + one_minus_xbar*mD2/2.;
+	double tauk = 2.*k*one_minus_xbar/basic_denominator;
 
 	// q-perp-vec
 	double qx = -p4*sin4;
@@ -204,39 +209,45 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double LPM = 1. - std::sin(u)/u;
 
 	// 2->2
-	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
-	double the_M2_Qq2Qq = M2_Qq2Qq(t, params); 
+	double t = -2.*pmax*p4*(1.+cos4);
+	double M2_elastic = M2_Qq2Qq(t, params); 
 
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2+ (1.-xbar)*mg2), 
-	       iD2 = 1./(kt2 - 2.*qx*kx  + qx*qx + x2M2 + (1.-xbar)*mg2);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2) 
+	double iD1 = 1./basic_denominator, 
+	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
+	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
 				*LPM	
-				*(kt2*std::pow(iD1-iD2, 2.) + qx*qx*iD2*iD2 + 2.*kx*qx*iD2*(iD1-iD2));
+				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
+	// Jacobian
+	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;
 	// 2->3 = 2->2 * 1->2
-	return c48pi*the_M2_Qq2Qq*Pg;
+	return c48pi*M2_elastic*Pg*J;
 }
 
 
 
 double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
-	// unpack parameters
+	// unpack variables, parameters and check integration range
+	double phi4k = x_[3];
+	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;	
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
 	double T = params[1];
-	double M = params[2];
-	double M2 = M*M;
-	double dt = params[3]; // separation time between this and the last scattering, in CoM frame [GeV-1]
-	double pmax =  0.5*sqrts*(1.-M2/s);
-	// unpack variables
-	double k = 0.5*(x_[0]+x_[1]), p4 = 0.5*(x_[0]-x_[1]), phi4k = x_[2], cos4 = x_[3];
+	double M2 = params[2]*params[2];
+	double M2s = M2/s;
+	double sfactor = 1. - M2s;
+	double dt = params[3]; 
+	double pmax =  0.5*sqrts*sfactor;
+	double expx1 = std::exp(x_[0]);
+	double expmx2 = std::exp(-x_[1]);
+	double k = pmax*(expx1+expmx2)/sfactor;
+	double p4 = pmax - pmax*(expx1*M2s+expmx2)/sfactor;
+	if ( p4 <= 0. || k <= 0. ||p4 >= pmax || k >= pmax ) return 0.0;
+	double cos4 = std::tanh(x_[2]);
 	double cos_star = ((s-M2)-2.*sqrts*(p4+k))/(2.*p4*k) +1.;
-	// check integration range	
-	if ( phi4k <= 0. || phi4k >= 2.*M_PI || cos4 <= -1. || cos4 >= 1.) return 0.0;
-	if ( p4 <= 0. || k <= 0. || p4 >= pmax || k >= pmax ) return 0.0;
-	if ( (p4+k) > sqrts || cos_star <= -1. || 1. <= cos_star ) return 0.0;
+	if ( cos_star <= -1. || 1. <= cos_star) return 0.0;
 	// more useful variables
 	double mD2 = t_channel_mD2->get_mD2(T);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
@@ -246,15 +257,15 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 		   ky = k*sin_star*sin_4k,
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	double x = std::max((k+kz)/sqrts, min_xfrac), xbar = (k+std::abs(kz))/sqrts;
-	double x2M2 = x*x*M2, mg2 = mD2/2.;
-	double tauk = 2.*k*(1.-xbar)/(kt2 + x*x*M2 + (1.-xbar)*mg2);
+	
+	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
+	double one_minus_xbar = 1.-xbar;
+	double basic_denominator = kt2 + x*x*M2 + one_minus_xbar*mD2/2.;
+	double tauk = 2.*k*one_minus_xbar/basic_denominator;
 
 	// q-perp-vec
 	double qx = -p4*sin4;
 	double alpha_rad = alpha_s(kt2);
-
-	
 
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ, 
@@ -262,18 +273,21 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
 	double LPM = 1. - std::sin(u)/u;
+
 	// 2->2
-	double t = -(sqrts - M2/sqrts)*p4*(1.+cos4);
-	double the_M2_Qg2Qg = M2_Qg2Qg_only_t(t, params);
+	double t = -2.*pmax*p4*(1.+cos4);
+	double M2_elastic = M2_Qg2Qg(t, params); 
 
 	// 1->2
-	double iD1 = 1./(kt2 + x2M2 + (1.-xbar)*mg2), 
-		   iD2 = 1./(kt2 - 2.*qx*kx  + qx*qx + x2M2 + (1.-xbar)*mg2);
-	double Pg = alpha_rad*std::pow(1.-xbar, 2)
-				*LPM
-				*(kt2*std::pow(iD1-iD2, 2.) + qx*qx*iD2*iD2 + 2.*kx*qx*iD2*(iD1-iD2));
+	double iD1 = 1./basic_denominator, 
+	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
+	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
+				*LPM	
+				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
+	// Jacobian
+	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;
 	// 2->3 = 2->2 * 1->2
-	return c48pi*the_M2_Qg2Qg*Pg;
+	return c48pi*M2_elastic*Pg*J;
 }
 
 
