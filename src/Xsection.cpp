@@ -367,9 +367,6 @@ double Xsection_2to3::calculate(double * arg){
 	
 	// limits of the integration
 	double sqrts = std::sqrt(s), M2 = M1*M1;
-	//double pmax = 0.5*(s-M2)/sqrts;
-	//double g = pmax/Temp;
-	//double eta0 = -std::log(g+std::sqrt(g*g-1.));
 	double xl[4], xu[4];
 	xl[0] = -15.; xu[0] = std::log((sqrts-M1)/(sqrts+M1));
 	xl[1] = -std::log(1.-M2/s); xu[1] = 15.;
@@ -405,7 +402,7 @@ void Xsection_2to3::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double xlim0 = std::log((sqrts-M1)/(sqrts+M1));
 	double xlim1 = -std::log(1.-M2/s);
 	double pmax = 0.5*(s-M2)/sqrts;
-	double g = pmax/Temp;
+	double g = pmax/Temp + 1.;
 	double eta0 = -std::log(g+std::sqrt(g*g-1.));
 	guessl[0] = xlim0-3.; 
 	guessl[1] = xlim1+2.; 
