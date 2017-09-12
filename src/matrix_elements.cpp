@@ -17,7 +17,9 @@ double alpha_s(double Q2){
     else
         return alpha0 * ( .5 - std::atan( std::log(Q2/Lambda2)/M_PI ) / M_PI );
 }
-
+double f_LPM(double x){
+	return 1. - cos(x);
+}
 //=============Debye mass=================================================
 Debye_mass * t_channel_mD2 = NULL;
 
@@ -206,7 +208,6 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
-	double LPM = 1. - std::sin(u)/u;
 
 	// 2->2
 	double t = -2.*pmax*p4*(1.+cos4);
@@ -216,7 +217,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double iD1 = 1./basic_denominator, 
 	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
 	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
-				*LPM	
+				*f_LPM(u)	
 				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
 	// Jacobian
 	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;
@@ -272,8 +273,6 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
-	double LPM = 1. - std::sin(u)/u;
-
 	// 2->2
 	double t = -2.*pmax*p4*(1.+cos4);
 	double M2_elastic = M2_Qg2Qg(t, params); 
@@ -282,7 +281,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double iD1 = 1./basic_denominator, 
 	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
 	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
-				*LPM	
+				*f_LPM(u)	
 				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
 	// Jacobian
 	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;

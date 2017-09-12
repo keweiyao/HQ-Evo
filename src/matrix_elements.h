@@ -4,7 +4,7 @@
 
 //======running coupling=======================================================
 double alpha_s(double Q2);
-
+double f_LPM(double x);
 //======Debye mass class=======================================================
 class Debye_mass{
 private:

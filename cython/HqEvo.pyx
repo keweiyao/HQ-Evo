@@ -54,7 +54,6 @@ cdef extern from "../src/rates.h":
 
 
 #-------------Heavy quark evolution class------------------------
-cdef double dtmin = 0.1
 
 cdef class HqEvo(object):
 	cdef bool elastic, inelastic, detailed_balance #2->2, 2->3, 3->2
@@ -138,7 +137,7 @@ cdef class HqEvo(object):
 			p[i] = psum; i += 1
 			Relastic = psum
 		if self.inelastic:
-			arg[2] = max(dt23, dtmin)
+			arg[2] = dt23
 			R1 = self.r_Qq_Qqg.interpR(arg)
 			R2 = self.r_Qg_Qgg.interpR(arg)
 			psum += R1
@@ -146,7 +145,7 @@ cdef class HqEvo(object):
 			psum += R2
 			p[i] = psum; i += 1
 		if self.detailed_balance:
-			arg[2] = max(dt32, dtmin)
+			arg[2] = dt32
 			R1 = self.r_Qqg_Qq.interpR(arg)
 			R2 = self.r_Qgg_Qg.interpR(arg)
 			psum += R1
@@ -172,16 +171,16 @@ cdef class HqEvo(object):
 		elif channel == 1:
 			self.r_Qg_Qg.sample_initial(arg,  self.IS)
 		elif channel == 2:
-			arg[2] = max(dt23, dtmin)
+			arg[2] = dt23
 			self.r_Qq_Qqg.sample_initial(arg,  self.IS)
 		elif channel == 3:
-			arg[2] = max(dt23, dtmin)
+			arg[2] = dt23
 			self.r_Qg_Qgg.sample_initial(arg,  self.IS)
 		elif channel == 4:
-			arg[2] = max(dt32, dtmin)
+			arg[2] = dt32
 			self.r_Qqg_Qq.sample_initial(arg,  self.IS)
 		elif channel == 5:
-			arg[2] = max(dt32, dtmin)
+			arg[2] = dt32
 			self.r_Qgg_Qg.sample_initial(arg,  self.IS)
 		else:
 			pass
@@ -195,10 +194,10 @@ cdef class HqEvo(object):
 		elif channel == 1:
 			self.x_Qg_Qg.sample_dXdPS(arg,  self.FS)
 		elif channel == 2:
-			arg[2] = max(dt23, dtmin)
+			arg[2] = dt23
 			self.x_Qq_Qqg.sample_dXdPS(arg,  self.FS)
 		elif channel == 3:
-			arg[2] = max(dt23, dtmin)
+			arg[2] = dt23
 			self.x_Qg_Qgg.sample_dXdPS(arg,  self.FS)
 		elif channel == 4:
 			arg[2] = a1; arg[3] = a2
