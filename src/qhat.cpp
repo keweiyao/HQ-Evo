@@ -149,7 +149,7 @@ double fx_wrapper22_YX(double x, void *px_)
         double M2 = px->params[3];
         double zeta = px->params[4];
 
-        int qidx = int(px->params[5]+0.5);
+        int qidx = int(px->params[5]);
 
 
         {
@@ -210,7 +210,7 @@ Qhat_2to2::Qhat_2to2(QhatXsection_2to2 * Xprocess_, int degeneracy_, double eta_
    NE(50), NT(10), E1L(M*1.01), E1M(M*20), E1H(M*100), TL(0.15), TH(0.60),
    dE1((E1M - E1L)/(NE -1.)), dE2((E1H - E1M)/(NE -1.)),
    dT((TH - TL)/(NT -1.)),
-   QhatTab(boost::extents[3][2*NE][NT])
+   QhatTab(boost::extents[4][2*NE][NT])
 {
         bool fileexist = boost::filesystem::exists(name_);
         if ((!fileexist) || (fileexist && refresh))
@@ -313,12 +313,13 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
                 for (size_t j = T_start; j < (T_start + dnT) ; ++j)
                 {
                         args[1] = TL + j * dT;
-                        args[2] = 1; double drag = calculate(args);
-                        args[2] = 2; double kperp = calculate(args);
-                        args[2] = 3; double kpara = calculate(args);
+                        args[2] = 1; double drag = calculate(args); // dpz/dt
+                        args[2] = 2; double kperp = calculate(args); // dpx^2/dt
+                        args[2] = 3; double kpara = calculate(args); // dpz^2/dt
+						args[2] = 5; double R = calculate(args); // 1/dt
                         QhatTab[0][i][j] = drag;
                         QhatTab[1][i][j] = kperp;
-                        QhatTab[2][i][j] = kpara - drag*drag;
+                        QhatTab[2][i][j] = kpara - drag*drag/R;
                         //if (i == 0) std::cout << i <<  " " << j <<" " <<  TL << " " << dT << " " << args[0] << " " << args[1] << " " << QhatTab[0][i][j] << " "<< QhatTab[1][i][j] << " " << QhatTab[2][i][j] << std::endl;
                            
                 }
@@ -333,7 +334,7 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 double Qhat_2to2::interpQ(double * args)
 {
         double E1 = args[0], Temp = args[1];
-        int qidx = int(args[2]+0.5);
+        int qidx = int(args[2]);
 
         if (Temp < TL) Temp = TL;
         if (Temp >= TH) Temp = TH - dT;
@@ -359,7 +360,7 @@ double Qhat_2to2::interpQ(double * args)
 double Qhat_2to2::calculate(double *args)
 {
         double E1 = args[0], Temp = args[1];
-        int qidx = int(args[2]+0.5);
+        int qidx = int(args[2]);
         double p1 = std::sqrt(E1*E1 - M*M);
         double result, error, xmin, xmax;
 

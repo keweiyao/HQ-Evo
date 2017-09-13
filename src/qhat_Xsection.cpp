@@ -42,7 +42,7 @@ QhatXsection_2to2::QhatXsection_2to2(double (*dXdPS_)(double*, size_t, void*), d
      sqrtsL(M1_*1.01), sqrtsM(M1_*5.), sqrtsH(M1_*40.),
      dsqrts1((sqrtsM-sqrtsL)/(Nsqrts-1.)), dsqrts2((sqrtsH - sqrtsM)/(Nsqrts - 1.)),
      TL(0.12), TH(0.8), dT((TH-TL)/(NT-1.)),
-     QhatXtab(boost::extents[5][Nsqrts*2][NT])
+     QhatXtab(boost::extents[6][Nsqrts*2][NT])
 {
         bool fileexist = boost::filesystem::exists(name_);
         if ( (!fileexist) || (fileexist && refresh))
@@ -78,7 +78,7 @@ void QhatXsection_2to2::save_to_file(std::string filename, std::string datasetna
 {
         const size_t rank = 3;
         H5::H5File file(filename.c_str(), H5F_ACC_TRUNC);
-        hsize_t dims[rank] = {5,Nsqrts*2, NT};
+        hsize_t dims[rank] = {6,Nsqrts*2, NT};
         H5::DSetCreatPropList proplist{};
         proplist.setChunk(rank, dims);
 
@@ -117,9 +117,9 @@ void QhatXsection_2to2::read_from_file(std::string filename, std::string dataset
         hdf5_read_scalar_attr(dataset, "N_T", NT);
         dT = (TH - TL)/ (NT-1.);
 
-        QhatXtab.resize(boost::extents[5][Nsqrts*2][NT]);
+        QhatXtab.resize(boost::extents[6][Nsqrts*2][NT]);
         hsize_t dims_mem[rank];
-        dims_mem[0] = 5;
+        dims_mem[0] = 6;
         dims_mem[1] = 2*Nsqrts;
         dims_mem[2] = NT;
         H5::DataSpace mem_space(rank, dims_mem);
@@ -132,7 +132,7 @@ void QhatXsection_2to2::read_from_file(std::string filename, std::string dataset
 void QhatXsection_2to2::tabulate(size_t T_start, size_t dnT)
 {
         double *args = new double[3];
-        for (size_t index = 0; index < 5; ++index)
+        for (size_t index = 0; index < 6; ++index)
         {
                 args[2] = index;
                 for (size_t i=0; i<2*Nsqrts; ++i)

@@ -24,13 +24,13 @@ double f_LPM(double x){
 Debye_mass * t_channel_mD2 = NULL;
 
 Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
-						   const double _mDslope, const double _mDcurv, 
+						   const double _mDslope, const double _mDcurv,
 						   const double _Tc)
-:	TL(0.1), TH(1.0), NT(100), dT((TH-TL)/(NT-1.)), 
+:	TL(0.1), TH(1.0), NT(100), dT((TH-TL)/(NT-1.)),
 	mDTc(_mDTc), mDslope(_mDslope), mDcurv(_mDcurv), Tc(_Tc),
 	type(_type), mD2(new double[NT])
 {
-	
+
 	if (type==0) {
 		std::cout << "# self-consistent Debye mass" << std::endl;
 		// type==0 use self-consistent Debye mass
@@ -74,7 +74,7 @@ double Debye_mass::get_mD2(double T){
 }
 
 void initialize_Debye_mass(const unsigned int type, const double mDTc,
-						   const double mDslope, const double mDcurv, 
+						   const double mDslope, const double mDcurv,
 						   const double Tc){
 	t_channel_mD2 = new Debye_mass(type, mDTc, mDslope, mDcurv, Tc);
 }
@@ -89,10 +89,11 @@ double M2_Qq2Qq(double t, void * params){
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t);
+  //std::cout << t << " " << At << std::endl;
 	// define Deybe mass for each channel
 	double mt2 = 0.2*t_channel_mD2->get_mD2(Temp);
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t - mt2, 2);
-	if (result < 0.) return 0.;
+  if (result < 0.) return 0.;
 	else return result;
 }
 
@@ -114,6 +115,7 @@ double M2_Qg2Qg(double t, void * params) {
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	// define coupling constant for each channel
 	double At = alpha_s(Q2t), Au = alpha_s(Q2u), As = alpha_s(Q2s);
+  //std::cout << At << " " << Au << " " << As << std::endl;
 	// define Deybe mass for each channel
 	double mD2 = t_channel_mD2->get_mD2(Temp);
 	double mt2 = 0.2*mD2;
@@ -122,7 +124,7 @@ double M2_Qg2Qg(double t, void * params) {
 	double result = 0.0;
 	// t*t
 	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t - mt2, 2);
-		
+
 	// s*s
 	result += c4d9*As*As * ( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(Q2s + ms2, 2);
 	// u*u
@@ -157,7 +159,7 @@ double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params){
 	double t = PS[0];
 	double * p = static_cast<double *>(params);
 	double s = p[0], M2 = p[2]*p[2];
-	return M2_Qg2Qg(t, params)/c16pi/std::pow(s-M2, 2);	
+	return M2_Qg2Qg(t, params)/c16pi/std::pow(s-M2, 2);
 }
 
 //=============Basic for 2->3===========================================
@@ -166,7 +168,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack variables, parameters and check integration range
 	double phi4k = x_[3];
-	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;	
+	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
@@ -174,7 +176,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double M2 = params[2]*params[2];
 	double M2s = M2/s;
 	double sfactor = 1. - M2s;
-	double dt = params[3]; 
+	double dt = params[3];
 	double pmax =  0.5*sqrts*sfactor;
 	double expx1 = std::exp(x_[0]);
 	double expmx2 = std::exp(-x_[1]);
@@ -188,12 +190,12 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double mD2 = t_channel_mD2->get_mD2(T);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
-	// k-vec	
-	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star), 
+	// k-vec
+	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star),
 		   ky = k*sin_star*sin_4k,
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	
+
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double one_minus_xbar = 1.-xbar;
 	double basic_denominator = kt2 + x*x*M2 + one_minus_xbar*mD2/2.;
@@ -204,20 +206,20 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 	double alpha_rad = alpha_s(kt2);
 
 	// here u is the ratio of the mean-free-path over the formation length
-	// mean-free-path \sim mean-free-time*v_HQ, 
+	// mean-free-path \sim mean-free-time*v_HQ,
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
 
 	// 2->2
 	double t = -2.*pmax*p4*(1.+cos4);
-	double M2_elastic = M2_Qq2Qq(t, params); 
+	double M2_elastic = M2_Qq2Qq(t, params);
 
 	// 1->2
-	double iD1 = 1./basic_denominator, 
+	double iD1 = 1./basic_denominator,
 	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
-	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
-				*f_LPM(u)	
+	double Pg = alpha_rad*std::pow(one_minus_xbar, 2)
+				*f_LPM(u)
 				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
 	// Jacobian
 	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;
@@ -231,7 +233,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack variables, parameters and check integration range
 	double phi4k = x_[3];
-	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;	
+	if ( phi4k <= -M_PI || phi4k >= M_PI) return 0.0;
 	double * params = static_cast<double*>(params_);
 	double s = params[0];
 	double sqrts = std::sqrt(s);
@@ -239,7 +241,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double M2 = params[2]*params[2];
 	double M2s = M2/s;
 	double sfactor = 1. - M2s;
-	double dt = params[3]; 
+	double dt = params[3];
 	double pmax =  0.5*sqrts*sfactor;
 	double expx1 = std::exp(x_[0]);
 	double expmx2 = std::exp(-x_[1]);
@@ -253,12 +255,12 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double mD2 = t_channel_mD2->get_mD2(T);
 	double sin_star = std::sqrt(1. - cos_star*cos_star), sin4 = std::sqrt(1. - cos4*cos4);
 	double cos_4k = std::cos(phi4k), sin_4k = std::sin(phi4k);
-	// k-vec	
-	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star), 
+	// k-vec
+	double kx = k*(sin_star*cos_4k*cos4 + sin4*cos_star),
 		   ky = k*sin_star*sin_4k,
 		   kz = k*(-sin_star*cos_4k*sin4 + cos4*cos_star);
 	double kt2 = kx*kx + ky*ky;
-	
+
 	double x = (k+kz)/sqrts, xbar = (k+std::abs(kz))/sqrts;
 	double one_minus_xbar = 1.-xbar;
 	double basic_denominator = kt2 + x*x*M2 + one_minus_xbar*mD2/2.;
@@ -269,19 +271,19 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double alpha_rad = alpha_s(kt2);
 
 	// here u is the ratio of the mean-free-path over the formation length
-	// mean-free-path \sim mean-free-time*v_HQ, 
+	// mean-free-path \sim mean-free-time*v_HQ,
 	// v_HQ = p/E = (s - M^2)/(s + M^2)
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*(s-M2)/(s+M2);
 	// 2->2
 	double t = -2.*pmax*p4*(1.+cos4);
-	double M2_elastic = M2_Qg2Qg_only_t(t, params); 
+	double M2_elastic = M2_Qg2Qg_only_t(t, params);
 
 	// 1->2
-	double iD1 = 1./basic_denominator, 
+	double iD1 = 1./basic_denominator,
 	       iD2 = 1./(basic_denominator - 2.*qx*kx  + qx*qx);
-	double Pg = alpha_rad*std::pow(one_minus_xbar, 2) 
-				*f_LPM(u)	
+	double Pg = alpha_rad*std::pow(one_minus_xbar, 2)
+				*f_LPM(u)
 				*(kt2*std::pow(iD1-iD2, 2.) + std::pow(qx*iD2,2) + 2.*kx*qx*iD2*(iD1-iD2));
 	// Jacobian
 	double J = (k+p4-pmax)*(pmax-p4-M2s*k)/sfactor*sin4*sin4;
@@ -293,69 +295,89 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 
 //=============Basic for 3->2===========================================
 double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_){
+  (void) n_dims_;
+	// unpack variables costheta42 = x_[0]
+	double costheta24 = x_[0], phi24 = x_[1];
+	if (costheta24<=-1. || costheta24>=1. || phi24 <=0. || phi24 >=2.*M_PI) return 0.;
+	double sintheta24 = std::sqrt(1. - costheta24*costheta24), sinphi24 = std::sin(phi24), cosphi24 = std::cos(phi24);
+	// unpack parameters
+	double * params = static_cast<double*>(params_); // s12k, T, M, ...
+	double E2 = params[3];
+	double E4 = params[4];
+	double TwoE2E4 = 2.*E2*E4;
+	double k = params[5];
+	double cos2 = params[6];
+	double sin2 = -std::sqrt(1. - cos2*cos2);
+  double cosk = params[7];
+  double sink = std::sqrt(1. - cosk*cosk);
+	double x2M2 = params[8];
+	double coeff_mg2 = params[9];
+
+	// 2->2
+	double t = TwoE2E4 * (costheta24 - 1);
+	double M2_elastic = M2_Qq2Qq(t, params);
+
+	// 1->2
+  double p2x = E2*sin2, p2z = E2*cos2;
+  double kx = k*sink, kz = k*cosk;
+  double p4x = E4*(cos2*sintheta24*cosphi24 + sin2*costheta24),
+         p4y = E4*sintheta24*sinphi24,
+         p4z = E4*(-sin2*sintheta24*cosphi24 + cos2*costheta24);
+  double qx = p2x - p4x, qy = - p4y, qz = p2z - p4z;
+  double q_project = (qx*p4x + qy*p4y + qz*p4z)/E4,
+         k_project = (kx*p4x + kz*p4z)/E4;
+  double qt2 = qx*qx+qy*qy+qz*qz - std::pow(q_project,2);
+  double kt2 = kx*kx + kz*kz - std::pow(k_project, 2);
+  double two_kt_dot_qt = kx*qx + kz*qz - k_project*q_project;
+	double iD1 = 1./(kt2 + x2M2 + coeff_mg2);
+	double iD2 = 1./(kt2 + qt2 + two_kt_dot_qt + x2M2 + coeff_mg2);
+	double Pg = kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2)
+              - two_kt_dot_qt*(iD1-iD2)*iD2;
+
+	// 2->3 = 2->2 * 1->2
+	return M2_elastic*Pg/16.;
+}
+
+double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
 	(void) n_dims_;
 	// unpack variables costheta42 = x_[0]
 	double costheta24 = x_[0], phi24 = x_[1];
 	if (costheta24<=-1. || costheta24>=1. || phi24 <=0. || phi24 >=2.*M_PI) return 0.;
 	double sintheta24 = std::sqrt(1. - costheta24*costheta24), sinphi24 = std::sin(phi24), cosphi24 = std::cos(phi24);
 	// unpack parameters
-	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
+	double * params = static_cast<double*>(params_); // s12k, T, M, ...
 	double E2 = params[3];
 	double E4 = params[4];
 	double TwoE2E4 = 2.*E2*E4;
-	double kt2 = params[5];
-	double costheta2 = params[6];
-	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
-	double x2M2 = params[7];
-	double coeff_mg2 = params[8];
+	double k = params[5];
+	double cos2 = params[6];
+	double sin2 = -std::sqrt(1. - cos2*cos2);
+  double cosk = params[7];
+  double sink = std::sqrt(1. - cosk*cosk);
+	double x2M2 = params[8];
+	double coeff_mg2 = params[9];
 
 	// 2->2
 	double t = TwoE2E4 * (costheta24 - 1);
-	double the_M2 = M2_Qq2Qq(t, params);
+	double M2_elastic = M2_Qg2Qg_only_t(t, params);
 
 	// 1->2
-	double qx = E2*sintheta2 - E4*(costheta2*sintheta24*cosphi24 + sintheta2*costheta24),
-		   qy = -E4*sintheta24*sinphi24;
-	double qxkx = -std::sqrt(kt2)*qx;
-	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2 + coeff_mg2;
-	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + coeff_mg2;
-	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
+  double p2x = E2*sin2, p2z = E2*cos2;
+  double kx = k*sink, kz = k*cosk;
+  double p4x = E4*(cos2*sintheta24*cosphi24 + sin2*costheta24),
+         p4y = E4*sintheta24*sinphi24,
+         p4z = E4*(-sin2*sintheta24*cosphi24 + cos2*costheta24);
+  double qx = p2x - p4x, qy = - p4y, qz = p2z - p4z;
+  double q_project = (qx*p4x + qy*p4y + qz*p4z)/E4,
+         k_project = (kx*p4x + kz*p4z)/E4;
+  double qt2 = qx*qx+qy*qy+qz*qz - std::pow(q_project,2);
+  double kt2 = kx*kx + kz*kz - std::pow(k_project, 2);
+  double two_kt_dot_qt = kx*qx + kz*qz - k_project*q_project;
+	double iD1 = 1./(kt2 + x2M2 + coeff_mg2);
+	double iD2 = 1./(kt2 + qt2 + two_kt_dot_qt + x2M2 + coeff_mg2);
+	double Pg = kt2*std::pow(iD1-iD2, 2) + qt2*std::pow(iD2, 2)
+              - two_kt_dot_qt*(iD1-iD2)*iD2;
 
 	// 2->3 = 2->2 * 1->2
-	return the_M2*Pg/16.;
-}
-
-double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_){
-(void) n_dims_;
-	// unpack variables costheta42 = x_[0]
-	double costheta24 = x_[0], phi24 = x_[1];
-	if (costheta24<=-1. || costheta24>=1. || phi24 <=0. || phi24 >=2.*M_PI) return 0.;
-	double sintheta24 = std::sqrt(1. - costheta24*costheta24), sinphi24 = std::sin(phi24), cosphi24 = std::cos(phi24);
-	// unpack parameters
-	double * params = static_cast<double*>(params_); // s12k, T, M, 2*E2*E4
-	double E2 = params[3];
-	double E4 = params[4];
-	double TwoE2E4 = 2.*E2*E4;
-	double kt2 = params[5];
-	double costheta2 = params[6];
-	double sintheta2 = std::sqrt(1. - costheta2*costheta2);
-	double x2M2 = params[7];
-	double coeff_mg2 = params[8];
-
-	// 2->2
-	double t = TwoE2E4 * (costheta24 - 1);
-	double the_M2 = M2_Qg2Qg_only_t(t, params);
-
-	// 1->2
-	double qx = E2*sintheta2 - E4*(costheta2*sintheta24*cosphi24 + sintheta2*costheta24),
-		   qy = -E4*sintheta24*sinphi24;
-	double qxkx = -std::sqrt(kt2)*qx;
-	double qt2 = qx*qx + qy*qy;
-	double D1 = kt2 + x2M2 + coeff_mg2;
-	double D2 = kt2 + qt2 + qxkx*2. + x2M2 + coeff_mg2;
-	double Pg = kt2/D1/D1 + (kt2 + qt2 + qxkx*2.)/D2/D2 - 2.*(kt2 + qxkx)/D1/D2;
-
-	// 2->3 = 2->2 * 1->2
-	return the_M2*Pg/16.;
+	return M2_elastic*Pg/16.;
 }

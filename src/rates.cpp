@@ -1,6 +1,6 @@
 #include <cmath>
 #include <vector>
-#include <thread> 
+#include <thread>
 #include <fstream>
 #include <string>
 
@@ -57,7 +57,7 @@ double fy_wrapper22(double y, void * params_){
 	arg[0] = s; arg[1] = Temp;
 	double Xsection = params->f(arg);
 	return (1.-v1*y)*Xsection;
-} 
+}
 
 double fx_wrapper22(double x, void * px_){
 	integrate_params_2 * px = static_cast<integrate_params_2 *>(px_);
@@ -112,7 +112,7 @@ double fy_wrapper23(double y, void * params_){
 	double Xsection = params->f(arg);
 	delete [] arg;
 	return (1.-v1*y)*Xsection;
-} 
+}
 
 double fx_wrapper23(double x, void * px_){
 	integrate_params_2 * px = static_cast<integrate_params_2 *>(px_);
@@ -173,7 +173,7 @@ rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_
 		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		for (size_t i=0; i< Ncores ; i++){	
+		for (size_t i=0; i< Ncores ; i++){
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
 			threads.push_back( std::thread(code, Nstart, dN) );
@@ -196,7 +196,7 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 	hsize_t dims[rank] = {NE1, NT};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
-	
+
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
 	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
@@ -206,7 +206,7 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
-	
+
 	hdf5_add_scalar_attr(dataset, "T_low", TL);
 	hdf5_add_scalar_attr(dataset, "T_high", TH);
 	hdf5_add_scalar_attr(dataset, "N_T", NT);
@@ -215,20 +215,20 @@ void rates_2to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_2to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);	
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
 	const size_t rank = 2;
-	
+
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
 	hdf5_read_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
 	dE1 = (E1H-E1L)/(NE1-1.);
-	
+
 	hdf5_read_scalar_attr(dataset, "T_low", TL);
 	hdf5_read_scalar_attr(dataset, "T_high", TH);
 	hdf5_read_scalar_attr(dataset, "N_T", NT);
 	dT = (TH-TL)/(NT-1.);
-	
+
 	Rtab.resize(boost::extents[NE1][NT]);
 
 	hsize_t dims_mem[rank];
@@ -246,7 +246,7 @@ void rates_2to2::tabulate_E1_T(size_t T_start, size_t dnT){
 	for (size_t i=0; i<NE1; i++){
 		arg[0] = E1L + i*dE1;
 		for (size_t j=T_start; j<(T_start+dnT); j++){
-			arg[1] = TL + j*dT;	
+			arg[1] = TL + j*dT;
 			Rtab[i][j] = calculate(arg)/approx_R22(arg);
 		}
 	}
@@ -302,7 +302,7 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	// and finally rejected with P_rej(x,y) = (1-v1*y) * sigma(M^2 + 2*E1*T*x - 2*p1*T*x*y, T);
 	// this function returns all initial state particles' four-vector in the order (p1, p2)
 	double E1 = arg[0], Temp = arg[1];
-	double * Xarg = new double[2]; 
+	double * Xarg = new double[2];
 	double M2 = M*M, x, y, max, smax;
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M2, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*v1*Temp;
@@ -312,7 +312,7 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
 		do{x = dist_x(gen);}while(x>10.);
-		y = dist_norm_y(gen); 
+		y = dist_norm_y(gen);
 		Xarg[0] = intersection + (coeff1 + coeff2*y)*x;
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg)/max < dist_reject(gen) );
 	delete [] Xarg;
@@ -321,10 +321,10 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double cosphi2 = std::cos(phi2), sinphi2 = std::sin(phi2);
 	// Constructing initial states
 	IS.resize(2); IS[0].resize(4); IS[1].resize(4);
-	IS[0][0] = E1; IS[0][1] = 0.0; 
+	IS[0][0] = E1; IS[0][1] = 0.0;
 	IS[0][2] = 0.0; IS[0][3] = v1*E1;
 
-	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2; 
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*cosphi2;
 	IS[1][2] = E2*sintheta2*sinphi2; IS[1][3] = E2*costheta2;
 }
 
@@ -347,7 +347,7 @@ rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_
 		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		for (size_t i=0; i< Ncores ; i++){	
+		for (size_t i=0; i< Ncores ; i++){
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
 			threads.push_back( std::thread(code, Nstart, dN) );
@@ -369,7 +369,7 @@ void rates_2to3::save_to_file(std::string filename, std::string datasetname){
 	hsize_t dims[rank] = {NE1, NT, Ndt};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
-	
+
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
 	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
@@ -379,7 +379,7 @@ void rates_2to3::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
-	
+
 	hdf5_add_scalar_attr(dataset, "T_low", TL);
 	hdf5_add_scalar_attr(dataset, "T_high", TH);
 	hdf5_add_scalar_attr(dataset, "N_T", NT);
@@ -399,17 +399,17 @@ void rates_2to3::read_from_file(std::string filename, std::string datasetname){
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
 	dE1 = (E1H-E1L)/(NE1-1.);
-	
+
 	hdf5_read_scalar_attr(dataset, "T_low", TL);
 	hdf5_read_scalar_attr(dataset, "T_high", TH);
 	hdf5_read_scalar_attr(dataset, "N_T", NT);
 	dT = (TH-TL)/(NT-1.);
-	
+
 	hdf5_read_scalar_attr(dataset, "dt_low", dtL);
 	hdf5_read_scalar_attr(dataset, "dt_high", dtH);
 	hdf5_read_scalar_attr(dataset, "N_dt", Ndt);
 	ddt = (dtH-dtL)/(Ndt-1.);
-	
+
 	Rtab.resize(boost::extents[NE1][NT][Ndt]);
 	hsize_t dims_mem[rank];
   	dims_mem[0] = NE1;
@@ -501,7 +501,7 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 		do{ x = dist_x(gen); }while(x>10.);
 		y = dist_norm_y(gen);
 		stemp = intersection + coeff1*x + coeff2*x*y;
-		Xarg[0] = stemp; 
+		Xarg[0] = stemp;
 	}while( (1.-v1*y)*Xprocess->interpX(Xarg) <= max*dist_reject(gen) );
 	delete [] Xarg;
 	double E2 = x*Temp;
@@ -518,7 +518,7 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_), eta_k(eta_k_),
-	NE1(100), NT(8), Ndt(10), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
+	NE1(50), NT(8), Ndt(10), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
@@ -530,13 +530,13 @@ rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, doubl
 		size_t call_per_core = size_t(NT*1./Ncores);
 		size_t call_for_last_core = NT - call_per_core*(Ncores-1);
 		auto code = [this](size_t NTstart_, size_t dNT_) { this->tabulate_E1_T(NTstart_, dNT_); };
-		for (size_t i=0; i< Ncores ; i++){	
+		for (size_t i=0; i< Ncores ; i++){
 			size_t Nstart = i*call_per_core;
 			size_t dN = (i==Ncores-1)? call_for_last_core : call_per_core;
 			threads.push_back( std::thread(code, Nstart, dN) );
 		}
 		for (std::thread& t : threads)	t.join();
-		
+
 		save_to_file(name_, "Rates-tab");
 	}
 	else{
@@ -553,7 +553,7 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 	hsize_t dims[rank] = {NE1, NT, Ndt};
 	H5::DSetCreatPropList proplist{};
 	proplist.setChunk(rank, dims);
-	
+
 	H5::DataSpace dataspace(rank, dims);
 	auto datatype(H5::PredType::NATIVE_DOUBLE);
 	H5::DataSet dataset = file.createDataSet(datasetname.c_str(), datatype, dataspace, proplist);
@@ -563,7 +563,7 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 	hdf5_add_scalar_attr(dataset, "E1_low", E1L);
 	hdf5_add_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_add_scalar_attr(dataset, "N_E1", NE1);
-	
+
 	hdf5_add_scalar_attr(dataset, "T_low", TL);
 	hdf5_add_scalar_attr(dataset, "T_high", TH);
 	hdf5_add_scalar_attr(dataset, "N_T", NT);
@@ -575,7 +575,7 @@ void rates_3to2::save_to_file(std::string filename, std::string datasetname){
 }
 
 void rates_3to2::read_from_file(std::string filename, std::string datasetname){
-	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);	
+	H5::H5File file(filename.c_str(), H5F_ACC_RDONLY);
 	const size_t rank = 3;
 
 	H5::DataSet dataset = file.openDataSet(datasetname.c_str());
@@ -583,17 +583,17 @@ void rates_3to2::read_from_file(std::string filename, std::string datasetname){
 	hdf5_read_scalar_attr(dataset, "E1_high", E1H);
 	hdf5_read_scalar_attr(dataset, "N_E1", NE1);
 	dE1 = (E1H-E1L)/(NE1-1.);
-	
+
 	hdf5_read_scalar_attr(dataset, "T_low", TL);
 	hdf5_read_scalar_attr(dataset, "T_high", TH);
 	hdf5_read_scalar_attr(dataset, "N_T", NT);
 	dT = (TH-TL)/(NT-1.);
-	
+
 	hdf5_read_scalar_attr(dataset, "dt_low", dtL);
 	hdf5_read_scalar_attr(dataset, "dt_high", dtH);
 	hdf5_read_scalar_attr(dataset, "N_dt", Ndt);
 	ddt = (dtH-dtL)/(Ndt-1.);
-	
+
 	Rtab.resize(boost::extents[NE1][NT][Ndt]);
 	hsize_t dims_mem[rank];
   	dims_mem[0] = NE1;
@@ -641,8 +641,8 @@ double rates_3to2::interpR(double * arg){
 //-------------3->2 wrapper function--------------------------
 double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	integrate_params_2 * params = static_cast<integrate_params_2 *>(params_);
-	double x2 = x_[0], costheta2 = x_[1], 
-		   xk = x_[2], costhetak = x_[3], 
+	double x2 = x_[0], costheta2 = x_[1],
+		   xk = x_[2], costhetak = x_[3],
 		   phik = x_[4];
 	if (costheta2 <= -1. || costheta2 >= 1.) return 0.;
 	if (costhetak <= -1. || costhetak >= 1. ) return 0.;
@@ -654,15 +654,15 @@ double dRdPS_wrapper(double * x_, size_t n_dims_, void * params_){
 	double sinthetak = std::sqrt(1. - costhetak*costhetak);
 	double cosphik = std::cos(phik), sinphik = std::sin(phik);
 
-	double E1 = params->params[0], 
+	double E1 = params->params[0],
 		   Temp = params->params[1],
-		   dt = params->params[2], 
-		   M = params->params[3], 
+		   dt = params->params[2],
+		   M = params->params[3],
 		   p1 = params->params[4],
-		   eta_2 = params->params[5], 
+		   eta_2 = params->params[5],
 		   eta_k = params->params[6];
 	double E2 = x2*Temp, k = xk*Temp;
-	
+
 	double kx = k*sinthetak*cosphik, ky = k*sinthetak*sinphik, kz = k*costhetak;
 	double p2x = sintheta2*E2, p2z = costheta2*E2;
 	// given p1 = (E1, 0, 0, p1),
@@ -695,21 +695,21 @@ double rates_3to2::calculate(double * arg){
 
 	const gsl_rng_type * Tr = gsl_rng_default;
 	gsl_rng * r = gsl_rng_alloc(Tr);
-	
+
 	params->params = new double[7];
-	params->params[0] = E1; 
-	params->params[1] = Temp; 
-	params->params[2] = dt; 
+	params->params[0] = E1;
+	params->params[1] = Temp;
+	params->params[2] = dt;
 	params->params[3] = M;
 	params->params[4] = std::sqrt(E1*E1-M*M);
 	params->params[5] = eta_2;
 	params->params[6] = eta_k;
-	
+
 	gsl_monte_function G;
-	G.f = dRdPS_wrapper; 
+	G.f = dRdPS_wrapper;
 	G.dim = 5;
 	G.params = params;
-	
+
 	// integration limits
 	double xl[5], xu[5];
 	xl[0] = 0.0; xu[0] = 5.;
@@ -718,11 +718,11 @@ double rates_3to2::calculate(double * arg){
 	xl[3] = -1.; xu[3] = 1.;
 	xl[4] = 0.0; xu[4] = 2.0*M_PI;
 
-	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5) 
+	// Actuall integration, require the Xi-square to be close to 1,  (0.5, 1.5)
 	gsl_monte_vegas_state * sv = gsl_monte_vegas_alloc(5);
-	do{ 
+	do{
 		gsl_monte_vegas_integrate(&G, xl, xu, 5, 10000, r, sv, &result, &error);
-	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5); 
+	}while(std::abs(gsl_monte_vegas_chisq(sv)-1.0)>0.5);
 	gsl_monte_vegas_free(sv);
 	gsl_rng_free(r);
 	delete [] params->params;
@@ -737,9 +737,9 @@ void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	integrate_params_2 * params = new integrate_params_2;
 	params->f = std::bind(&f_3to2::interpX, Xprocess, _1);
 	params->params = new double[7];
-	params->params[0] = E1; 
-	params->params[1] = Temp; 
-	params->params[2] = dt; 
+	params->params[0] = E1;
+	params->params[1] = Temp;
+	params->params[2] = dt;
 	params->params[3] = M;
 	params->params[4] = p1;
 	params->params[5] = eta_2;
@@ -750,22 +750,21 @@ void rates_3to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	guessl[0] = 0.9; guessl[1] = -0.1; guessl[2] = 0.9; guessl[3] = -0.1; guessl[4] = 0.9*M_PI;
 	guessh[0] = 1.1; guessh[1] = 0.1; guessh[2] = 1.1; guessh[3] = 0.1; guessh[4] = 1.1*M_PI;
 	std::vector<double> vec5 = sampler.sample(dRdPS_wrapper, n_dims, params, guessl, guessh);
-	double x2 = vec5[0], 
-		   costheta2 = vec5[1], 
-		   xk = vec5[2], 
-	       costhetak = vec5[3], 
-		   phik = vec5[4];	
+	double x2 = vec5[0],
+		   costheta2 = vec5[1],
+		   xk = vec5[2],
+	       costhetak = vec5[3],
+		   phik = vec5[4];
 	double phi2 = (rand()*2.*M_PI)/RAND_MAX;
-	double E2 = x2*Temp, k = xk*Temp, 
-		   sintheta2 = std::sqrt(1. - costheta2*costheta2), 
+	double E2 = x2*Temp, k = xk*Temp,
+		   sintheta2 = std::sqrt(1. - costheta2*costheta2),
 		   sinthetak = std::sqrt(1. - costhetak*costhetak);
 	IS.resize(3); IS[0].resize(4); IS[1].resize(4); IS[2].resize(4); // HQ, light q or g, absorbed g
-	IS[0][0] = E1; IS[0][1] = 0.; IS[0][2] = 0.; IS[0][3] = p1; 
-	IS[1][0] = E2; IS[1][1] = E2*sintheta2*std::cos(phi2); IS[1][2] = E2*sintheta2*std::sin(phi2); IS[1][3] = E2*costheta2; 
-	IS[2][0] = k; IS[2][1] = k*sinthetak*std::cos(phi2+phik); IS[2][2] = k*sinthetak*std::sin(phi2+phik); IS[2][3] = k*costhetak; 
+	IS[0][0] = E1; IS[0][1] = 0.; IS[0][2] = 0.; IS[0][3] = p1;
+	IS[1][0] = E2; IS[1][1] = E2*sintheta2*std::cos(phi2); IS[1][2] = E2*sintheta2*std::sin(phi2); IS[1][3] = E2*costheta2;
+	IS[2][0] = k; IS[2][1] = k*sinthetak*std::cos(phi2+phik); IS[2][2] = k*sinthetak*std::sin(phi2+phik); IS[2][3] = k*costhetak;
 	delete [] params->params;
 	delete params;
 	delete [] guessl;
 	delete [] guessh;
 }
-
