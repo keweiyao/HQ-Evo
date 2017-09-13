@@ -275,7 +275,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 	double u = dt/tauk*(s-M2)/(s+M2);
 	// 2->2
 	double t = -2.*pmax*p4*(1.+cos4);
-	double M2_elastic = M2_Qg2Qg(t, params); 
+	double M2_elastic = M2_Qg2Qg_only_t(t, params); 
 
 	// 1->2
 	double iD1 = 1./basic_denominator, 
