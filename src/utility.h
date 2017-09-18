@@ -27,6 +27,15 @@ const double Q2cut_l = -Lambda2*std::exp(alpha0),
 			 Q2cut_h = Lambda2*std::exp(M_PI*std::tan(M_PI*(0.5-1./alpha0)));
 // [GeV^2] ranges within which alphas > 1 and will be cut
 
+//=============== extra const 2 (used in Langevin) ============================
+const double cMass = 1.27;
+const double bMass = 4.19;
+const double CF = 4./3.;
+const double hbarC = 0.1973;
+const double inv_fm_to_GeV = 0.1973;
+const double eSMALL = 1e-16;
+
+
 
 double interpolate2d(	boost::multi_array<double, 2> * A, 
 					 	const int& ni, const int& nj, 

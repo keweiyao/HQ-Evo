@@ -17,6 +17,34 @@ using std::vector;
 
 int main()
 {
+    RadiationHT rad = RadiationHT(4, "dNg_over_dxdydt.dat", true, false);
+
+    double time=2.0;
+    double temp = 0.18;
+    double HQenergy = 50.;
+    double deltat_lrf = 0.2;
+    double qhat = M_PI * pow(temp , 3);
+
+    double result, max_dNg;
+    rad.calculate(time, temp, HQenergy, result, max_dNg);
+    std::cout << "gluon emission probability: " << result * qhat * deltat_lrf << " " << max_dNg << std::endl; 
+    bool emit, success;
+    int count1 = 0, count2 = 0, trial = 1e4;
+    std::vector<double> gluon;
+    for (int i=0; i<trial; ++i)
+    {
+        emit = rad.emitGluon(time, temp, HQenergy, qhat, deltat_lrf);
+        if (emit)
+        {
+            count1 ++;
+            success = rad.sampleGluon(time, temp, HQenergy, qhat, deltat_lrf, gluon);
+            if (success) count2 ++;
+        }
+    }
+
+    std::cout << "in reality: " << 1.*count1/trial << " " << 1.*count2/trial << std::endl;
+
+/*
         double M = 1.3;
 
         double temp = 0.3;
@@ -33,6 +61,8 @@ int main()
         QhatXsection_2to2 qhat_xQg2Qg(&dqhat_Qg2Qg_dPS, M, "qhat_XQg2Qg.hdf5", refresh);
         Qhat_2to2 qhatQq2Qq(&qhat_xQq2Qq, 36, 0., "qhat_Qq2Qq.hdf5", refresh);
         Qhat_2to2 qhatQg2Qg(&qhat_xQg2Qg, 16, 0., "qhat_Qg2Qg.hdf5", refresh);
+*/
+
 
 /*
 
