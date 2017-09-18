@@ -35,11 +35,11 @@ private:
     double interpR(double time, double temp, double HQenergy);
     double interpMax(double time, double temp, double HQenergy);
     double getMaxdNg(double time, double temp, double HQenergy);
-
-public:
-    RadiationHT(int flavor, std::string filename, bool plain, bool refresh);
-    double dNgOverDxdydt(double time, double temp, double HQenergy, double x, double y, double& max_dNg);
     void calculate(double time, double temp, double HQenergy, double& result, double& max_dNg);
+ 
+public:
+    RadiationHT(double mass, std::string filename, bool plain, bool refresh);
+    double dNgOverDxdydt(double time, double temp, double HQenergy, double x, double y, double& max_dNg);
     double getNg(double time, double temp, double HQenergy, double qhat);
     bool emitGluon(double time, double temp, double HQenergy, double qhat, double deltat);
     bool sampleGluon(double time, double temp, double HQenergy, double qhat, double deltat, std::vector<double> & gluon);

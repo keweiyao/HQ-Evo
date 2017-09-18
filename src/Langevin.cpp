@@ -28,10 +28,11 @@ double randUniform()
     return (double)rand()/RAND_MAX;
 }
 
+
+
 void Langevin_pre(double p_length, double M, double temp, double drag, double kperp, double kpara, double deltat_lrf, std::vector<double> &pre_result)
 {
-         // sample normal distribution with mean=0.0, width=1.0
-
+        // sample normal distribution with mean=0.0, width=1.0
         // save the values of rho as those will carry on to the post_point scheme second step
         std::vector<double> rho_xi(3, 0.0);
         for (size_t i=0; i< 3; ++i)
@@ -78,16 +79,19 @@ void Langevin_post(double p_length, double M, double temp, double drag, double k
 }
 
 
+// radiative energy loss
+// given HQ energy in cell frame, return sampled gluon in (0,0,pz) frame of HQ
 
 
 //>>>>>>>>>>>>>>>>>>>>>> radiative energy loss from Higher Twist formula >>>>>>>>>>>>>>>>>>>>>>>
-RadiationHT::RadiationHT(int flavor, std::string filename, bool plain, bool refresh)
-:   HQflavor_(flavor),
+RadiationHT::RadiationHT(double mass, std::string filename, bool plain, bool refresh)
+:   HQmass_(mass),
     Ntime_(2), Ntemp_(11), NE_(10),
     timeL_(2), timeH_(4), tempL_(0.15), tempH_(0.45), EL_(10), EH_(100),
     dtime_((timeH_-timeL_)/(Ntime_-1.)), dtemp_((tempH_-tempL_)/(Ntemp_-1.)), dE_((EH_-EL_)/(NE_-1.)),
     RadTab_(boost::extents[Ntime_][Ntemp_][NE_]), Max_dNg_(boost::extents[Ntime_][Ntemp_][NE_])
 {
+/*
     if (flavor == 4) HQmass_ = cMass;
     else if (flavor == 5) HQmass_ = bMass;
     else
@@ -95,7 +99,7 @@ RadiationHT::RadiationHT(int flavor, std::string filename, bool plain, bool refr
         std::cerr << "Flavor " << flavor << " is currently not implemented!" << std::endl;
         exit(EXIT_FAILURE);
     }
-
+*/
     bool file_exist = boost::filesystem::exists(filename);
     if (!file_exist || (file_exist && refresh))
     {
@@ -211,7 +215,7 @@ double RadiationHT::TauF(double x, double y, double HQenergy)
 double RadiationHT::dNgOverDxdydt(double time, double temp, double HQenergy, double x, double y, double & max_dNg)
 // HT formula (as a function of delta_time, temperature, HQenergy, x, y)
 // arxiv: 1065.06477 Eqn.14
-// returns actually dNg_over_dxdydt/qhat, I figured this is the best without all those hastles
+// returns actually dNg_over_dxdydt/qhat, I figured this is the best without all those hassles
 {
     double cutoff = M_PI*temp;
     double k0_gluon = x*HQenergy;

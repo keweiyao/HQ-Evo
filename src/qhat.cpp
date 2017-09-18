@@ -299,7 +299,7 @@ void Qhat_2to2::read_from_file(std::string  filename, std::string datasetname)
 		file.close();
 }
 
-
+/*
 void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
 {
         double *args = new double[3];
@@ -322,7 +322,23 @@ void Qhat_2to2::tabulate_E1_T(size_t T_start, size_t dnT)
         
         delete [] args;
 }
+*/
 
+void Qhat_2to2::tabulate_E1_T(size_t Tstart, size_t dnT)
+{
+    double *args = new double[3];
+    for(size_t i=0; i< NE; ++i)
+    {
+        args[0] = E1L + i*dE1;
+        for (size_t j = Tstart; j<(Tstart + dnT); ++j)
+        {
+            args[1] = TL + j*dT;
+            args[2] = 1; QhatTab[0][i][j] = calculate(args); // drag
+            args[2] = 2; QhatTab[1][i][j] = calculate(args); // kperp
+            args[2] = 3; QhatTab[1][i][j] = calculate(args); // kpara = this - drag**2/rate
+        }
+    }
+}
 
 
 

@@ -17,7 +17,8 @@ using std::vector;
 
 int main()
 {
-    RadiationHT rad = RadiationHT(4, "dNg_over_dxdydt.dat", true, false);
+    double mass = 1.27;
+    RadiationHT rad = RadiationHT(mass, "dNg_over_dxdydt.dat", true, false);
 
     double time=2.0;
     double temp = 0.18;
@@ -25,11 +26,10 @@ int main()
     double deltat_lrf = 0.2;
     double qhat = M_PI * pow(temp , 3);
 
-    double result, max_dNg;
-    rad.calculate(time, temp, HQenergy, result, max_dNg);
-    std::cout << "gluon emission probability: " << result * qhat * deltat_lrf << " " << max_dNg << std::endl; 
+    double result = rad.getNg(time, temp, HQenergy, qhat);
+    std::cout << "gluon emission probability: " << result * deltat_lrf << std::endl; 
     bool emit, success;
-    int count1 = 0, count2 = 0, trial = 1e4;
+    int count1 = 0, count2 = 0, trial = 1e6;
     std::vector<double> gluon;
     for (int i=0; i<trial; ++i)
     {
