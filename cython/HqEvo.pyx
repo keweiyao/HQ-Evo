@@ -116,7 +116,7 @@ cdef class HqEvo(object):
 		print "# Number of Channels", self.Nchannels
 
 	cpdef (double, double) sample_channel(self, double E1, double T, double dt23, double dt32):	
-		cdef double r, psum = 0.0, dt, Pmax = 0.1, R1, R2, Relastic
+		cdef double r, psum = 0.0, dt, Pmax = 0.1, Ptot, R1, R2, Relastic
 		cdef int i=0
 		cdef int channel_index = -1
 		cdef double p[6]
@@ -153,12 +153,18 @@ cdef class HqEvo(object):
 			psum += R2 
 			p[i] = psum; i += 1
 		free(arg)
-		dt = Pmax/psum
-		r = (<double>rand())/dt/RAND_MAX
-		if r >= p[self.Nchannels-1]:
+		# determine an evolution time, which is always less than 0.1 [Gev-1]
+		# when psum is much greater than 1 GeV, the step decreases accordingly
+		# to reach a consistent level of solution precision
+		dt = Pmax/(1.+psum) 
+		# the total scattering probablity during this time.
+		# by the definition of dt, this is always smaller than 0.1.
+		Ptot = dt*psum
+		r = (<double>rand())/RAND_MAX
+		if r >= Ptot: # there will be a large probablity of no sacttering
 			return -1, dt
-		for i in range(self.Nchannels):
-			if r < p[i]:
+		for i in range(self.Nchannels): # else, sample different scattering channel
+			if r < p[i]*dt:
 				channel_index = i
 				break
 		return channel_index, dt/self.Kfactor
