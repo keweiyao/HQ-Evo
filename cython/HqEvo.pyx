@@ -149,9 +149,9 @@ cdef class HqEvo(object):
 			p[i] = psum; i += 1
 		free(arg)
 		# determine an evolution time, which is always less than 0.1 [Gev-1]
-		# when psum is much greater than 1 GeV, the step decreases accordingly
+		# when psum is much greater than 0.25 GeV, the step decreases accordingly
 		# to reach a consistent level of solution precision
-		dt = Pmax/(1.+psum)
+		dt = Pmax/(0.25+psum)
 		# the total scattering probablity during this time.
 		# by the definition of dt, this is always smaller than 0.1.
 		Ptot = dt*psum
