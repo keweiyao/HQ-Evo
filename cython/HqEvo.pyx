@@ -131,9 +131,9 @@ cdef class HqEvo(object):
 		# 5: 	Qgg->Qg
 		if self.elastic:
 			arg[2] = 0.
-			psum += self.r_Qq_Qq.interpR(arg)*0
+			psum += self.r_Qq_Qq.interpR(arg)
 			p[i] = psum; i += 1
-			psum += self.r_Qg_Qg.interpR(arg)*0
+			psum += self.r_Qg_Qg.interpR(arg)
 			p[i] = psum; i += 1
 		if self.inelastic:
 			arg[2] = dt23
