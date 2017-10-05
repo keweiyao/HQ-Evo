@@ -161,7 +161,7 @@ rates::rates(std::string name_)
 rates_2to2::rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_),
-	NE1(100), NT(16), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75),
+	NE1(120), NT(16), E1L(M*1.01), E1H(M*120), TL(0.13), TH(0.75),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)),
 	Rtab(boost::extents[NE1][NT])
 {
@@ -335,7 +335,7 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_2to3::rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_),
-	NE1(100), NT(8), Ndt(20), E1L(M*1.01), E1H(M*100), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
+	NE1(120), NT(8), Ndt(20), E1L(M*1.01), E1H(M*120), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {
@@ -518,7 +518,7 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 rates_3to2::rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, std::string name_, bool refresh)
 :	rates(name_), Xprocess(Xprocess_), M(Xprocess->get_M1()), degeneracy(degeneracy_),
 	eta_2(eta_2_), eta_k(eta_k_),
-	NE1(50), NT(8), Ndt(10), E1L(M*1.01), E1H(M*50), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
+	NE1(120), NT(8), Ndt(10), E1L(M*1.01), E1H(M*120), TL(0.13), TH(0.75), dtL(0.1), dtH(10.0),
 	dE1((E1H-E1L)/(NE1-1.)), dT((TH-TL)/(NT-1.)), ddt((dtH-dtL)/(Ndt-1.)),
 	Rtab(boost::extents[NE1][NT][Ndt])
 {

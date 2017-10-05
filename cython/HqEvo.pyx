@@ -11,46 +11,46 @@ import os
 #------------------Import C++ fucntions and class for Xsection and rates------------------
 cdef extern from "../src/matrix_elements.h":
 	cdef void initialize_Debye_mass(const unsigned int mDtype, const double mDTc,
-						   const double mDslope, const double mDcurv, 
+						   const double mDslope, const double mDcurv,
 						   const double Tc)
 
-	cdef double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params)  
-	cdef double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params) 
+	cdef double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params)
+	cdef double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params)
 
-	cdef double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_)  
-	cdef double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_)  
+	cdef double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_)
+	cdef double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_)
 
-	cdef double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_)   
-	cdef double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_) 
+	cdef double Ker_Qqg2Qq(double * x_, size_t n_dims_, void * params_)
+	cdef double Ker_Qgg2Qg(double * x_, size_t n_dims_, void * params_)
 
 cdef extern from "../src/Xsection.h":
 	cdef cppclass Xsection_2to2 :
-		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)  
-		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)  
-	
+		Xsection_2to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
+
 	cdef cppclass Xsection_2to3 :
-		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)  
-		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)  
+		Xsection_2to3(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
 
 	cdef cppclass f_3to2 :
-		f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)  
-		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)  
+		f_3to2(double (*dXdPS_)(double *, size_t, void *), double M1_, string name_, bool refresh)
+		void sample_dXdPS(double * arg, vector[ vector[double] ] & FS)
 
 cdef extern from "../src/rates.h":
 	cdef cppclass rates_2to2 :
-		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)  
-		double interpR(double * arg)  
-		void sample_initial(double * arg, vector[ vector[double] ] & IS)  
+		rates_2to2(Xsection_2to2 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
+		double interpR(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_2to3 :
-		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)  
-		double interpR(double * arg)  
-		void sample_initial(double * arg, vector[ vector[double] ] & IS)  
+		rates_2to3(Xsection_2to3 * Xprocess_, int degeneracy_, double eta_2_, string name_, bool refresh)
+		double interpR(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 	cdef cppclass rates_3to2 :
-		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, string name_, bool refresh) 
-		double interpR(double * arg)  
-		void sample_initial(double * arg, vector[ vector[double] ] & IS)  
+		rates_3to2(f_3to2 * Xprocess_, int degeneracy_, double eta_2_, double eta_k_, string name_, bool refresh)
+		double interpR(double * arg)
+		void sample_initial(double * arg, vector[ vector[double] ] & IS)
 
 
 #-------------Heavy quark evolution class------------------------
@@ -72,7 +72,7 @@ cdef class HqEvo(object):
 	cdef size_t Nchannels, Nf
 	cdef double mass, Kfactor, Tc
 	cdef public vector[vector[double]] IS, FS
-	
+
 	def __cinit__(self, options, table_folder='./tables', refresh_table=False):
 		self.elastic=options['transport']['2->2']
 		self.inelastic=options['transport']['2->3']
@@ -88,7 +88,7 @@ cdef class HqEvo(object):
 		cdef double mDslope = options['mD']['slope']
 		cdef double mDcurv = options['mD']['curv']
 		initialize_Debye_mass(mD_type, mDTc, mDslope, mDcurv, Tc)
-		
+
 		if not os.path.exists(table_folder):
 			os.makedirs(table_folder)
 
@@ -98,7 +98,7 @@ cdef class HqEvo(object):
 			self.r_Qq_Qq = new rates_2to2(self.x_Qq_Qq, 12*self.Nf, 0., "%s/RQq2Qq.hdf5"%table_folder, refresh_table)
 			self.r_Qg_Qg = new rates_2to2(self.x_Qg_Qg, 16, 0., "%s/RQg2Qg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
-			
+
 		if self.inelastic:
 			self.x_Qq_Qqg = new Xsection_2to3(&M2_Qq2Qqg, self.mass, "%s/XQq2Qqg.hdf5"%table_folder, refresh_table)
 			self.x_Qg_Qgg = new Xsection_2to3(&M2_Qg2Qgg, self.mass, "%s/XQg2Qgg.hdf5"%table_folder, refresh_table)
@@ -112,11 +112,11 @@ cdef class HqEvo(object):
 			self.r_Qqg_Qq = new rates_3to2(self.x_Qqg_Qq, 12*self.Nf*16, 0., 0., "%s/RQqg2Qq.hdf5"%table_folder, refresh_table)
 			self.r_Qgg_Qg = new rates_3to2(self.x_Qgg_Qg, 16*16/2, 0., 0., "%s/RQgg2Qg.hdf5"%table_folder, refresh_table)
 			self.Nchannels += 2
-			
+
 		print "# Number of Channels", self.Nchannels
 
-	cpdef (double, double) sample_channel(self, double E1, double T, double dt23, double dt32):	
-		cdef double r, psum = 0.0, dt, Pmax = 0.1, Ptot, R1, R2, Relastic
+	cpdef (double, double) sample_channel(self, double E1, double T, double dt23, double dt32):
+		cdef double r, psum = 0.0, dt, Pmax = 0.1, Ptot, R1, R2
 		cdef int i=0
 		cdef int channel_index = -1
 		cdef double p[6]
@@ -131,32 +131,27 @@ cdef class HqEvo(object):
 		# 5: 	Qgg->Qg
 		if self.elastic:
 			arg[2] = 0.
-			psum += self.r_Qq_Qq.interpR(arg)
+			psum += self.r_Qq_Qq.interpR(arg)*0
 			p[i] = psum; i += 1
-			psum += self.r_Qg_Qg.interpR(arg)
+			psum += self.r_Qg_Qg.interpR(arg)*0
 			p[i] = psum; i += 1
-			Relastic = psum
 		if self.inelastic:
 			arg[2] = dt23
-			R1 = self.r_Qq_Qqg.interpR(arg)
-			R2 = self.r_Qg_Qgg.interpR(arg)
-			psum += R1
+			psum += self.r_Qq_Qqg.interpR(arg)
 			p[i] = psum; i += 1
-			psum += R2
+			psum += self.r_Qg_Qgg.interpR(arg)
 			p[i] = psum; i += 1
 		if self.detailed_balance:
 			arg[2] = dt32
-			R1 = self.r_Qqg_Qq.interpR(arg)
-			R2 = self.r_Qgg_Qg.interpR(arg)
-			psum += R1
+			psum += self.r_Qqg_Qq.interpR(arg)
 			p[i] = psum; i += 1
-			psum += R2 
+			psum += self.r_Qgg_Qg.interpR(arg)
 			p[i] = psum; i += 1
 		free(arg)
 		# determine an evolution time, which is always less than 0.1 [Gev-1]
 		# when psum is much greater than 1 GeV, the step decreases accordingly
 		# to reach a consistent level of solution precision
-		dt = Pmax/(1.+psum) 
+		dt = Pmax/(1.+psum)
 		# the total scattering probablity during this time.
 		# by the definition of dt, this is always smaller than 0.1.
 		Ptot = dt*psum
@@ -214,7 +209,7 @@ cdef class HqEvo(object):
 		else:
 			pass
 		free(arg)
-	
+
 	cpdef rate(self, int channel, double E, double T):
 		cdef double * arg = <double*>malloc(2*sizeof(double))
 		arg[0] = E; arg[1] = T;
@@ -227,18 +222,3 @@ cdef class HqEvo(object):
 			result = self.r_Qg_Qg.interpR(arg)
 		free(arg)
 		return result
-		
-			
-
-							
-		
-
-
-
-
-
-
-
-
-
-

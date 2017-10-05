@@ -203,7 +203,9 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 
 	// q-perp-vec
 	double qx = -p4*sin4;
-	double alpha_rad = alpha_s(kt2);
+	double alpha_rad = alpha_s(
+			basic_denominator/xbar/one_minus_xbar
+					);
 
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ,
@@ -268,7 +270,9 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 
 	// q-perp-vec
 	double qx = -p4*sin4;
-	double alpha_rad = alpha_s(kt2);
+	double alpha_rad = alpha_s(
+			basic_denominator/xbar/one_minus_xbar
+					);
 
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ,
