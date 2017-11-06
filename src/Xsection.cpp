@@ -169,6 +169,8 @@ double Xsection_2to2::interpX(double * arg){
 	if (Temp >= TH) Temp = TH-dT;
 	if (sqrts < sqrtsL) sqrts = sqrtsL;
 	if (sqrts >= sqrtsH) sqrts = sqrtsH-dsqrts;
+	if (std::pow(arg[0]-M1*M1,2)/arg[0] < t_channel_mD2->get_mD2(Temp) )
+		return 0.;
 	double xT, rT, xsqrts, rsqrts;
 	size_t iT, isqrts;
 	xT = (Temp-TL)/dT;	iT = floor(xT); rT = xT - iT;
@@ -179,7 +181,7 @@ double Xsection_2to2::interpX(double * arg){
 
 double Xsection_2to2::calculate(double * arg){
 	double s = arg[0], Temp = arg[1];
-	double result, error, tmin, tmax;
+	double result, error, tmin;
 	gsl_integration_workspace *w = gsl_integration_workspace_alloc(1000);
 	Mygsl_integration_params * params = new Mygsl_integration_params;
 	params->f = dXdPS;
@@ -188,12 +190,11 @@ double Xsection_2to2::calculate(double * arg){
 	params->params[1] = Temp;
 	params->params[2] = M1;
 
-        gsl_function F;
+    gsl_function F;
 	F.function = gsl_1dfunc_wrapper;
 	F.params = params;
-	tmax = 0.0;
 	tmin = -std::pow(s-M1*M1, 2)/s;
-	gsl_integration_qag(&F, tmin, tmax, 0, 1e-4, 1000, 6, w, &result, &error);
+	gsl_integration_qag(&F, tmin, 0.0, 0, 1e-4, 1000, 6, w, &result, &error);
         delete [] params->params;
 	delete params;
 	gsl_integration_workspace_free(w);
@@ -209,7 +210,8 @@ void Xsection_2to2::sample_dXdPS(double * arg, std::vector< std::vector<double> 
 	double sqrts = std::sqrt(s);
 	double pQ = (s-M2)/2./sqrts;
 	double EQ = sqrts - pQ;
-	double t = sampler1d.sample(dXdPS, -std::pow(s-M2, 2)/s, 0.0, p);
+	double tmin = -std::pow(s-M2, 2)/s;
+	double t = sampler1d.sample(dXdPS, tmin, 0., p);
 	double costheta3 = 1. + t/pQ/pQ/2.;
 	double sintheta3 = std::sqrt(1. - costheta3*costheta3);
 	double phi3 = dist_phi3(gen);
@@ -629,7 +631,7 @@ double f_3to2::interpX(double * arg){
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*p1/E1;
 	double alpha_rad = alpha_s(
-			(kt2 + x2M2 + coeff_mg2)/fracbar/(1.-fracbar)
+			(kt2 + x2M2 + coeff_mg2)/fracbar/(1.-fracbar), Temp
 					);
 
 	return 1.5/M_PI*(1. - M1*M1/s) * alpha_rad * f_LPM(u) * raw_result;

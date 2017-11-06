@@ -307,7 +307,6 @@ void rates_2to2::sample_initial(double * arg, std::vector< std::vector<double> >
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M2, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*v1*Temp;
 	smax = intersection + (coeff1 + (-1)*coeff2)*10.;
-	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax; Xarg[1] = Temp;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{
@@ -494,7 +493,6 @@ void rates_2to3::sample_initial(double * arg, std::vector< std::vector<double> >
 	double v1 = std::sqrt(E1*E1 - M2)/E1;
 	double intersection = M*M, coeff1 = 2.*E1*Temp, coeff2 = -2.*E1*Temp*v1;
 	smax = M2 + (coeff1 +(-1)*coeff2)*10.;
-	if (smax < 2.*M2) smax = 2.*M2;
 	Xarg[0] = smax;
 	max = (1.+v1)*Xprocess->interpX(Xarg);
 	do{

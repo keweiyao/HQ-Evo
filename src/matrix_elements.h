@@ -3,7 +3,7 @@
 #include <cstdlib>
 
 //======running coupling=======================================================
-double alpha_s(double Q2);
+double alpha_s(double Q2, double T);
 double f_LPM(double x);
 //======Debye mass class=======================================================
 class Debye_mass{
@@ -13,9 +13,9 @@ private:
 	const double dT, mDTc, mDslope, mDcurv, Tc;
 	const unsigned int type;
 	double * mD2;
-public:	
+public:
 	Debye_mass(const unsigned int _type, const double _mDTc,
-				const double _mDslope, const double _mDcurv, 
+				const double _mDslope, const double _mDcurv,
 				const double _Tc);
 	~Debye_mass(){delete[] mD2;};
 	double get_mD2(double T);
@@ -23,16 +23,18 @@ public:
 
 //=====For external initialization of debye mass==============================
 void initialize_Debye_mass(const unsigned int type, const double mDTc,
-						   const double mDslope, const double mDcurv, 
+						   const double mDslope, const double mDcurv,
 						   const double Tc);
 
 //=============Baisc function for Q+q --> Q+q==================================
 double M2_Qq2Qq(double t, void * params);
+double M2_Qq2Qq_rad(double t, void * params);
 double dX_Qq2Qq_dPS(double * PS, size_t n_dims, void * params);
 double dqhat_Qq2Qq_dPS(double* PS, size_t ndims, void* params);
 
 //=============Baisc function for Q+g --> Q+g==================================
 double M2_Qg2Qg(double t, void * params);
+double M2_Qg2Qg_rad(double t, void * params);
 double dX_Qg2Qg_dPS(double * PS, size_t n_dims, void * params);
 double dqhat_Qg2Qg_dPS(double* PS, size_t ndims, void* params);
 
