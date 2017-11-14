@@ -12,9 +12,7 @@ cdef double GeV_to_Invfm = 5.068
 
 #------------------Import C++ fucntions and class for Xsection and rates------------------
 cdef extern from "../src/matrix_elements.h":
-	cdef void initialize_Debye_mass(const unsigned int mDtype, const double mDTc,
-						   const double mDslope, const double mDcurv, 
-						   const double Tc)
+	cdef void initialize_mD_and_scale(const unsigned int mDtype, const double scale)
 
 	cdef double dqhat_Qq2Qq_dPS(double* PS, size_t ndims, void* params) 
 	cdef double dqhat_Qg2Qg_dPS(double* PS, size_t ndims, void* params) 
@@ -59,12 +57,8 @@ cdef class HqLGV:
 
 		# set mD
 		cdef double Tc = options['Tc']
-		cdef unsigned int mD_type = options['mD']['mD-model']
-		cdef double mDTc = options['mD']['mTc']
-		cdef double mDslope = options['mD']['slope']
-		cdef double mDcurv = options['mD']['curv']
-		print "mD:", mD_type, mDTc, mDslope, mDcurv, Tc
-		initialize_Debye_mass(mD_type, mDTc, mDslope, mDcurv, Tc)
+		cdef unsigned int mD_type = options['mD_tupe']
+		initialize_mD_and_scale(mD_type, options['scale'])
 		
 		if not os.path.exists(table_folder):
 			os.makedirs(table_folder)

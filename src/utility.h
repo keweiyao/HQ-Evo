@@ -7,11 +7,6 @@
 #include <H5Cpp.h>
 
 //=============constants=======================================================
-/// soft cut: Q2_min = cut*mD2
-const double cut = 1.0;
-// renormazliation_scale*pi*T
-const double renormazliation_scale = 2.0;
-
 const double c4d9 = 4./9.;
 const double c1d9 = 1./9.;
 const double c16pi = 16.*M_PI;
@@ -25,9 +20,8 @@ const double pf_q = M_PI/2.*(Nc*Nc - 1)/2./Nc; // prefractor for quark self ener
 const double alpha0 = 4.*M_PI/(11. - 2./3.*nf); // alpha_s(Q2 = e*Lambda2)
 const double Lambda = 0.2; // [GeV] Lambda QCD
 const double Lambda2 = Lambda*Lambda; // [GeV^2] Lambda QCD squared
-const double min_xfrac = 0.01; // minimum radiation x
-const double Q2cut_l = -Lambda2*std::exp(alpha0),
-			 Q2cut_h = Lambda2*std::exp(M_PI*std::tan(M_PI*(0.5-1./alpha0)));
+const double mu2_left = Lambda2*std::exp(1.0),
+			 mu2_right = Lambda2*1e-6;
 // [GeV^2] ranges within which alphas > 1 and will be cut
 
 

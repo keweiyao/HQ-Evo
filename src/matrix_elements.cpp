@@ -6,25 +6,22 @@
 
 #include <boost/math/tools/roots.hpp>
 
+double renormalization_scale = 2.0; // default
 
 //=============running coupling=================================================
 double alpha_s(double Q2, double T){
-	double screen_scale2 = std::pow(renormazliation_scale*M_PI*T, 2);
-	double result = 0.;
+	double screen_scale2 = std::pow(renormalization_scale*M_PI*T, 2);
+	double result = 0., mu2;
     if (Q2 < 0.){
-        result = alpha0 / std::log(
-							std::max(-Q2, screen_scale2) / Lambda2
-								);
+		mu2 = std::max(-Q2, screen_scale2);
+		if (mu2 <= mu2_left) return alpha0;
+		else return alpha0 / std::log(mu2/Lambda2);
 	}
     else{
-		result = alpha0 * ( .5 - std::atan(
-									std::log(
-										std::max(Q2, screen_scale2)/Lambda2
-											)/M_PI
-										) / M_PI
-						);
+		mu2 = std::max(Q2, screen_scale2);
+		if (mu2 <= mu2_right) return alpha0;
+		else return alpha0 * ( .5 - std::atan(std::log(mu2/Lambda2)/M_PI) / M_PI);
 	}
-	return result;
 }
 
 /// 					   time duration from last emission
@@ -37,11 +34,8 @@ double f_LPM(double x){
 
 ///             Debye mass pointer and class
 Debye_mass * t_channel_mD2 = NULL;
-Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
-						   const double _mDslope, const double _mDcurv,
-						   const double _Tc)
+Debye_mass::Debye_mass(const unsigned int _type)
 :	TL(0.1), TH(1.0), NT(100), dT((TH-TL)/(NT-1.)),
-	mDTc(_mDTc), mDslope(_mDslope), mDcurv(_mDcurv), Tc(_Tc),
 	type(_type), mD2(new double[NT])
 {
 
@@ -51,17 +45,6 @@ Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
 		for (size_t i=0; i<NT; i++){
 			double T = TL+dT*i;
 			mD2[i] = pf_g*alpha_s(0., T)*T*T;
-		}
-	}
-	if (type==1) {
-		std::cout << "# parameterized Debye mass" << std::endl;
-		double mD = 0.;
-		// use parameterized Debye mass
-		for (size_t i=0; i<NT; i++){
-			double T = TL+dT*i;
-			double power = std::pow(T/Tc, mDcurv);
-			mD = T * mDTc*power/(mDslope + (1.-mDslope)*power);
-		 	mD2[i] = mD*mD;
 		}
 	}
 	if (type==2) {
@@ -74,7 +57,7 @@ Debye_mass::Debye_mass(const unsigned int _type, const double _mDTc,
 			 (std::numeric_limits<double>::digits * 3) / 4};
 			try{
 				auto result = boost::math::tools::toms748_solve(
-					[&T](double x) {return pf_g*alpha_s(-x, T)*T*T - x;},
+					[&T](double x) {return pf_g*alpha_s(-x, 0)*T*T - x;},
 					0.01, 20., tol, maxiter);
 				mD2[i] = .5*(result.first + result.second);
 			}
@@ -95,10 +78,10 @@ double Debye_mass::get_mD2(double T){
 	return (1.-r)*mD2[index] + r*mD2[index+1];
 }
 
-void initialize_Debye_mass(const unsigned int type, const double mDTc,
-						   const double mDslope, const double mDcurv,
-						   const double Tc){
-	t_channel_mD2 = new Debye_mass(type, mDTc, mDslope, mDcurv, Tc);
+void initialize_mD_and_scale(const unsigned int type, const double scale){
+	t_channel_mD2 = new Debye_mass(type);
+	renormalization_scale = scale;
+	std::cout << "Scale = " << renormalization_scale << std::endl;
 }
 
 
@@ -164,16 +147,16 @@ double M2_Qg2Qg(double t, void * params){
 	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t-mt2, 2);
 	// s*s
 	result += c4d9*As*As *
-			( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(Q2s, 2);
+			( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(Q2s+mt2, 2);
 	// u*u
 	result += c4d9*Au*Au *
-			( Q2s*(-Q2u) + 2.*M2*(Q2u + 2.*M2) ) / std::pow(-Q2u, 2);
+			( Q2s*(-Q2u) + 2.*M2*(Q2u + 2.*M2) ) / std::pow(-Q2u+mt2, 2);
 	// s*u
-	result += c1d9*As*Au * M2*(4.*M2 - Q2t) / Q2s / (-Q2u);
+	result += c1d9*As*Au * M2*(4.*M2 - Q2t) / (Q2s+mt2) / (-Q2u+mt2);
 	// t*s
-	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / (Q2t-mt2) / Q2s;
+	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / (Q2t-mt2) / (Q2s+mt2);
     // t*u
-	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / (Q2t-mt2) / (-Q2u);
+	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / (Q2t-mt2) / (-Q2u+mt2);
 	if (result < 0.) return 0.;
 	return result*c16pi2;
 }
