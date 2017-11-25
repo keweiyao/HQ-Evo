@@ -68,7 +68,7 @@ cdef class HqEvo(object):
 	cdef rates_3to2 * r_Qqg_Qq
 	cdef rates_3to2 * r_Qgg_Qg
 	cdef size_t Nchannels, Nf
-	cdef double mass, Kfactor, Tc
+	cdef double mass, Tc
 	cdef public vector[vector[double]] IS, FS
 
 	def __cinit__(self, options, table_folder='./tables', refresh_table=False):
@@ -77,12 +77,11 @@ cdef class HqEvo(object):
 		self.detailed_balance=options['transport']['3->2']
 		self.Nchannels = 0
 		self.mass = options['mass']
-		self.Nf = options['Nf']
-		self.Kfactor = options['Kfactor']
+		self.Nf = options['transport']['Nf']
 		# set mD
 		cdef double Tc = options['Tc']
-		cdef unsigned int mD_type = options['mD_type']
-		initialize_mD_and_scale(mD_type, options['scale'])
+		cdef unsigned int mD_type = options['transport']['mD_type']
+		initialize_mD_and_scale(mD_type, options['transport']['scale'])
 
 		if not os.path.exists(table_folder):
 			os.makedirs(table_folder)
@@ -157,7 +156,7 @@ cdef class HqEvo(object):
 			if r < p[i]*dt:
 				channel_index = i
 				break
-		return channel_index, dt/self.Kfactor
+		return channel_index, dt
 
 	cpdef sample_initial(self, int channel, double E1, double T, double dt23, double dt32):
 		cdef double * arg = <double*>malloc(3*sizeof(double))

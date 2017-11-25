@@ -27,8 +27,8 @@ cdef class HqLGV:
 		
 	def __cinit__(self, options):
 		self.mass = options['mass']
-		cdef double A = options['A']
-		cdef double B = options['B']
+		cdef double A = options['transport']['A']
+		cdef double B = options['transport']['B']
 		initialize_transport_coeff(A, B)
 
 	# Giving [E0, 0, 0, pz0] return [E', px', py', pz']
