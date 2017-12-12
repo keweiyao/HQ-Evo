@@ -18,8 +18,7 @@ fileLBT = [	'cython/HqEvo.pyx',
 			'src/utility.cpp', 
 			'src/Xsection.cpp',
 			'src/sample_methods.cpp',
-			'src/rates.cpp']
-fileLGV = [	'cython/HqLGV.pyx', 
+			'src/rates.cpp',
 			'src/Langevin.cpp']
 modules = [
         Extension('HqEvo', 
@@ -28,14 +27,7 @@ modules = [
 #        		 include_dirs=includes,
         		 library_dirs=libs,
         		 extra_compile_args=["-std=c++11", '-march=native', '-fPIC'],
-        		 libraries=["m", "gsl", "gslcblas", "boost_filesystem", "hdf5", "hdf5_cpp"]),
-                Extension('HqLGV', 
-        		 sources=fileLGV, 
-        		 language="c++", 
-#        		 include_dirs=includes,
-        		 library_dirs=libs,
-        		 extra_compile_args=["-std=c++11", '-march=native', '-fPIC'],
-        		 libraries=["m"]),
+        		 libraries=["m", "gsl", "gslcblas", "boost_filesystem", "hdf5", "hdf5_cpp"])
 ]
 
 
