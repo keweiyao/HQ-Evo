@@ -34,7 +34,7 @@ double rejection_1d::sample(double (*f_) (double * x, size_t n_dims, void * para
 		cumulate += ele.w/total_weight;
 		ele.w = cumulate;
 	}
-	double r1, r2, xl, dx, fl, df, fh, lambda, xtry;
+	double r1, r2, xl=0., dx=0., fl=0., df=0., fh=0., lambda, xtry;
 	do{
 		r1 = std::rand()*1./RAND_MAX;
 		for (auto&& ele : intervals){

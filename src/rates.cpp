@@ -28,7 +28,7 @@ double approx_R22(double * arg){
 }
 
 double approx_R23(double * arg, double M){
-	double E1 = arg[0];
+	//double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));
@@ -37,7 +37,7 @@ double approx_R23(double * arg, double M){
 }
 
 double approx_R32(double * arg){
-	double E1 = arg[0];
+	//double E1 = arg[0];
 	double T = arg[1];
 	double dt = arg[2];
 	double meff = std::sqrt(t_channel_mD2->get_mD2(T));

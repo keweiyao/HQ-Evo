@@ -674,7 +674,7 @@ double f_3to2::calculate(double * arg){
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double cos2 = (-E2*E2+k*k-p1*p1)/2./p1/E2;
 	double kz = k*cosk;
-	double kt2 = k*k - kz*kz;
+	//double kt2 = k*k - kz*kz;
 	double frac = (k+kz)/(E1+p1+k+kz);
 	double fracbar = (k+std::abs(kz))/(E1+p1+k+std::abs(kz));
 	double x2M2 = frac*frac*M2;
@@ -725,7 +725,7 @@ void f_3to2::sample_dXdPS(double * arg, std::vector< std::vector<double> > & FS)
 	double sin21 = std::sqrt(1. - cos21*cos21);
 	double cosk = (E2*E2-k*k-p1*p1)/2./p1/k;
 	double kz = k*cosk;
-	double kt2 = k*k - kz*kz;
+	//double kt2 = k*k - kz*kz;
 	double frac = (k+kz)/(E1+p1+k+kz);
 	double fracbar = (k+std::abs(kz))/(E1+p1+k+std::abs(kz));
 	double x2M2 = frac*frac*M2;
