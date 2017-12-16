@@ -630,9 +630,7 @@ double f_3to2::interpX(double * arg){
 	// v_HQ = p1/E1
 	// formation length = tau_k*v_k = tau_k
 	double u = dt/tauk*p1/E1;
-	double alpha_rad = alpha_s(
-			(kt2 + x2M2 + coeff_mg2)/fracbar/(1.-fracbar), Temp
-					);
+	double alpha_rad = alpha_s(kt2, Temp);
 
 	return 1.5/M_PI*(1. - M1*M1/s) * alpha_rad * f_LPM(u) * raw_result;
 }

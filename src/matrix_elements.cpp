@@ -47,9 +47,9 @@ Debye_mass::Debye_mass(const unsigned int _type)
 			mD2[i] = pf_g*alpha_s(0., T)*T*T;
 		}
 	}
-	if (type==2) {
+	if (type==1) {
 		std::cout << "# self-consistent Debye mass" << std::endl;
-		// type==0 use self-consistent Debye mass
+		// type==1 use self-consistent Debye mass
 		for (size_t i=0; i<NT; i++){
 			double T = TL+dT*i;
 			size_t maxiter=100;
@@ -57,7 +57,7 @@ Debye_mass::Debye_mass(const unsigned int _type)
 			 (std::numeric_limits<double>::digits * 3) / 4};
 			try{
 				auto result = boost::math::tools::toms748_solve(
-					[&T](double x) {return pf_g*alpha_s(-x, 0)*T*T - x;},
+					[&T](double x) {return pf_g*alpha_s(-x, T)*T*T - x;},
 					0.01, 20., tol, maxiter);
 				mD2[i] = .5*(result.first + result.second);
 			}
@@ -96,7 +96,7 @@ double M2_Qq2Qq(double t, void * params){
 	double mt2 = t_channel_mD2->get_mD2(Temp);
 	double At = alpha_s(Q2t, Temp);
 	double result = c64d9pi2*At*At*
-					(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(Q2t-mt2, 2);
+					(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)/std::pow(std::min(Q2t,-mt2), 2);
 	if (result < 0.) return 0.;
 	else return result;
 }
@@ -111,8 +111,9 @@ double M2_Qq2Qq_rad(double t, void * params){
 	// define energy scales for each channel
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	double At = alpha_s(Q2t, Temp);
+	double mt2 = t_channel_mD2->get_mD2(Temp);
 	double result = c64d9pi2*At*At*(Q2u*Q2u + Q2s*Q2s + 2.*M2*Q2t)
-					/std::pow(Q2t-t_channel_mD2->get_mD2(Temp), 2);
+					/std::pow(std::min(Q2t,-mt2), 2);
 	if (result < 0.) return 0.;
 	else return result;
 }
@@ -144,19 +145,19 @@ double M2_Qg2Qg(double t, void * params){
 
 	double result = 0.0;
 	// t*t
-	result += 2.*At*At * Q2s*(-Q2u)/std::pow(Q2t-mt2, 2);
+	result += 2.*At*At * Q2s*(-Q2u)/std::pow(std::min(Q2t, -mt2), 2);
 	// s*s
 	result += c4d9*As*As *
-			( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(Q2s+mt2, 2);
+			( Q2s*(-Q2u) + 2.*M2*(Q2s + 2.*M2) ) / std::pow(std::max(Q2s,mt2), 2);
 	// u*u
 	result += c4d9*Au*Au *
-			( Q2s*(-Q2u) + 2.*M2*(Q2u + 2.*M2) ) / std::pow(-Q2u+mt2, 2);
+			( Q2s*(-Q2u) + 2.*M2*(Q2u + 2.*M2) ) / std::pow(std::max(-Q2u,mt2), 2);
 	// s*u
-	result += c1d9*As*Au * M2*(4.*M2 - Q2t) / (Q2s+mt2) / (-Q2u+mt2);
+	result += c1d9*As*Au * M2*(4.*M2 - Q2t) / std::max(Q2s,mt2) / std::max(-Q2u, mt2);
 	// t*s
-	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / (Q2t-mt2) / (Q2s+mt2);
+	result += At*As * ( Q2s*(-Q2u) + M2*(Q2s - Q2u) ) / std::min(Q2t, -mt2) / std::max(Q2s, mt2);
     // t*u
-	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / (Q2t-mt2) / (-Q2u+mt2);
+	result += -At*Au * ( Q2s*(-Q2u) - M2*(Q2s - Q2u) ) / std::min(Q2t, -mt2) / std::max(-Q2u, mt2);
 	if (result < 0.) return 0.;
 	return result*c16pi2;
 }
@@ -170,8 +171,9 @@ double M2_Qg2Qg_rad(double t, void * params) {
 	double s = p[0], Temp = p[1], M2 = p[2]*p[2];
 	double Q2s = s - M2, Q2t = t, Q2u = M2 - s - t;
 	double At = alpha_s(Q2t, Temp);
+	double mt2 = t_channel_mD2->get_mD2(Temp);
 	double result = c16pi2*2.*At*At * Q2s*(-Q2u)
-			/std::pow(Q2t-t_channel_mD2->get_mD2(Temp), 2);
+			/std::pow(std::min(Q2t, -mt2), 2);
 	if (result < 0.) return 0.;
 	else return result;
 }
@@ -228,7 +230,7 @@ double M2_Qq2Qqg(double * x_, size_t n_dims_, void * params_){
 
 	// q-perp-vec
 	double qx = -p4*sin4;
-	double alpha_rad = alpha_s(basic_denominator/xbar/one_minus_xbar, T);
+	double alpha_rad = alpha_s(kt2, T);
 
 	// here u is the ratio of the mean-free-path over the formation length
 	// mean-free-path \sim mean-free-time*v_HQ,
@@ -298,7 +300,7 @@ double M2_Qg2Qgg(double * x_, size_t n_dims_, void * params_){
 
 		// q-perp-vec
 		double qx = -p4*sin4;
-		double alpha_rad = alpha_s(basic_denominator/xbar/one_minus_xbar, T);
+		double alpha_rad = alpha_s(kt2, T);
 
 		// here u is the ratio of the mean-free-path over the formation length
 		// mean-free-path \sim mean-free-time*v_HQ,
