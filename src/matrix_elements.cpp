@@ -11,7 +11,7 @@ double renormalization_scale = 2.0; // default
 //=============running coupling=================================================
 double alpha_s(double Q2, double T){
 	double screen_scale2 = std::pow(renormalization_scale*M_PI*T, 2);
-	double result = 0., mu2;
+	double mu2;
     if (Q2 < 0.){
 		mu2 = std::max(-Q2, screen_scale2);
 		if (mu2 <= mu2_left) return alpha0;
